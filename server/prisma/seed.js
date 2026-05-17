@@ -1,15 +1,12 @@
-// server/prisma/seed.js
+
 // Run: node prisma/seed.js
-// Or add to package.json: "prisma": { "seed": "node prisma/seed.js" }
-// Then: npx prisma db seed
 
-const prisma=require('../src/config')
-const bcrypt           = require('bcryptjs')
+const { PrismaClient } = require('@prisma/client')
+const bcrypt = require('bcryptjs')
+const { prisma }= require('../config/prisma')
+const logger= require("../utils/logger")
 
-const prisma = 
-
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
+// ========== Helpers ==================
 const hash = (pw) => bcrypt.hash(pw, 12)
 
 const future = (daysFromNow, hour = 9) => {
@@ -26,35 +23,30 @@ const past = (daysAgo, hour = 9) => {
   return d
 }
 
-// ─── Main ─────────────────────────────────────────────────────────────────────
+// ========== Main seeder function ===================
 
 async function main() {
   console.log('🌱 Seeding AICN database...\n')
 
-  // ── 1. Clear existing data (order matters for FK constraints) ─────────────
+// Clear existing data 
   await prisma.announcement.deleteMany()
   await prisma.certificate.deleteMany()
   await prisma.enrolment.deleteMany()
   await prisma.trainerProfile.deleteMany()
   await prisma.session.deleteMany()
   await prisma.user.deleteMany()
-  console.log('✓ Cleared existing data')
+  logger.info(' Cleared existing data')
 
-  // ── 2. Users ──────────────────────────────────────────────────────────────
+  // ============ Users ===================================
 
   const [
-    adminPw, trainerPw, learner1Pw, learner2Pw, learner3Pw,
-    learner4Pw, learner5Pw, learner6Pw
+    adminPw, trainerPw, learnerPw,pendingTrainerPW
   ] = await Promise.all([
     hash('admin123'),
     hash('trainer123'),
     hash('learner123'),
-    hash('learner123'),
-    hash('learner123'),
-    hash('learner123'),
-    hash('learner123'),
-    hash('learner123'),
-  ])
+    hash("pending123")
+  ]) //default passwords for mock data
 
   // Admin
   const admin = await prisma.user.create({
@@ -107,7 +99,7 @@ async function main() {
     data: {
       name:     'Dev Scipio',
       email:    'dev@example.com',
-      password: learner1Pw,
+      password: learnerPw,
       phone:    '+254700000001',
       county:   'Nairobi',
       role:     'LEARNER',
@@ -118,7 +110,7 @@ async function main() {
     data: {
       name:     'Akinyi Moraa',
       email:    'akinyi@example.com',
-      password: learner2Pw,
+      password: learnerPw,
       phone:    '+254700000002',
       county:   'Kisumu',
       role:     'LEARNER',
@@ -129,7 +121,7 @@ async function main() {
     data: {
       name:     'Juma Baraka',
       email:    'juma@example.com',
-      password: learner3Pw,
+      password: learnerPw,
       phone:    '+254700000003',
       county:   'Mombasa',
       role:     'LEARNER',
@@ -140,7 +132,7 @@ async function main() {
     data: {
       name:     'Wanjiku Mwangi',
       email:    'wanjiku@example.com',
-      password: learner4Pw,
+      password: learnerPw,
       phone:    '+254700000004',
       county:   'Nakuru',
       role:     'LEARNER',
@@ -151,7 +143,7 @@ async function main() {
     data: {
       name:     'Emmanuel Kipchoge',
       email:    'emmanuel@example.com',
-      password: learner5Pw,
+      password: learnerPw,
       phone:    '+254700000005',
       county:   'Narok',
       role:     'LEARNER',
@@ -162,7 +154,7 @@ async function main() {
     data: {
       name:     'Zawadi Adhiambo',
       email:    'zawadi@example.com',
-      password: learner6Pw,
+      password: learnerPw,
       phone:    '+254700000006',
       county:   'Kisii',
       role:     'LEARNER',
@@ -181,9 +173,9 @@ async function main() {
     }
   })
 
-  console.log('✓ Created 11 users (1 admin, 3 trainers, 6 learners, 1 pending applicant)')
+  logger.info(' Created 11 users (1 admin, 3 trainers, 6 learners, 1 pending applicant)')
 
-  // ── 3. Trainer Profiles ───────────────────────────────────────────────────
+  //============Trainer Profiles=======================
 
   await prisma.trainerProfile.create({
     data: {
@@ -230,9 +222,9 @@ async function main() {
     }
   })
 
-  console.log('✓ Created 4 trainer profiles (3 approved, 1 pending)')
+  logger.info(' Created 4 trainer profiles (3 approved, 1 pending)')
 
-  // ── 4. Sessions ───────────────────────────────────────────────────────────
+  // ======== Sessions=================
 
   // COMPLETED sessions (past)
   const session1 = await prisma.session.create({
@@ -397,9 +389,9 @@ async function main() {
     }
   })
 
-  console.log('✓ Created 10 sessions (3 completed, 6 scheduled, 1 cancelled)')
+  logger.info('Created 10 sessions (3 completed, 6 scheduled, 1 cancelled)')
 
-  // ── 5. Enrolments ─────────────────────────────────────────────────────────
+  // =============Enrolments================================
 
   // Completed session 1 — Cyber Hygiene Nairobi
   const e1 = await prisma.enrolment.create({ data: { userId: learner1.id, sessionId: session1.id, status: 'ATTENDED' } })
@@ -430,9 +422,9 @@ async function main() {
   await prisma.enrolment.create({ data: { userId: learner2.id, sessionId: session7.id, status: 'ENROLLED' } })
   await prisma.enrolment.create({ data: { userId: learner6.id, sessionId: session7.id, status: 'ENROLLED' } })
 
-  console.log('✓ Created 17 enrolments across sessions')
+ logger.info(' Created 17 enrolments across sessions')
 
-  // ── 6. Certificates ───────────────────────────────────────────────────────
+  // ========Certificates====================================
   // Only issued to ATTENDED enrolments on COMPLETED sessions
 
   // Session 1 — Cyber Hygiene
@@ -448,9 +440,9 @@ async function main() {
   await prisma.certificate.create({ data: { userId: learner2.id, sessionId: session3.id } })
   await prisma.certificate.create({ data: { userId: learner3.id, sessionId: session3.id } })
 
-  console.log('✓ Issued 7 certificates')
+  logger.info(' Issued 7 certificates')
 
-  // ── 7. Announcements ──────────────────────────────────────────────────────
+  // ======Announcements =================================
 
   await prisma.announcement.createMany({
     data: [
@@ -472,33 +464,33 @@ async function main() {
     ]
   })
 
-  console.log('✓ Created 3 announcements')
+  logger.info(' Created 3 announcements')
 
-  // ── 8. Summary ────────────────────────────────────────────────────────────
+  // ==========sumarry=================
 
-  console.log('\n── Seed complete ──────────────────────────────────────────')
-  console.log('\n📋 Test accounts (all passwords as shown):')
-  console.log('  ADMIN:    calvince@africaictcsnetwork.org  /  admin123')
-  console.log('  TRAINER:  amara.osei@aicn.org              /  trainer123')
-  console.log('  TRAINER:  fatuma.njeri@aicn.org            /  trainer123')
-  console.log('  TRAINER:  brian.otieno@aicn.org            /  trainer123')
-  console.log('  LEARNER:  dev@example.com                  /  learner123  ← use this one')
-  console.log('  LEARNER:  akinyi@example.com               /  learner123')
-  console.log('  LEARNER:  juma@example.com                 /  learner123')
-  console.log('  LEARNER:  wanjiku@example.com              /  learner123')
-  console.log('  LEARNER:  emmanuel@example.com             /  learner123')
-  console.log('  LEARNER:  zawadi@example.com               /  learner123')
-  console.log('  PENDING:  moses.kamau@example.com          /  pending123')
-  console.log('\n📊 Data summary:')
-  console.log('  Users:          11')
-  console.log('  Sessions:       10  (3 completed · 6 scheduled · 1 cancelled)')
-  console.log('  Enrolments:     17')
-  console.log('  Certificates:    7')
-  console.log('  Announcements:   3')
-  console.log('  Trainer apps:    4  (3 approved · 1 pending)')
-  console.log('──────────────────────────────────────────────────────────\n')
+ logger.info('\n===========seeding complete ,start of seeding logs============')
+  logger.info('\n📋 Test accounts (all passwords as shown):')
+  logger.info('  ADMIN:    calvince@africaictcsnetwork.org  /  admin123')
+  logger.info('  TRAINER:  amara.osei@aicn.org              /  trainer123')
+  logger.info('  TRAINER:  fatuma.njeri@aicn.org            /  trainer123')
+  logger.info('  TRAINER:  brian.otieno@aicn.org            /  trainer123')
+  logger.info('  LEARNER:  dev@example.com                  /  learner123  ← use this one')
+  logger.info('  LEARNER:  akinyi@example.com               /  learner123')
+  logger.info('  LEARNER:  juma@example.com                 /  learner123')
+  logger.info('  LEARNER:  wanjiku@example.com              /  learner123')
+  logger.info('  LEARNER:  emmanuel@example.com             /  learner123')
+  logger.info('  LEARNER:  zawadi@example.com               /  learner123')
+  logger.info('  PENDING:  moses.kamau@example.com          /  pending123')
+  logger.info('\n📊 Data summary:')
+  logger.info('  Users:          11')
+  logger.info('  Sessions:       10  (3 completed · 6 scheduled · 1 cancelled)')
+  logger.info('  Enrolments:     17')
+  logger.info('  Certificates:    7')
+  logger.info('  Announcements:   3')
+  logger.info('  Trainer apps:    4  (3 approved · 1 pending)')
+  logger.info('======end of seeding logs=============================\n')
 }
 
 main()
-  .catch(e => { console.error('❌ Seed failed:', e); process.exit(1) })
+  .catch(e => { logger.error(' Seed failed:', e); process.exit(1) })
   .finally(async () => { await prisma.$disconnect() })

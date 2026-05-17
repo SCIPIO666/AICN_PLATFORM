@@ -1,12 +1,14 @@
+
+const logger = require('../utils/logger');
 const { PrismaClient } = require('@prisma/client');
-const dotenv = require('dotenv');
-const logger = require('../src/utils/logger');
+const { Pool } = require('pg');
+const { PrismaPg } = require('@prisma/adapter-pg');
+const dotenv=require('dotenv').config()
 
-dotenv.config();
 
-const prisma = new PrismaClient({
-  log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-});
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 async function connectDB() {
   try {
@@ -14,7 +16,7 @@ async function connectDB() {
     logger.info('Database connected');
     return true;
   } catch (error) {
-    logger.error('❌Database connection failed:', error.message);
+    logger.error('Database connection failed:', error.message);
     throw error;
   }
 }
