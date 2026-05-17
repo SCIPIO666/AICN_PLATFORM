@@ -1,5 +1,6 @@
 # Dependency directories
 node_modules/
+aicn-trainsync/
 uploads/
 
 # IDE / Editor folders
@@ -18,3 +19,4 @@ Thumbs.db
 # Debug logs
 pino-debug.log
 logs/
+/src/generated/prisma

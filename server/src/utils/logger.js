@@ -49,7 +49,6 @@ const logger = pino({
     censor: '[REDACTED]',
   },
 
-  // Better timestamps
   timestamp: pino.stdTimeFunctions.isoTime,
 
   base: {
