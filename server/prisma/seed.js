@@ -3,7 +3,7 @@
 
 const { PrismaClient } = require('@prisma/client')
 const bcrypt = require('bcryptjs')
-const { prisma }= require('../config/prisma')
+const { prisma }= require('../config/db')
 const logger= require("../utils/logger")
 
 // ========== Helpers ==================
