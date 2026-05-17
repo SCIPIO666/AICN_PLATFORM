@@ -20,5 +20,5 @@ async function connectDB() {
     throw error;
   }
 }
-connectDB()
+
 module.exports = { prisma, connectDB };
