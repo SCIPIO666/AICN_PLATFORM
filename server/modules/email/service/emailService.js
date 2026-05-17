@@ -28,7 +28,7 @@ async function sendEmail({ to, subject, html, text }) {
   return info;
 }
 
-// --- Pre-built email templates ---
+// -- email templates ---
 
 async function sendWelcomeEmail(user) {
   return sendEmail({
