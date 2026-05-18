@@ -12,14 +12,7 @@ const {findUser,
     countUsers
 } = require('../users/usersModel')
 
-const KENYAN_COUNTIES = [
-  'Nairobi','Mombasa','Kisumu','Nakuru','Eldoret','Nyamira','Kisii',
-  'Kakamega','Narok','Migori','Homa Bay','Bomet','Siaya','Other'
-]
-
 async function login(email,password){
-
-  return { user: safeUser, token }
   try {
     const user=await findUserWithPassword(email)
     if (!user) throw new Error('Invalid credentials')
@@ -28,11 +21,19 @@ async function login(email,password){
         if (!isValid) {
             throw new Error('Invalid password')
         }
-        
-    const token = jwt.sign({ userId: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' })
+        const tokenPayload = {
+                userId: user.id,
+                email: user.email,
+                role: user.role
+                }
+    const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, { expiresIn: '7d' })
     const { password: _, ...safeUser } = user
+    return { user: safeUser,
+                token,
+                expiresIn: 7 * 24 * 60 * 60 * 1000
+            }
   } catch (error) {
-    throw error
+   throw new Error('Invalid email or password')
   }
 }
 async function signout(){
@@ -54,54 +55,14 @@ async function signup(name, email, password, phone, county ){
   
    
 }
+async function me (userId){
+try {
+      const user = await findUserById(userId)
+         if(!user) throw new Error ('User not found') 
+        return user
 
-module.exports={login,signout,signup}
-
-// FILE 6 — src/features/auth/auth.service.js
-// All auth business logic + Prisma calls. Never in controller.
-
-const bcrypt = require('bcryptjs')
-const jwt    = require('jsonwebtoken')
-const prisma = require('../../lib/prisma')
-
-const KENYAN_COUNTIES = [
-  'Nairobi','Mombasa','Kisumu','Nakuru','Eldoret','Nyamira','Kisii',
-  'Kakamega','Narok','Migori','Homa Bay','Bomet','Siaya','Other'
-]
-
-const register = async ({ name, email, password, phone, county }) => {
-  const existing = await prisma.user.findUnique({ where: { email } })
-  if (existing) throw Object.assign(new Error('Email already registered'), { status: 409 })
-
-  const hashed = await bcrypt.hash(password, 12)
-  const user   = await prisma.user.create({
-    data: { name, email, password: hashed, phone, county, role: 'LEARNER' },
-    select: { id: true, name: true, email: true, role: true, county: true }
-  })
-
-  const token = jwt.sign({ userId: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' })
-  return { user, token }
+} catch (error) {
+throw error
 }
-
-const login = async ({ email, password }) => {
-  const user = await prisma.user.findUnique({ where: { email } })
-  if (!user) throw Object.assign(new Error('Invalid credentials'), { status: 401 })
-
-  const match = await bcrypt.compare(password, user.password)
-  if (!match)  throw Object.assign(new Error('Invalid credentials'), { status: 401 })
-
-  const token = jwt.sign({ userId: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' })
-  const { password: _, ...safeUser } = user
-  return { user: safeUser, token }
 }
-
-const me = async (userId) => {
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { id: true, name: true, email: true, role: true, phone: true, county: true, createdAt: true }
-  })
-  if (!user) throw Object.assign(new Error('User not found'), { status: 404 })
-  return user
-}
-
-module.exports = { register, login, me }
+module.exports={login,signout,signup,me}
