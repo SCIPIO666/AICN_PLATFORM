@@ -53,7 +53,8 @@ async function signout(token, userId){
             }
         })
     
-        await cleanupExpiredTokens() //cleanup expired
+        //cleanup expired
+        await cleanupExpiredTokens().catch(err => logger.error('Cleanup failed:', err.message))
         
         return { 
             success: true, 
@@ -70,7 +71,7 @@ async function signup(name, email, password, phone, county ){
     try {
     const existingUser=await findUser(email)
         if(existingUser)  throw new Error(`User with email ${email} already exists`)
-        const hashed = await bcrypt.hash(password, 12)     
+           
     const newUser=await createUser(name, email, password, phone, county)
     return newUser    
     } catch (error) {
