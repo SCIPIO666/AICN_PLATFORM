@@ -230,7 +230,7 @@ async function createUser(name, email, password, phone, county) {
     }
 }
 
-async function verifyUserPassword(email, unhashedpassword) {
+async function findUserWithPassword(email) {
     try {
         // returning password for verification only
         const user = await prisma.user.findUnique({
@@ -242,20 +242,8 @@ async function verifyUserPassword(email, unhashedpassword) {
                 role: true
             }
         })
-        
-        if (!user) {
-            throw new Error('User not found')
-        }
-        
-        const isValid = await bcrypt.compare(plainTextPassword, user.password)
-        
-        if (!isValid) {
-            throw new Error('Invalid password')
-        }
-        
-        // Return without password
-        const { password, ...userWithoutPassword } = user
-        return userWithoutPassword
+    
+        return user
     } catch (error) {
         logger.error(`failed verifying password for ${email}: ${error.message}`)
         throw error
@@ -314,7 +302,7 @@ module.exports = {
     updateUser,
     deleteUser,
     createUser,
-    verifyUserPassword,
+    findUserWithPassword,
     updateUserPassword,
     countUsers
 }
