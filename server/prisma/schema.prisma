@@ -47,21 +47,21 @@ enum TrainerStatus {
 // ─── MODELS ──────────────────────────────────────────────────────────────────
 
 model User {
-  id           String   @id @default(cuid())
-  name         String
-  email        String   @unique
-  password     String
-  phone        String?
-  county       String?
-  role         Role     @default(LEARNER)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  phone     String?
+  county    String?
+  role      Role     @default(LEARNER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
   enrolments      Enrolment[]
   certificates    Certificate[]
   trainerProfile  TrainerProfile?
-  trainedSessions Session[]         @relation("TrainerSessions")
+  trainedSessions Session[]       @relation("TrainerSessions")
 }
 
 model Session {
@@ -72,7 +72,7 @@ model Session {
   date         DateTime
   durationMins Int           @default(120)
   locationType LocationType  @default(PHYSICAL)
-  venue        String?       // physical address or online  links
+  venue        String? // physical address or online  links
   county       String?
   capacity     Int           @default(30)
   status       SessionStatus @default(SCHEDULED)
@@ -117,8 +117,8 @@ model TrainerProfile {
   id           String        @id @default(cuid())
   userId       String        @unique
   bio          String?
-  skills       String[]      // array of skill area strings
-  availability String?       // "weekends" | "weekdays" | "online-only"
+  skills       String[] // array of skill area strings
+  availability String? // "weekends" | "weekdays" | "online-only"
   motivation   String?
   status       TrainerStatus @default(PENDING)
   createdAt    DateTime      @default(now())
@@ -133,4 +133,16 @@ model Announcement {
   body      String
   audience  String   @default("all") // "all" | "learners" | "trainers"
   createdAt DateTime @default(now())
+}
+
+// auth
+model BlacklistedToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    Int
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([expiresAt])
+  @@index([userId])
 }

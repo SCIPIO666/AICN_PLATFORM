@@ -1,5 +1,7 @@
 const bcrypt = require('bcryptjs')
 const jwt    = require('jsonwebtoken')
+const prisma=require('../../config/db')
+const logger=require('../../utils/logger')
 const {findUser,
     findUserById,
     findManyUsers,
@@ -36,9 +38,34 @@ async function login(email,password){
    throw new Error('Invalid email or password')
   }
 }
-async function signout(){
-
+async function signout(token, userId){
+    try {
+        // token
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)
+        const expiresAt = new Date(decoded.exp * 1000)
+        
+        // db storage
+        await prisma.blacklistedToken.create({
+            data: {
+                token,
+                userId: userId || decoded.userId,
+                expiresAt
+            }
+        })
+    
+        await cleanupExpiredTokens() //cleanup expired
+        
+        return { 
+            success: true, 
+            message: 'Successfully signed out' 
+        }
+        
+    } catch (error) {
+        logger.error(error.message)
+        throw error
+    }
 }
+
 async function signup(name, email, password, phone, county ){
     try {
     const existingUser=await findUser(email)
@@ -64,5 +91,18 @@ try {
 } catch (error) {
 throw error
 }
+}
+
+async function cleanupExpiredTokens() {
+    try {
+        await prisma.blacklistedToken.deleteMany({
+            where: {
+                expiresAt: { lt: new Date() }
+            }
+        })
+    } catch (error) {
+        logger.error(error.message)
+        throw error
+    }
 }
 module.exports={login,signout,signup,me}
