@@ -23,7 +23,7 @@ authSwagger(app);
 
 
 //routesS
-app.use('/api/v1/auth', indexRouter);
+app.use('/api/v1/auth', authRouter);
 
 
 // catch 404 and forward to error handler

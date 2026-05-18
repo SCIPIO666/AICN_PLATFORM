@@ -1,6 +1,6 @@
 const { prisma } = require('../../config/db')
 const logger = require('../../utils/logger')
-const bcrypt = require('bcrypt') 
+const bcrypt = require('bcryptjs') 
 
 async function findUser(email) {
     try {

@@ -1,6 +1,6 @@
 // authRouter.js
 const express = require('express');
-const router = express.Router();
+const authRouter = express.Router();
 const authController = require('../modules/auth/authController');
 const { verifyToken, requireRole } = require('../middleware/authMiddleware');
 
@@ -52,7 +52,7 @@ const { verifyToken, requireRole } = require('../middleware/authMiddleware');
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-authController.post('/signup', authController.signup);
+authRouter.post('/signup', authController.signup);
 
 /**
  * @swagger
@@ -87,7 +87,7 @@ authController.post('/signup', authController.signup);
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-authController.post('/login', authController.login);
+authRouter.post('/login', authController.login);
 
 /**
  * @swagger
@@ -125,7 +125,7 @@ authController.post('/login', authController.login);
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-authController.post('/signout', verifyToken, authController.signout);
+authRouter.post('/signout', verifyToken, authController.signout);
 
 /**
  * @swagger
@@ -169,6 +169,6 @@ authController.post('/signout', verifyToken, authController.signout);
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-authController.get('/me', verifyToken, authController.me);
+authRouter.get('/me', verifyToken, authController.me);
 
-module.exports = authController;
+module.exports = authRouter;

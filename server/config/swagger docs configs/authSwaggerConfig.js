@@ -211,7 +211,7 @@ function setupSwagger(app) {
     res.send(swaggerSpec);
   });
   
-  logger.log(' Swagger UI available at /api-docs');
+  logger.info(' Swagger UI available at /api-docs');
 }
 
 module.exports = setupSwagger;
