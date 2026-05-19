@@ -3,9 +3,9 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const authSwagger = require('./config/swagger docs configs/authSwaggerConfig');
+const setupSwagger = require('./config/swagger');
 const authRouter=require('./routes/authRoutes')
-
+const sessionsRouter=require('./routes/sessionRoutes')
 const app = express();
 
 // view engine setup
@@ -18,13 +18,19 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-//swagger configs
-authSwagger(app);
+//swagger config
+setupSwagger(app);
 
 
-//routesS
+//routes
 app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/sessions', sessionsRouter);
 
+
+// Health check
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'OK', timestamp: new Date() });
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
