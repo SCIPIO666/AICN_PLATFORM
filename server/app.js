@@ -28,7 +28,7 @@ app.use('/api/v1/sessions', sessionsRouter);
 
 
 // Health check
-app.get('/health', (req, res) => {
+app.get('/api/v1/health', (req, res) => {
   res.status(200).json({ status: 'OK', timestamp: new Date() });
 });
 
@@ -50,9 +50,10 @@ app.use(function(err, req, res, next) {
 
 
 app.listen(process.env.PORT,'localhost',()=>{
-  console.log(`\n Server is running! on ${process.env.PORT}`);
+  console.log(`\n Server is running! on port ${process.env.PORT}`);
   console.log(`API URL: http://localhost:${process.env.PORT}/api`);
   console.log(` Swagger UI: http://localhost:${process.env.PORT}/api-docs`);
-  console.log(` Health check: http://localhost:${process.env.PORT}/health\n`);
+  console.log(` Swagger UI: http://localhost:${process.env.PORT}/swagger.json`);
+  console.log(` Health check: http://localhost:${process.env.PORT}/api/v1/health\n`);
 })
 module.exports = app;
