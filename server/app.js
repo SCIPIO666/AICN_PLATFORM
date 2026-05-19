@@ -44,6 +44,9 @@ app.use(function(err, req, res, next) {
 
 
 app.listen(process.env.PORT,'localhost',()=>{
-  console.log(`app is live on `)
+  console.log(`\n Server is running! on ${process.env.PORT}`);
+  console.log(`API URL: http://localhost:${process.env.PORT}/api`);
+  console.log(` Swagger UI: http://localhost:${process.env.PORT}/api-docs`);
+  console.log(` Health check: http://localhost:${process.env.PORT}/health\n`);
 })
 module.exports = app;
