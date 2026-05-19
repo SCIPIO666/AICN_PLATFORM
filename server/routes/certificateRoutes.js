@@ -1,14 +1,14 @@
-const {Router}=express
-const certificateRouter=Router()
-const {verifyToken, requireRole }=require('../middleware/authMiddleware')
+const express = require('express');
+const certificatesRouter = express.Router();
+const { verifyToken, requireRole } = require('../middleware/authMiddleware')
+const certificatesController = require('../modules/certificates/certificateController');
 
+// Public routes
+certificatesRouter.get('/verify/:certCode', certificatesController.verifyCertificate);
 
+// Protected routes
+certificatesRouter.use(verifyToken);
+certificatesRouter.get('/my', certificatesController.getMyCertificates);
+certificatesRouter.post('/', requireRole(['ADMIN']), certificatesController.issueCertificate);
 
-
-
-
-
-
-
-
-module.exports=certificateRouter
+module.exports = certificatesRouter;

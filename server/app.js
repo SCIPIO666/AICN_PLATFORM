@@ -6,6 +6,7 @@ const logger = require('morgan');
 const setupSwagger = require('./config/swagger');
 const authRouter=require('./routes/authRoutes')
 const sessionsRouter=require('./routes/sessionRoutes')
+const enrolmentsRouter=require('./routes/enrollmentRoutes')
 const app = express();
 
 // view engine setup
@@ -25,9 +26,10 @@ setupSwagger(app);
 //routes
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/sessions', sessionsRouter);
+app.use('/api/v1/enrolments',enrolmentsRouter)
 
 
-// Health check
+// Health check'
 app.get('/api/v1/health', (req, res) => {
   res.status(200).json({ status: 'OK', timestamp: new Date() });
 });

@@ -1,109 +1,106 @@
-const prisma= require('../../config/db')
-const logger=require('../../utils/logger')
+const prisma = require('../../config/db');
+const logger = require('../../utils/logger');
 
-
-async function createSession(data){
-    try {
-        const newSession=await prisma.session.create({data})
-        return newSession
-    } catch (error) {
-        logger.error(`failed to create session: ${error.message}`)
-        throw error
-    }
+async function createSession(data) {
+  try {
+    const newSession = await prisma.session.create({ data });
+    return newSession;
+  } catch (error) {
+    logger.error(`Failed to create session: ${error.message}`);
+    throw error;
+  }
 }
 
-async function getSession(id){
-try {
+async function getSession(id) {
+  try {
     const session = await prisma.session.findUnique({
-    where: { id },
-    include: {
-      trainer:    { select: { name: true, email: true } },
-      enrolments: { include: { user: { select: { id: true, name: true, email: true } } } },
-      _count:     { select: { enrolments: true } }
+      where: { id },
+      include: {
+        trainer: { select: { id: true, name: true, email: true } },
+        enrolments: {
+          include: { user: { select: { id: true, name: true, email: true } } }
+        },
+        _count: { select: { enrolments: true } }
+      }
+    });
+    if (!session) throw new Error('Session not found');
+    return session;
+  } catch (error) {
+    logger.error(`Failed to get a session: ${error.message}`);
+    throw error;
+  }
+}
+
+async function getAllSessions(filters = {}) {
+  try {
+    const { title, skillArea, status, locationType, county, trainerId, page = 1, limit = 10 } = filters;
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    
+    const where = {};
+    if (title) where.title = { contains: title, mode: 'insensitive' };
+    if (skillArea) where.skillArea = { contains: skillArea, mode: 'insensitive' };
+    if (status) where.status = status;
+    if (locationType) where.locationType = locationType;
+    if (county) where.county = { contains: county, mode: 'insensitive' };
+    if (trainerId) where.trainerId = trainerId;
+    
+    const [sessions, total] = await Promise.all([
+      prisma.session.findMany({
+        where,
+        skip,
+        take: parseInt(limit),
+        include: {
+          trainer: { select: { id: true, name: true, email: true } },
+          _count: { select: { enrolments: true } }
+        },
+        orderBy: { date: 'asc' }
+      }),
+      prisma.session.count({ where })
+    ]);
+    
+    return {
+      sessions,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total,
+        totalPages: Math.ceil(total / parseInt(limit))
+      }
+    };
+  } catch (error) {
+    logger.error(`Failed finding all sessions: ${error.message}`);
+    throw error;
+  }
+}
+
+async function updateSession(id, data) {
+  try {
+    return await prisma.session.update({ where: { id }, data });
+  } catch (error) {
+    logger.error(`Failed to update session: ${error.message}`);
+    throw error;
+  }
+}
+
+async function deleteSession(id) {
+  try {
+    const existingSession = await prisma.session.findUnique({ where: { id } });
+    if (!existingSession) {
+      throw new Error(`Session with id ${id} not found`);
     }
-  })
-  if (!session) throw new Error('Session not found')
-  return session
-} catch (error) {
-    logger.error(`failed to get a session : ${error.message}`)
-    throw error
+    
+    const deletedSession = await prisma.session.delete({ where: { id } });
+    return deletedSession;
+  } catch (error) {
+    logger.error(error.message);
+    throw error;
+  }
 }
-}
-
-
-async function getAllSessions(filters){
-     try {
-        const { title,skillArea, page = 1, limit = 10 } = filters
-        const skip = (page - 1) * limit
-        
-        const where = {}//filters,adding only selected search criteria
-        if (title) where.title = title
-        if (skillArea) where.skillArea = skillArea
-        
-        const sessions = await prisma.session.findMany({
-            where,
-            skip,
-            take: limit,
-            orderBy: {
-                createdAt: 'desc'
-            }
-        })
-        
-        const total = await prisma.session.count({ where })
-        
-        return {
-            sessions,
-            pagination: {
-                page,
-                limit,
-                total,
-                totalPages: Math.ceil(total / limit)
-            }
-        }
-    } catch (error) {
-        logger.error(`failed finding all sessions: ${error.message}`)
-        throw error
-    }
-}
-
-async function updateSession(id, data){
-    try {
-    return await prisma.session.update({ where: { id }, data })
-    } catch (error) {
-        logger.error(`failed to update session: ${error.message}`)
-        throw error
-    }
- 
-}
-
-
-async function deleteSession(id){
-    try {
-        const existingSession = await prisma.session.findUnique({
-            where: {id},
-        })
-        
-        if (!existingSession) {
-            throw new Error(`session with id ${id} not found`)
-        }
-        
-        const deletedSession = await prisma.session.delete({
-            where: { id },
-        })     
-        return deletedSession   
-    } catch (error) {
-        logger.error(error.message)
-        throw error
-    }
-      
-}
-
 
 module.exports = {
-    createSession,
-    getSession,
-    getAllSessions,
-    updateSession,
-    deleteSession
-
- }
+  createSession,
+  getSession,
+  getAllSessions,
+  updateSession,
+  deleteSession
+};
