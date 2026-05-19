@@ -1,5 +1,5 @@
-const prisma= require('../../../config/db')
-const logger=require('../../../utils/logger')
+const prisma= require('../../config/db')
+const logger=require('../../utils/logger')
 // enum SessionStatus {
 //   SCHEDULED
 //   IN_PROGRESS
@@ -62,7 +62,7 @@ try {
 }
 
 
-async function getAllSessions(filters={}){
+async function getAllSessions(filters){
      try {
         const { title,skillArea, page = 1, limit = 10 } = filters
         const skip = (page - 1) * limit
