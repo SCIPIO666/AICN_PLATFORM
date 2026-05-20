@@ -6,8 +6,28 @@ const enrolmentsController = require('../modules/enrollments/enrolmentController
 // auth
 enrolmentsRouter.use(verifyToken);
 
+
 enrolmentsRouter.get('/', enrolmentsController.getAllEnrolments);
 enrolmentsRouter.post('/', enrolmentsController.createEnrolment);
+
+/**
+ * @swagger
+ * /enrolments/{id}:
+ *   get:
+ *     summary: Get enrolment by ID
+ *     tags: [Enrolments]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Enrolment retrieved successfully
+ */
 enrolmentsRouter.get('/:id', enrolmentsController.getEnrolment);
 enrolmentsRouter.put('/:id', enrolmentsController.updateEnrolment);
 enrolmentsRouter.delete('/:id', enrolmentsController.deleteEnrolment);
