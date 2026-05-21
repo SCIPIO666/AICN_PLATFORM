@@ -3,6 +3,7 @@ const logger = require('../../utils/logger');
 
 async function createTrainerProfile(userId, data) {
   try {
+    //later  intergrate email services
     return await prisma.trainerProfile.create({
       data: {
         userId,

@@ -51,7 +51,7 @@ module.exports = {
   paginationSchema: commonValidation.paginationSchema,
   dateRangeSchema: commonValidation.dateRangeSchema,
   
-  // Enums ( frontend)
+  // Enums
   enums,
   
   // Middleware

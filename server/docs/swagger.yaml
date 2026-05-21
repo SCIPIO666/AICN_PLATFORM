@@ -1,31 +1,57 @@
 openapi: 3.0.0
 info:
-  title: Training Management System API
+  title: AICN Training Management System API
   version: 2.0.0
-  description: Complete API documentation for Training Sessions Management System
+  description: |
+    Complete API documentation for the redesigned Training Management System.
+    
+    ## Features
+    * Public session browsing with advanced filters
+    * Self-service enrolment and cancellation
+    * Trainer attendance tracking
+    * Certificate management with batch issuance
+    * Admin dashboard with user management
+    * Trainer application workflow
+    
+    ## Authentication
+    Most endpoints require JWT authentication. Include the token in requests:
+    
+    `Authorization: Bearer <your-token>`
+    
+    ## Role-Based Access Control
+    
+    | Role | Permissions |
+    |------|-------------|
+    | **LEARNER** | Browse sessions, enrol, cancel own enrolments, view own certificates |
+    | **TRAINER** | All LEARNER permissions + mark attendance, view assigned sessions |
+    | **ADMIN** | Full system access + user management, batch operations, announcements |
+    
   contact:
     name: API Support
-    email: support@trainingsystem.com
+    email: support@aicn.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
 
 servers:
-  - url: http://localhost:3000/api/v1
+  - url: http://localhost:3000/api
     description: Development server
-  - url: https://api.trainingsystem.com/api/v1
+  - url: https://staging-api.aicn.com/api
+    description: Staging server
+  - url: https://api.aicn.com/api
     description: Production server
 
 tags:
   - name: Authentication
-    description: User authentication and profile management
+    description: User registration, login, and profile management
   - name: Sessions
-    description: Training session management
+    description: Public session browsing and management (ADMIN only for write)
   - name: Enrolments
-    description: Session enrolment operations
+    description: Self-service enrolment and attendance tracking
   - name: Certificates
-    description: Certificate issuance and verification
+    description: Certificate issuance, verification, and download
   - name: Trainers
     description: Trainer application and management
-  - name: Announcements
-    description: System announcements
   - name: Admin
     description: Administrative operations (ADMIN only)
 
@@ -73,7 +99,7 @@ components:
           format: date-time
 
     # Auth Schemas
-    SignupRequest:
+    RegisterRequest:
       type: object
       required:
         - name
@@ -100,10 +126,6 @@ components:
         county:
           type: string
           example: Nairobi
-        role:
-          type: string
-          enum: [LEARNER, TRAINER]
-          default: LEARNER
 
     LoginRequest:
       type: object
@@ -130,7 +152,7 @@ components:
           $ref: '#/components/schemas/User'
         token:
           type: string
-          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+          example: eyJhbGciOiJIUzI1NiIs...
         expiresIn:
           type: integer
           example: 604800000
@@ -177,15 +199,13 @@ components:
           example: sess_2xK3pQ7VnM
         title:
           type: string
-          minLength: 3
-          maxLength: 200
           example: Advanced JavaScript Workshop
         skillArea:
           type: string
           example: Programming
         description:
           type: string
-          example: Deep dive into modern JavaScript features
+          example: Deep dive into modern JavaScript
         date:
           type: string
           format: date-time
@@ -217,8 +237,6 @@ components:
         trainerId:
           type: string
           example: usr_2xK3pQ7VnM
-        trainer:
-          $ref: '#/components/schemas/User'
         enrolledCount:
           type: integer
           example: 15
@@ -243,87 +261,60 @@ components:
           type: string
           minLength: 3
           maxLength: 200
-          example: Advanced JavaScript Workshop
         skillArea:
           type: string
           minLength: 2
           maxLength: 100
-          example: Programming
         description:
           type: string
           maxLength: 2000
-          example: Deep dive into modern JavaScript features
         date:
           type: string
           format: date-time
-          example: 2024-12-15T10:00:00Z
         durationMins:
           type: integer
           minimum: 30
           maximum: 480
           default: 120
-          example: 120
         locationType:
           type: string
           enum: [PHYSICAL, ONLINE]
           default: PHYSICAL
-          example: ONLINE
         venue:
           type: string
-          minLength: 3
-          maxLength: 500
-          example: https://zoom.us/join/123456
         county:
           type: string
-          minLength: 2
-          maxLength: 50
-          example: Nairobi
         capacity:
           type: integer
           minimum: 1
           maximum: 100
           default: 30
-          example: 30
         trainerId:
           type: string
-          example: usr_2xK3pQ7VnM
 
     UpdateSessionInput:
       type: object
       properties:
         title:
           type: string
-          minLength: 3
-          maxLength: 200
         skillArea:
           type: string
-          minLength: 2
-          maxLength: 100
         description:
           type: string
-          maxLength: 2000
         date:
           type: string
           format: date-time
         durationMins:
           type: integer
-          minimum: 30
-          maximum: 480
         locationType:
           type: string
           enum: [PHYSICAL, ONLINE]
         venue:
           type: string
-          minLength: 3
-          maxLength: 500
         county:
           type: string
-          minLength: 2
-          maxLength: 50
         capacity:
           type: integer
-          minimum: 1
-          maximum: 100
         status:
           type: string
           enum: [SCHEDULED, IN_PROGRESS, COMPLETED, CANCELLED]
@@ -334,17 +325,13 @@ components:
       properties:
         id:
           type: string
-          example: enr_2xK3pQ7VnM
         userId:
           type: string
-          example: usr_2xK3pQ7VnM
         sessionId:
           type: string
-          example: sess_2xK3pQ7VnM
         status:
           type: string
           enum: [ENROLLED, ATTENDED, ABSENT, CANCELLED]
-          example: ENROLLED
         user:
           $ref: '#/components/schemas/User'
         session:
@@ -363,38 +350,17 @@ components:
       properties:
         sessionId:
           type: string
-          format: cuid
           example: sess_2xK3pQ7VnM
 
-    UpdateEnrolmentInput:
+    MarkAttendanceInput:
       type: object
+      required:
+        - status
       properties:
         status:
           type: string
-          enum: [ATTENDED, ABSENT, CANCELLED]
-          description: Cannot update to ENROLLED status directly
+          enum: [ATTENDED, ABSENT]
           example: ATTENDED
-
-    BulkEnrolmentInput:
-      type: object
-      required:
-        - sessionId
-        - userIds
-      properties:
-        sessionId:
-          type: string
-          format: cuid
-          example: sess_2xK3pQ7VnM
-        userIds:
-          type: array
-          minItems: 1
-          maxItems: 100
-          items:
-            type: string
-            format: cuid
-          example:
-            - usr_abc123
-            - usr_def456
 
     # Certificate Schemas
     Certificate:
@@ -402,17 +368,13 @@ components:
       properties:
         id:
           type: string
-          example: cert_2xK3pQ7VnM
         userId:
           type: string
-          example: usr_2xK3pQ7VnM
         sessionId:
           type: string
-          example: sess_2xK3pQ7VnM
         certCode:
           type: string
-          pattern: '^CERT-[A-F0-9]{16}$'
-          example: CERT-ABC123DEF456XYZ
+          example: CERT-ABC123DEF456
         issuedAt:
           type: string
           format: date-time
@@ -423,10 +385,6 @@ components:
         revokedReason:
           type: string
           nullable: true
-        user:
-          $ref: '#/components/schemas/User'
-        session:
-          $ref: '#/components/schemas/Session'
 
     IssueCertificateInput:
       type: object
@@ -436,22 +394,29 @@ components:
       properties:
         userId:
           type: string
-          format: cuid
-          example: usr_2xK3pQ7VnM
         sessionId:
           type: string
-          format: cuid
-          example: sess_2xK3pQ7VnM
 
-    VerifyCertificateInput:
+    BatchIssueResult:
       type: object
-      required:
-        - certCode
       properties:
-        certCode:
-          type: string
-          pattern: '^CERT-[A-F0-9]{16}$'
-          example: CERT-ABC123DEF456XYZ
+        issued:
+          type: integer
+          example: 5
+        failed:
+          type: integer
+          example: 1
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              userId:
+                type: string
+              userName:
+                type: string
+              error:
+                type: string
 
     # Trainer Schemas
     TrainerProfile:
@@ -459,63 +424,28 @@ components:
       properties:
         id:
           type: string
-          example: trn_2xK3pQ7VnM
         userId:
           type: string
-          example: usr_2xK3pQ7VnM
         bio:
           type: string
-          maxLength: 1000
-          example: Experienced software developer
         skills:
           type: array
           items:
             type: string
-          example:
-            - JavaScript
-            - React
         availability:
           type: string
-          maxLength: 200
-          example: Weekends
         motivation:
           type: string
-          maxLength: 1000
-          example: Passionate about teaching
         status:
           type: string
           enum: [PENDING, APPROVED, REJECTED]
-          example: APPROVED
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
+        user:
+          $ref: '#/components/schemas/User'
 
-    CreateTrainerProfileInput:
+    ApplyTrainerInput:
       type: object
       required:
         - skills
-      properties:
-        bio:
-          type: string
-          maxLength: 1000
-        skills:
-          type: array
-          minItems: 1
-          maxItems: 20
-          items:
-            type: string
-        availability:
-          type: string
-          maxLength: 200
-        motivation:
-          type: string
-          maxLength: 1000
-
-    UpdateTrainerProfileInput:
-      type: object
       properties:
         bio:
           type: string
@@ -541,29 +471,48 @@ components:
         status:
           type: string
           enum: [APPROVED, REJECTED]
-          example: APPROVED
 
-    # Announcement Schemas
+    # Admin Schemas
+    AdminStats:
+      type: object
+      properties:
+        learners:
+          type: integer
+          example: 150
+        trainers:
+          type: integer
+          example: 25
+        sessions:
+          type: integer
+          example: 45
+        certificates:
+          type: integer
+          example: 120
+        pendingTrainerApplications:
+          type: integer
+          example: 8
+
+    UpdateUserRoleInput:
+      type: object
+      required:
+        - role
+      properties:
+        role:
+          type: string
+          enum: [LEARNER, TRAINER, ADMIN]
+
     Announcement:
       type: object
       properties:
         id:
           type: string
-          example: ann_2xK3pQ7VnM
         title:
           type: string
-          minLength: 3
-          maxLength: 200
-          example: System Maintenance
         body:
           type: string
-          minLength: 10
-          maxLength: 5000
-          example: System will be down for maintenance
         audience:
           type: string
           enum: [all, learners, trainers]
-          example: all
         createdAt:
           type: string
           format: date-time
@@ -578,33 +527,16 @@ components:
           type: string
           minLength: 3
           maxLength: 200
-          example: New Feature Release
         body:
           type: string
           minLength: 10
           maxLength: 5000
-          example: We're excited to announce...
         audience:
           type: string
           enum: [all, learners, trainers]
           default: all
 
-    UpdateAnnouncementInput:
-      type: object
-      properties:
-        title:
-          type: string
-          minLength: 3
-          maxLength: 200
-        body:
-          type: string
-          minLength: 10
-          maxLength: 5000
-        audience:
-          type: string
-          enum: [all, learners, trainers]
-
-    # Common Schemas
+    # Common Responses
     SuccessResponse:
       type: object
       properties:
@@ -613,7 +545,6 @@ components:
           example: true
         message:
           type: string
-          example: Operation successful
         data:
           type: object
 
@@ -625,32 +556,8 @@ components:
           example: false
         message:
           type: string
-          example: An error occurred
         statusCode:
           type: integer
-          example: 400
-
-    ValidationErrorResponse:
-      type: object
-      properties:
-        success:
-          type: boolean
-          example: false
-        message:
-          type: string
-          example: Validation failed
-        statusCode:
-          type: integer
-          example: 400
-        errors:
-          type: array
-          items:
-            type: object
-            properties:
-              field:
-                type: string
-              message:
-                type: string
 
     PaginatedResponse:
       type: object
@@ -665,76 +572,57 @@ components:
           properties:
             page:
               type: integer
-              example: 1
             limit:
               type: integer
-              example: 10
             total:
               type: integer
-              example: 100
             totalPages:
               type: integer
-              example: 10
 
   responses:
     UnauthorizedError:
-      description: Authentication token is missing or invalid
+      description: Authentication required
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
-          example:
-            success: false
-            message: No token provided
-            statusCode: 401
-
     ForbiddenError:
-      description: User does not have required permissions
+      description: Insufficient permissions
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
-          example:
-            success: false
-            message: Access denied. Required role: ADMIN
-            statusCode: 403
-
     NotFoundError:
       description: Resource not found
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
-          example:
-            success: false
-            message: Resource not found
-            statusCode: 404
-
     ValidationError:
-      description: Validation error
+      description: Validation failed
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ValidationErrorResponse'
+            $ref: '#/components/schemas/ErrorResponse'
 
-security:
-  - bearerAuth: []
+# ==================== PATH DEFINITIONS ====================
 
 paths:
-  # Authentication endpoints
-  /auth/signup:
+  # ==================== AUTHENTICATION ====================
+  /auth/register:
     post:
       summary: Register a new user
+      description: Creates a new user account with LEARNER role by default
       tags: [Authentication]
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SignupRequest'
+              $ref: '#/components/schemas/RegisterRequest'
       responses:
         '201':
-          description: User created successfully
+          description: User registered successfully
           content:
             application/json:
               schema:
@@ -744,16 +632,15 @@ paths:
                     type: boolean
                   user:
                     $ref: '#/components/schemas/User'
-                  token:
-                    type: string
         '400':
           $ref: '#/components/responses/ValidationError'
         '409':
-          description: User already exists
+          description: Email already exists
 
   /auth/login:
     post:
       summary: Login user
+      description: Authenticates user and returns JWT token
       tags: [Authentication]
       requestBody:
         required: true
@@ -770,6 +657,26 @@ paths:
                 $ref: '#/components/schemas/LoginResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
+
+  /auth/logout:
+    post:
+      summary: Logout user
+      description: Invalidates the current JWT token
+      tags: [Authentication]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
 
   /auth/me:
     get:
@@ -789,17 +696,67 @@ paths:
                     type: boolean
                   user:
                     $ref: '#/components/schemas/User'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-
-  # Sessions endpoints
-  /sessions:
-    get:
-      summary: Get all sessions
-      tags: [Sessions]
+    patch:
+      summary: Update current user profile
+      tags: [Authentication]
       security:
         - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProfileRequest'
+      responses:
+        '200':
+          description: Profile updated successfully
+    delete:
+      summary: Delete current user account (soft delete)
+      tags: [Authentication]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Account deleted successfully
+
+  /auth/me/password:
+    patch:
+      summary: Change password
+      tags: [Authentication]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordRequest'
+      responses:
+        '200':
+          description: Password changed successfully
+
+  # ==================== SESSIONS ====================
+  /sessions:
+    get:
+      summary: Get all sessions (PUBLIC)
+      description: Browse sessions with optional filters. No authentication required.
+      tags: [Sessions]
       parameters:
+        - name: upcoming
+          in: query
+          schema:
+            type: boolean
+          description: Filter to upcoming sessions only
+        - name: skillArea
+          in: query
+          schema:
+            type: string
+          description: Filter by skill area
+        - name: county
+          in: query
+          schema:
+            type: string
+          description: Filter by county
         - name: status
           in: query
           schema:
@@ -810,18 +767,21 @@ paths:
           schema:
             type: integer
             default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
       responses:
         '200':
-          description: Sessions retrieved
+          description: Sessions retrieved successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaginatedResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
 
     post:
-      summary: Create a new session
+      summary: Create a new session (ADMIN only)
       tags: [Sessions]
       security:
         - bearerAuth: []
@@ -833,16 +793,7 @@ paths:
               $ref: '#/components/schemas/CreateSessionInput'
       responses:
         '201':
-          description: Session created
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  data:
-                    $ref: '#/components/schemas/Session'
+          description: Session created successfully
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '403':
@@ -850,10 +801,8 @@ paths:
 
   /sessions/{id}:
     get:
-      summary: Get session by ID
+      summary: Get session by ID (PUBLIC)
       tags: [Sessions]
-      security:
-        - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -876,7 +825,7 @@ paths:
           $ref: '#/components/responses/NotFoundError'
 
     put:
-      summary: Update session
+      summary: Update session (ADMIN only)
       tags: [Sessions]
       security:
         - bearerAuth: []
@@ -884,8 +833,6 @@ paths:
         - name: id
           in: path
           required: true
-          schema:
-            type: string
       requestBody:
         required: true
         content:
@@ -894,14 +841,11 @@ paths:
               $ref: '#/components/schemas/UpdateSessionInput'
       responses:
         '200':
-          description: Session updated
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
+          description: Session updated successfully
 
     delete:
-      summary: Delete session
+      summary: Cancel session (ADMIN only - soft delete)
+      description: Sets session status to CANCELLED
       tags: [Sessions]
       security:
         - bearerAuth: []
@@ -909,18 +853,58 @@ paths:
         - name: id
           in: path
           required: true
-          schema:
-            type: string
       responses:
         '200':
-          description: Session deleted
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
+          description: Session cancelled successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Session'
 
-  # Enrolments endpoints
+  # ==================== ENROLMENTS ====================
   /enrolments:
+    post:
+      summary: Enroll in a session
+      description: Authenticated users can enroll in available sessions
+      tags: [Enrolments]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEnrolmentInput'
+      responses:
+        '201':
+          description: Successfully enrolled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Enrolment'
+        '400':
+          description: Session full or unavailable
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /enrolments/me:
     get:
-      summary: Get all enrolments
+      summary: Get my enrolments
+      description: Returns enrolments for the authenticated user only
       tags: [Enrolments]
       security:
         - bearerAuth: []
@@ -935,6 +919,11 @@ paths:
           schema:
             type: integer
             default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
       responses:
         '200':
           description: Enrolments retrieved
@@ -943,33 +932,37 @@ paths:
               schema:
                 $ref: '#/components/schemas/PaginatedResponse'
 
-    post:
-      summary: Enroll in a session
+  /enrolments/{id}/attend:
+    patch:
+      summary: Mark attendance (TRAINER/ADMIN only)
+      description: Mark a user as ATTENDED or ABSENT for a session
       tags: [Enrolments]
       security:
         - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateEnrolmentInput'
+              $ref: '#/components/schemas/MarkAttendanceInput'
       responses:
-        '201':
-          description: Enrolled successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  data:
-                    $ref: '#/components/schemas/Enrolment'
+        '200':
+          description: Attendance marked successfully
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
 
-  /enrolments/{id}:
-    delete:
-      summary: Cancel enrolment
+  /enrolments/{id}/cancel:
+    patch:
+      summary: Cancel my enrolment
+      description: Users can cancel their own enrolment if not yet attended
       tags: [Enrolments]
       security:
         - bearerAuth: []
@@ -981,60 +974,14 @@ paths:
             type: string
       responses:
         '200':
-          description: Enrolment cancelled
+          description: Enrolment cancelled successfully
+        '400':
+          description: Cannot cancel attended enrolment
+        '404':
+          $ref: '#/components/responses/NotFoundError'
 
-  # Certificates endpoints
-  /certificates:
-    post:
-      summary: Issue certificate (ADMIN only)
-      tags: [Certificates]
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/IssueCertificateInput'
-      responses:
-        '201':
-          description: Certificate issued
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  data:
-                    $ref: '#/components/schemas/Certificate'
-
-  /certificates/verify/{certCode}:
-    get:
-      summary: Verify certificate
-      tags: [Certificates]
-      parameters:
-        - name: certCode
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Certificate is valid
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  data:
-                    $ref: '#/components/schemas/Certificate'
-        '410':
-          description: Certificate revoked
-
-  /certificates/my:
+  # ==================== CERTIFICATES ====================
+  /certificates/me:
     get:
       summary: Get my certificates
       tags: [Certificates]
@@ -1055,7 +1002,147 @@ paths:
                     items:
                       $ref: '#/components/schemas/Certificate'
 
-  # Trainers endpoints
+  /certificates/verify/{certCode}:
+    get:
+      summary: Verify a certificate (PUBLIC)
+      tags: [Certificates]
+      parameters:
+        - name: certCode
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Certificate is valid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Certificate'
+        '404':
+          description: Certificate not found
+        '410':
+          description: Certificate has been revoked
+
+  /certificates/me/download/{id}:
+    get:
+      summary: Download certificate PDF
+      tags: [Certificates]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: PDF file
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+
+  /certificates:
+    post:
+      summary: Issue certificate (ADMIN only)
+      tags: [Certificates]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IssueCertificateInput'
+      responses:
+        '201':
+          description: Certificate issued
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /certificates/batch/{sessionId}:
+    post:
+      summary: Batch issue certificates (ADMIN only)
+      description: Issue certificates to all ATTENDED users in a session
+      tags: [Certificates]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Batch issuance completed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/BatchIssueResult'
+
+  /certificates/{id}:
+    delete:
+      summary: Revoke certificate (ADMIN only)
+      tags: [Certificates]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+      responses:
+        '200':
+          description: Certificate revoked
+
+  # ==================== TRAINERS ====================
+  /trainers:
+    get:
+      summary: Get all trainers (PUBLIC)
+      description: Returns approved trainers only
+      tags: [Trainers]
+      parameters:
+        - name: skill
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Trainers retrieved
+
   /trainers/apply:
     post:
       summary: Apply to become a trainer
@@ -1067,10 +1154,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateTrainerProfileInput'
+              $ref: '#/components/schemas/ApplyTrainerInput'
       responses:
         '201':
-          description: Application submitted
+          description: Application submitted successfully
 
   /trainers/me:
     get:
@@ -1081,9 +1168,11 @@ paths:
       responses:
         '200':
           description: Profile retrieved
+        '404':
+          description: No trainer profile found
 
     patch:
-      summary: Update my trainer profile
+      summary: Update my trainer profile (PENDING only)
       tags: [Trainers]
       security:
         - bearerAuth: []
@@ -1092,27 +1181,206 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateTrainerProfileInput'
+              $ref: '#/components/schemas/ApplyTrainerInput'
       responses:
         '200':
           description: Profile updated
+        '403':
+          description: Cannot update approved application
 
-  # Announcements endpoints
-  /announcements:
+    delete:
+      summary: Withdraw trainer application (PENDING only)
+      tags: [Trainers]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Application withdrawn
+
+  /trainers/me/sessions:
     get:
-      summary: Get all announcements
-      tags: [Announcements]
+      summary: Get my assigned sessions (TRAINER/ADMIN only)
+      description: Returns sessions where user is the trainer, with enrolments
+      tags: [Trainers]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [SCHEDULED, IN_PROGRESS, COMPLETED, CANCELLED]
+        - name: fromDate
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: toDate
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Sessions retrieved
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /trainers/admin/all:
+    get:
+      summary: Get all trainer applications (ADMIN only)
+      tags: [Trainers]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [PENDING, APPROVED, REJECTED]
+        - name: skill
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Applications retrieved
+
+  /trainers/admin/{id}/status:
+    patch:
+      summary: Approve/Reject trainer application (ADMIN only)
+      tags: [Trainers]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTrainerStatusInput'
+      responses:
+        '200':
+          description: Status updated
+
+  # ==================== ADMIN ====================
+  /admin/stats:
+    get:
+      summary: Get dashboard statistics (ADMIN only)
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Statistics retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/AdminStats'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /admin/users:
+    get:
+      summary: Get all users (ADMIN only)
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: role
+          in: query
+          schema:
+            type: string
+            enum: [LEARNER, TRAINER, ADMIN]
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Search by name or email
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Users retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponse'
+
+  /admin/users/{userId}/role:
+    patch:
+      summary: Update user role (ADMIN only)
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRoleInput'
+      responses:
+        '200':
+          description: Role updated
+        '400':
+          description: Cannot demote last admin
+
+  /admin/announcements:
+    get:
+      summary: Get all announcements (ADMIN only)
+      tags: [Admin]
+      security:
+        - bearerAuth: []
       parameters:
         - name: audience
           in: query
           schema:
             type: string
             enum: [all, learners, trainers]
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
       responses:
         '200':
           description: Announcements retrieved
 
-  /admin/announcements:
     post:
       summary: Create announcement (ADMIN only)
       tags: [Admin]
@@ -1127,3 +1395,39 @@ paths:
       responses:
         '201':
           description: Announcement created
+
+  /admin/announcements/{id}:
+    put:
+      summary: Update announcement (ADMIN only)
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAnnouncementInput'
+      responses:
+        '200':
+          description: Announcement updated
+
+    delete:
+      summary: Delete announcement (ADMIN only)
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+      responses:
+        '200':
+          description: Announcement deleted
+
+security:
+  - bearerAuth: []

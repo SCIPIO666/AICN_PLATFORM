@@ -5,17 +5,17 @@ const trainersController = require('./trainersController');
 const { validate } = require('../../middleware/validate');
 const { createTrainerProfileSchema, updateTrainerProfileSchema, updateTrainerStatusSchema } = require('../../validation');
 
-// Public routes (view approved trainers)
+// Public routes 
 trainersRouter.get('/', trainersController.getAllTrainerApplications);
 
-// Protected routes - User
+// Protected routes 
 trainersRouter.use(verifyToken);
 trainersRouter.post('/apply', validate(createTrainerProfileSchema), trainersController.applyForTrainer);
 trainersRouter.get('/me', trainersController.getMyTrainerProfile);
 trainersRouter.patch('/me', validate(updateTrainerProfileSchema), trainersController.updateMyTrainerProfile);
 trainersRouter.delete('/me', trainersController.withdrawApplication);
 
-// Admin only routes
+// RBAC Admin only
 trainersRouter.get('/admin/all', requireRole(['ADMIN']), trainersController.getAllTrainerApplications);
 trainersRouter.get('/admin/:id', requireRole(['ADMIN']), trainersController.getTrainerApplicationById);
 trainersRouter.patch('/admin/:id/approve', requireRole(['ADMIN']), trainersController.approveTrainerApplication);

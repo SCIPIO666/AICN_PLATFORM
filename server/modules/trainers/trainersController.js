@@ -1,9 +1,7 @@
 const trainersService = require('./trainersService');
 const logger = require('../../utils/logger');
 
-/**
- * Apply to become a trainer
- */
+
 async function applyForTrainer(req, res, next) {
   try {
     const result = await trainersService.applyForTrainer(req.user.id, req.body);
@@ -18,9 +16,7 @@ async function applyForTrainer(req, res, next) {
   }
 }
 
-/**
- * Get my trainer profile
- */
+
 async function getMyTrainerProfile(req, res, next) {
   try {
     const profile = await trainersService.getMyTrainerProfile(req.user.id);
@@ -34,9 +30,7 @@ async function getMyTrainerProfile(req, res, next) {
   }
 }
 
-/**
- * Update my trainer profile (only if PENDING)
- */
+
 async function updateMyTrainerProfile(req, res, next) {
   try {
     const updated = await trainersService.updateMyTrainerProfile(req.user.id, req.body);
@@ -51,9 +45,7 @@ async function updateMyTrainerProfile(req, res, next) {
   }
 }
 
-/**
- * Withdraw trainer application
- */
+
 async function withdrawApplication(req, res, next) {
   try {
     const result = await trainersService.withdrawApplication(req.user.id);
@@ -67,9 +59,7 @@ async function withdrawApplication(req, res, next) {
   }
 }
 
-/**
- * Get all trainer applications (ADMIN only)
- */
+
 async function getAllTrainerApplications(req, res, next) {
   try {
     const filters = {};
@@ -92,9 +82,7 @@ async function getAllTrainerApplications(req, res, next) {
   }
 }
 
-/**
- * Get trainer application by ID (ADMIN only)
- */
+
 async function getTrainerApplicationById(req, res, next) {
   try {
     const application = await trainersService.getTrainerApplicationById(
@@ -112,9 +100,7 @@ async function getTrainerApplicationById(req, res, next) {
   }
 }
 
-/**
- * Approve trainer application (ADMIN only)
- */
+
 async function approveTrainerApplication(req, res, next) {
   try {
     const result = await trainersService.approveTrainerApplication(req.params.id, req.user.id);
@@ -129,9 +115,7 @@ async function approveTrainerApplication(req, res, next) {
   }
 }
 
-/**
- * Reject trainer application (ADMIN only)
- */
+
 async function rejectTrainerApplication(req, res, next) {
   try {
     const result = await trainersService.rejectTrainerApplication(req.params.id, req.user.id);
@@ -146,9 +130,7 @@ async function rejectTrainerApplication(req, res, next) {
   }
 }
 
-/**
- * Delete trainer application (ADMIN only)
- */
+
 async function deleteTrainerApplication(req, res, next) {
   try {
     const result = await trainersService.deleteTrainerApplication(req.params.id, req.user.id);

@@ -4,9 +4,12 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const setupSwagger = require('./config/swagger');
+
+//routers
 const authRouter=require('./routes/authRoutes')
 const sessionsRouter=require('./routes/sessionRoutes')
 const enrolmentsRouter=require('./routes/enrollmentRoutes')
+const trainerRouter=require('./routes/trainersRouter')
 const app = express();
 
 // view engine setup
@@ -27,6 +30,7 @@ setupSwagger(app);
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/sessions', sessionsRouter);
 app.use('/api/v1/enrolments',enrolmentsRouter)
+app.use('./api/v1/trainers',trainerRouter)
 
 
 // Health check'

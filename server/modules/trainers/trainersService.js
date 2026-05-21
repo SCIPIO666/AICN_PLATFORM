@@ -3,22 +3,21 @@ const { sendTrainerApplicationEmail, sendTrainerApprovalEmail } = require('../..
 const logger = require('../../utils/logger');
 
 async function applyForTrainer(userId, data) {
-  // Check if user already has an application
+  // if user already has an application
   const existing = await trainersModel.checkExistingApplication(userId);
   if (existing) {
     throw new Error('You already have a trainer application');
   }
   
-  // Validate skills array
   if (!data.skills || data.skills.length === 0) {
     throw new Error('At least one skill is required');
   }
   
-  // Create trainer profile
+  // create profile
   const profile = await trainersModel.createTrainerProfile(userId, data);
   
-  // Send email notification to admins (optional - implement if needed)
-  // await sendTrainerApplicationEmail(profile);
+  // Send email notification to admins - later implementation
+  // await sendTrainerApplicationEmail(profile); 
   
   return profile;
 }
@@ -32,18 +31,17 @@ async function getMyTrainerProfile(userId) {
 }
 
 async function updateMyTrainerProfile(userId, updateData) {
-  // Get existing profile
+
   const profile = await trainersModel.getTrainerProfileByUserId(userId);
   if (!profile) {
     throw new Error('No trainer profile found');
   }
   
-  // Check if application is already approved
+  //  if application approved
   if (profile.status === 'APPROVED') {
     throw new Error('Approved applications cannot be modified. Please contact admin.');
   }
   
-  // Update profile
   const updated = await trainersModel.updateTrainerProfile(profile.id, updateData);
   return updated;
 }
@@ -58,7 +56,6 @@ async function withdrawApplication(userId) {
     throw new Error('Cannot withdraw an approved application');
   }
   
-  // Delete the application
   await trainersModel.deleteTrainerProfile(profile.id, userId);
   
   return { message: 'Application withdrawn successfully' };
@@ -79,8 +76,8 @@ async function getAllTrainerApplications(filters = {}, page = 1, limit = 10) {
   };
 }
 
-async function getTrainerApplicationById(id, adminId, adminRole) {
-  if (adminRole !== 'ADMIN') {
+async function getTrainerApplicationById(id, role) {
+  if (role !== 'ADMIN') {
     throw new Error('Access denied. Admin only.');
   }
   
@@ -92,7 +89,11 @@ async function getTrainerApplicationById(id, adminId, adminRole) {
   return profile;
 }
 
-async function approveTrainerApplication(id, adminId) {
+async function approveTrainerApplication(id, role) {
+
+    if(role!=='ADMIN'){
+        throw new Error('only an Admin can approve trainers')
+    }
   const profile = await trainersModel.getTrainerProfileById(id);
   if (!profile) {
     throw new Error('Trainer application not found');
@@ -102,7 +103,7 @@ async function approveTrainerApplication(id, adminId) {
     throw new Error('Application already approved');
   }
   
-  // Update status to APPROVED (this also updates user role via transaction)
+  // status to APPROVED /also updates user role via transaction
   const updated = await trainersModel.updateTrainerStatus(id, 'APPROVED');
   
   // Send approval email
