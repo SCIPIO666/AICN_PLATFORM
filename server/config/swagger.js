@@ -1,13 +1,13 @@
-const fs = require('fs');
-const path = require('path');
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
+const path = require('path');
 const logger = require('../utils/logger');
+
 
 const swaggerDocument = YAML.load(path.join(__dirname, '../docs/swagger.yaml'));
 
 const setupSwagger = (app) => {
-  // Serve Swagger UI
+  // Swagger UI
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
     explorer: true,
     customCss: '.swagger-ui .topbar { display: none }',
@@ -17,28 +17,29 @@ const setupSwagger = (app) => {
       docExpansion: 'list',
       filter: true,
       showRequestDuration: true,
-      defaultModelsExpandDepth: 3,
-      defaultModelExpandDepth: 3,
       tryItOutEnabled: true,
-      displayRequestDuration: true
+      syntaxHighlight: {
+        activate: true,
+        theme: 'monokai'
+      }
     }
   }));
   
-  // raw YAML spec
+  // raw YAML
   app.get('/swagger.yaml', (req, res) => {
     res.setHeader('Content-Type', 'text/yaml');
     res.sendFile(path.join(__dirname, '../docs/swagger.yaml'));
   });
   
-  // JSON spec
+  //  JSON version
   app.get('/swagger.json', (req, res) => {
     res.setHeader('Content-Type', 'application/json');
     res.json(swaggerDocument);
   });
   
-  logger.info('Swagger UI available at /api-docs');
-  logger.info('Swagger YAML available at /swagger.yaml');
-  logger.info('Swagger JSON available at /swagger.json');
+  logger.info(' Swagger UI available at /api-docs');
+  logger.info(' YAML spec at /swagger.yaml');
+  logger.info(' JSON spec at /swagger.json');
 };
 
 module.exports = setupSwagger;
