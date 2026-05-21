@@ -4,10 +4,20 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test": "jest",
     "swagger:validate": "swagger-cli validate docs/swagger.yaml",
     "swagger:generate": "swagger-cli bundle docs/swagger.yaml -o docs/swagger-bundled.yaml",
-    "swagger:serve": "swagger-ui-watcher docs/swagger.yaml"
+    "swagger:serve": "swagger-ui-watcher docs/swagger.yaml",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:verbose": "jest --verbose",
+    "test:auth": "jest tests/auth.test.js",
+    "test:sessions": "jest tests/sessions.test.js",
+    "test:enrolments": "jest tests/enrolments.test.js",
+    "test:certificates": "jest tests/certificates.test.js",
+    "test:trainers": "jest tests/trainers.test.js",
+    "test:admin": "jest tests/admin.test.js",
+    "test:all": "npm run test:auth && npm run test:sessions && npm run test:enrolments && npm run test:certificates && npm run test:trainers && npm run test:admin"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.8.0",
