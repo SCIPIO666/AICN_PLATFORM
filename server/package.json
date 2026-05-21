@@ -17,7 +17,12 @@
     "test:certificates": "jest tests/certificates.test.js",
     "test:trainers": "jest tests/trainers.test.js",
     "test:admin": "jest tests/admin.test.js",
-    "test:all": "npm run test:auth && npm run test:sessions && npm run test:enrolments && npm run test:certificates && npm run test:trainers && npm run test:admin"
+    "test:all": "npm run test:auth && npm run test:sessions && npm run test:enrolments && npm run test:certificates && npm run test:trainers && npm run test:admin",
+    "test:email": "jest tests/utils/emailService.test.js",
+    "test:pdf": "jest tests/utils/pdfGenerator.test.js",
+    "test:certificates:integration": "jest tests/integration/certificateWithEmail.test.js",
+    "email:test": "node scripts/testEmail.js",
+    "pdf:test": "node scripts/testPDF.js"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.8.0",

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+      border-radius: 10px 10px 0 0;
+    }
+    .content {
+      background: #f9fafb;
+      padding: 30px;
+      border-radius: 0 0 10px 10px;
+    }
+    .button {
+      display: inline-block;
+      background: #667eea;
+      color: white;
+      padding: 12px 24px;
+      text-decoration: none;
+      border-radius: 5px;
+      margin: 20px 0;
+    }
+    .footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 12px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Welcome to AICN Training, {{name}}! 🎉</h1>
+  </div>
+  <div class="content">
+    <p>Thank you for joining our training platform. We're excited to have you on board!</p>
+    
+    <h3>What you can do next:</h3>
+    <ul>
+      <li>Browse available training sessions</li>
+      <li>Enroll in courses that match your interests</li>
+      <li>Track your learning progress</li>
+      <li>Earn certificates upon completion</li>
+    </ul>
+    
+    <div style="text-align: center;">
+      <a href="{{frontendUrl}}/sessions" class="button">Explore Sessions</a>
+    </div>
+    
+    <p>If you have any questions, feel free to reply to this email or contact our support team.</p>
+    <p>Best regards,<br>The AICN Team</p>
+  </div>
+  <div class="footer">
+    <p>© 2024 AICN Training. All rights reserved.</p>
+    <p>You received this email because you registered on our platform.</p>
+  </div>
+</body>
+</html>

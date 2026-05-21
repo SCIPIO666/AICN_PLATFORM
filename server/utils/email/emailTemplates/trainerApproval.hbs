@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .approved {
+      background: #dcfce7;
+      border: 1px solid #22c55e;
+      padding: 20px;
+      text-align: center;
+      border-radius: 10px;
+      margin: 20px 0;
+    }
+    .rejected {
+      background: #fee2e2;
+      border: 1px solid #ef4444;
+      padding: 20px;
+      text-align: center;
+      border-radius: 10px;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  {{#if approved}}
+  <div class="approved">
+    <h2>🎉 Congratulations, {{name}}!</h2>
+    <p>Your trainer application has been <strong>APPROVED</strong>.</p>
+  </div>
+  <p>You can now:</p>
+  <ul>
+    <li>Create and manage training sessions</li>
+    <li>Track attendance for your sessions</li>
+    <li>Issue certificates to learners</li>
+    <li>Access trainer dashboard</li>
+  </ul>
+  <div style="text-align: center;">
+    <a href="{{frontendUrl}}/trainer/dashboard" style="background: #667eea; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+      Go to Trainer Dashboard
+    </a>
+  </div>
+  {{else}}
+  <div class="rejected">
+    <h2>Trainer Application Update</h2>
+    <p>Dear {{name}},</p>
+    <p>Thank you for your interest in becoming a trainer. After careful review, we have decided not to proceed with your application at this time.</p>
+  </div>
+  <p>You may reapply in the future with additional qualifications or experience.</p>
+  {{/if}}
+</body>
+</html>

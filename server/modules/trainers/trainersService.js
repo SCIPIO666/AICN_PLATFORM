@@ -134,11 +134,52 @@ async function deleteTrainerApplication(id, adminId) {
     throw new Error('Trainer application not found');
   }
   
-  // Hard delete the application and demote user
+  // delete the application and demote user
   const deleted = await trainersModel.deleteTrainerProfile(id, adminId);
   
   return { message: 'Trainer application deleted successfully' };
 }
+
+async function getTrainerSessions(userId, role, filters = {}) {
+  if (role !== 'ADMIN' && role !== 'TRAINER') {
+    throw new Error('Access denied');
+  }
+  
+  const where = {};
+  
+  if (role === 'TRAINER') {
+    where.trainerId = userId;
+  }
+  
+  if (filters.status) where.status = filters.status;
+  if (filters.fromDate) where.date = { gte: new Date(filters.fromDate) };
+  if (filters.toDate) where.date = { lte: new Date(filters.toDate) };
+  
+  const sessions = await prisma.session.findMany({
+    where,
+    include: {
+      enrolments: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              phone: true
+            }
+          }
+        }
+      },
+      _count: {
+        select: { enrolments: true }
+      }
+    },
+    orderBy: { date: 'asc' }
+  });
+  
+  return sessions;
+}
+
 
 module.exports = {
   applyForTrainer,
@@ -149,5 +190,6 @@ module.exports = {
   getTrainerApplicationById,
   approveTrainerApplication,
   rejectTrainerApplication,
-  deleteTrainerApplication
+  deleteTrainerApplication,
+    getTrainerSessions
 };

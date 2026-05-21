@@ -24,9 +24,25 @@ async function deleteSession(id) {
   const deletedSession = await sessionModel.deleteSession(id);
   return deletedSession;
 }
+// Add this function to existing sessionsService.js
+async function cancelSession(id) {
+  // Check if session exists
+  const session = await sessionModel.getSession(id);
+  if (!session) throw new Error('Session not found');
+  
+  // Soft delete - update status to CANCELLED
+  const cancelledSession = await sessionModel.updateSession(id, { 
+    status: 'CANCELLED' 
+  });
+  
+  return cancelledSession;
+}
 
 module.exports = {
   createSession,
   getSession,
   getAllSessions,
-}
+  updateSession,
+  deleteSession, 
+  cancelSession 
+};

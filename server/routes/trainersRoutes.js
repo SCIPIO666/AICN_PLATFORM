@@ -21,5 +21,10 @@ trainersRouter.get('/admin/:id', requireRole(['ADMIN']), trainersController.getT
 trainersRouter.patch('/admin/:id/approve', requireRole(['ADMIN']), trainersController.approveTrainerApplication);
 trainersRouter.patch('/admin/:id/reject', requireRole(['ADMIN']), trainersController.rejectTrainerApplication);
 trainersRouter.delete('/admin/:id', requireRole(['ADMIN']), trainersController.deleteTrainerApplication);
-
+// RBAC admin /trainer
+trainersRouter.get('/me/sessions', 
+  verifyToken, 
+  requireRole(['TRAINER', 'ADMIN']), 
+  trainersController.getMySessions
+);
 module.exports = trainersRouter;

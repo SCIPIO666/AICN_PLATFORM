@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .certificate-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .certificate-icon {
+      font-size: 48px;
+    }
+    .congrats {
+      background: #f0fdf4;
+      border-left: 4px solid #22c55e;
+      padding: 15px;
+      margin: 20px 0;
+    }
+    .cert-code {
+      background: #f3f4f6;
+      padding: 10px;
+      text-align: center;
+      font-family: monospace;
+      font-size: 18px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+    .button {
+      display: inline-block;
+      background: #667eea;
+      color: white;
+      padding: 12px 24px;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="certificate-header">
+    <div class="certificate-icon">🏆</div>
+    <h2>Congratulations, {{name}}!</h2>
+  </div>
+  
+  <div class="congrats">
+    <p>You have successfully completed <strong>{{sessionTitle}}</strong>!</p>
+    <p>Your certificate is attached to this email.</p>
+  </div>
+  
+  <h3>Certificate Details:</h3>
+  <ul>
+    <li><strong>Course:</strong> {{sessionTitle}}</li>
+    <li><strong>Skill Area:</strong> {{skillArea}}</li>
+    <li><strong>Duration:</strong> {{duration}} minutes</li>
+    <li><strong>Issue Date:</strong> {{issueDate}}</li>
+  </ul>
+  
+  <div class="cert-code">
+    <strong>Certificate Code:</strong> {{certCode}}
+  </div>
+  
+  <div style="text-align: center; margin: 30px 0;">
+    <a href="{{verifyUrl}}" class="button">Verify Certificate Online</a>
+  </div>
+  
+  <p>You can also download your certificate from your account dashboard anytime.</p>
+  
+  <hr>
+  <p style="font-size: 12px; color: #666;">
+    This is an automated message from AICN Training. Please do not reply to this email.
+  </p>
+</body>
+</html>

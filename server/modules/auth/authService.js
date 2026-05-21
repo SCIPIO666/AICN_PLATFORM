@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs')
 const jwt    = require('jsonwebtoken')
 const prisma=require('../../config/db')
 const logger=require('../../utils/logger')
+const { sendWelcomeEmail } = require('../../utils/email/emailService');
 const {findUser,
     findUserById,
     findManyUsers,
@@ -67,21 +68,28 @@ async function signout(token, userId){
     }
 }
 
-async function signup(name, email, password, phone, county ){
-    try {
-    const existingUser=await findUser(email)
-        if(existingUser)  throw new Error(`User with email ${email} already exists`)
-           
-    const newUser=await createUser(name, email, password, phone, county)
-    return newUser    
-    } catch (error) {
-         if (error.code === 'P2002' && error.meta?.target?.includes('email')) {
-            throw new Error(`User with email ${email} already exists`)
-        }
-        throw error
+
+async function signup(name, email, password, phone, county) {
+  try {
+    const existingUser = await findUser(email);
+    if (existingUser) {
+      if (existingUser.deletedAt) {
+        throw new Error('This email was previously deactivated. Please contact support.');
+      }
+      throw new Error(`User with email ${email} already exists`);
     }
-  
-   
+    
+    const newUser = await createUser(name, email, password, phone, county);
+    
+    // welcome email 
+    sendWelcomeEmail(email, name).catch(err => 
+      logger.error(`Failed to send welcome email: ${err.message}`)
+    );
+    
+    return newUser;
+  } catch (error) {
+    throw error;
+  }
 }
 async function me (userId){
 try {

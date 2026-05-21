@@ -1,41 +1,19 @@
 const express = require('express');
 const enrolmentsRouter = express.Router();
-const { verifyToken, requireRole } = require('../middleware/authMiddleware')
-const enrolmentsController = require('../modules/enrollments/enrolmentController');
+const { verifyToken, requireRole } = require('../../middleware/authMiddleware');
+const enrolmentsController = require('./enrolmentsController');
 
-// auth
-enrolmentsRouter.use(verifyToken);
+enrolmentsRouter.use(verifyToken); //all need verification
 
-
-enrolmentsRouter.get('/', enrolmentsController.getAllEnrolments);
+// learners
 enrolmentsRouter.post('/', enrolmentsController.createEnrolment);
+enrolmentsRouter.get('/me', enrolmentsController.getMyEnrolments);
+enrolmentsRouter.patch('/:id/cancel', enrolmentsController.cancelEnrolment);
 
-/**
- * @swagger
- * /enrolments/{id}:
- *   get:
- *     summary: Get enrolment by ID
- *     tags: [Enrolments]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Enrolment retrieved successfully
- */
-enrolmentsRouter.get('/:id', enrolmentsController.getEnrolment);
-enrolmentsRouter.put('/:id', enrolmentsController.updateEnrolment);
-enrolmentsRouter.delete('/:id', enrolmentsController.deleteEnrolment);
-
-// rbac
-enrolmentsRouter.get('/admin/all', 
-  requireRole(['ADMIN']), 
-  enrolmentsController.getAllEnrolments
+// Trainer/Admin 
+enrolmentsRouter.patch('/:id/attend', 
+  requireRole(['TRAINER', 'ADMIN']), 
+  enrolmentsController.markAttendance
 );
 
 module.exports = enrolmentsRouter;

@@ -144,6 +144,24 @@ async function deleteTrainerApplication(req, res, next) {
   }
 }
 
+const getMySessions = async (req, res, next) => {
+  try {
+    const sessions = await trainersService.getTrainerSessions(
+      req.user.id,
+      req.user.role,
+      req.query
+    );
+    
+    res.status(200).json({
+      success: true,
+      data: sessions
+    });
+  } catch (err) {
+    logger.error(`Failed to get trainer sessions: ${err.message}`);
+    next(err);
+  }
+};
+
 module.exports = {
   applyForTrainer,
   getMyTrainerProfile,
@@ -153,5 +171,6 @@ module.exports = {
   getTrainerApplicationById,
   approveTrainerApplication,
   rejectTrainerApplication,
-  deleteTrainerApplication
+  deleteTrainerApplication,
+    getMySessions
 };

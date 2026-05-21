@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      line-height: 1.6;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      background: #667eea;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      border-radius: 10px 10px 0 0;
+    }
+    .content {
+      background: #f9fafb;
+      padding: 30px;
+      border-radius: 0 0 10px 10px;
+    }
+    .session-details {
+      background: white;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 20px 0;
+      border: 1px solid #e5e7eb;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h2>Enrolment Confirmation</h2>
+  </div>
+  <div class="content">
+    <p>Dear {{name}},</p>
+    <p>You have successfully enrolled in:</p>
+    
+    <div class="session-details">
+      <h3>{{sessionTitle}}</h3>
+      <p><strong>Date:</strong> {{sessionDate}}</p>
+      <p><strong>Time:</strong> {{sessionTime}}</p>
+      <p><strong>Location:</strong> {{location}}</p>
+      <p><strong>Duration:</strong> {{duration}} minutes</p>
+    </div>
+    
+    <p>Please check your dashboard for updates and reminders.</p>
+    
+    <div style="text-align: center;">
+      <a href="{{frontendUrl}}/sessions/{{sessionId}}" style="background: #667eea; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+        View Session Details
+      </a>
+    </div>
+  </div>
+</body>
+</html>

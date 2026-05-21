@@ -9,6 +9,13 @@ certificatesRouter.get('/verify/:certCode', certificatesController.verifyCertifi
 // Protected routes
 certificatesRouter.use(verifyToken);
 certificatesRouter.get('/my', certificatesController.getMyCertificates);
+certificatesRouter.post('/batch/:sessionId', 
+  verifyToken, 
+  requireRole(['ADMIN']), 
+  certificatesController.batchIssueCertificates
+);
+
 certificatesRouter.post('/', requireRole(['ADMIN']), certificatesController.issueCertificate);
+
 
 module.exports = certificatesRouter;
