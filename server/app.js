@@ -4,7 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const setupSwagger = require('./config/swagger');
-
+const devLogger = require('./utils/logger');
 //routers
 const authRouter = require('./routes/authRoutes');
 const sessionsRouter = require('./routes/sessionRoutes');
@@ -61,10 +61,10 @@ app.use(function(err, req, res, next) {
 
 
 app.listen(process.env.PORT,'localhost',()=>{
-  console.log(`\n Server is running! on port ${process.env.PORT}`);
-  console.log(`API URL: http://localhost:${process.env.PORT}/api`);
-  console.log(` Swagger UI: http://localhost:${process.env.PORT}/api-docs`);
-  console.log(` Swagger UI: http://localhost:${process.env.PORT}/swagger.json`);
-  console.log(` Health check: http://localhost:${process.env.PORT}/api/v1/health\n`);
+  devLogger.info(`\n Server is running! on port ${process.env.PORT}`);
+  devLogger.info(`API URL: http://localhost:${process.env.PORT}/api`);
+  devLogger.info(` Swagger UI: http://localhost:${process.env.PORT}/api-docs`);
+  devLogger.info(` Swagger UI: http://localhost:${process.env.PORT}/swagger.json`);
+  devLogger.info(` Health check: http://localhost:${process.env.PORT}/api/v1/health\n`);
 })
 module.exports = app;
