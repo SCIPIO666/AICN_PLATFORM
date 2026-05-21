@@ -6,10 +6,13 @@ const logger = require('morgan');
 const setupSwagger = require('./config/swagger');
 
 //routers
-const authRouter=require('./routes/authRoutes')
-const sessionsRouter=require('./routes/sessionRoutes')
-const enrolmentsRouter=require('./routes/enrollmentRoutes')
-const trainerRouter=require('./routes/trainersRouter')
+const authRouter = require('./routes/authRoutes');
+const sessionsRouter = require('./routes/sessionRoutes');
+const enrolmentsRouter = require('./routes/enrollmentRoutes');
+const certificatesRouter = require('./routes/certificateRoutes');
+const trainersRouter = require('./routes/trainersRoutes');
+const adminRouter = require('./routes/adminRoutes');
+
 const app = express();
 
 // view engine setup
@@ -27,10 +30,13 @@ setupSwagger(app);
 
 
 //routes
+
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/sessions', sessionsRouter);
-app.use('/api/v1/enrolments',enrolmentsRouter)
-app.use('./api/v1/trainers',trainerRouter)
+app.use('/api/v1/enrolments', enrolmentsRouter);
+app.use('/api/v1/certificates', certificatesRouter);
+app.use('/api/v1/trainers', trainersRouter);
+app.use('/api/v1/admin', adminRouter);
 
 
 // Health check'
