@@ -1,0 +1,68 @@
+Certificate:
+  type: object
+  properties:
+    id:
+      type: string
+      example: cert_2xK3pQ7VnM
+    userId:
+      type: string
+      example: usr_2xK3pQ7VnM
+    sessionId:
+      type: string
+      example: sess_2xK3pQ7VnM
+    certCode:
+      type: string
+      pattern: '^CERT-[A-F0-9]{16}$'
+      example: CERT-ABC123DEF456XYZ
+    issuedAt:
+      type: string
+      format: date-time
+    revokedAt:
+      type: string
+      format: date-time
+      nullable: true
+    revokedReason:
+      type: string
+      nullable: true
+    user:
+      $ref: './user.yaml#/User'
+    session:
+      $ref: './session.yaml#/Session'
+
+CertificateSummary:
+  type: object
+  properties:
+    id:
+      type: string
+    certCode:
+      type: string
+    sessionTitle:
+      type: string
+    issuedAt:
+      type: string
+      format: date-time
+
+IssueCertificateInput:
+  type: object
+  required:
+    - userId
+    - sessionId
+  properties:
+    userId:
+      type: string
+      format: cuid
+      example: usr_2xK3pQ7VnM
+    sessionId:
+      type: string
+      format: cuid
+      example: sess_2xK3pQ7VnM
+
+VerifyCertificateInput:
+  type: object
+  required:
+    - certCode
+  properties:
+    certCode:
+      type: string
+      pattern: '^CERT-[A-F0-9]{16}$'
+      example: CERT-ABC123DEF456XYZ

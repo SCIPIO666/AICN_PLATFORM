@@ -1,0 +1,176 @@
+/trainers/apply:
+  post:
+    summary: Apply to become a trainer
+    tags:
+      - Trainers
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateTrainerProfileInput'
+    responses:
+      '201':
+        description: Application submitted
+      '400':
+        $ref: '#/components/responses/ValidationError'
+      '401':
+        $ref: '#/components/responses/UnauthorizedError'
+      '409':
+        description: Already have an application
+
+/trainers/me:
+  get:
+    summary: Get my trainer profile
+    tags:
+      - Trainers
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: Profile retrieved
+      '401':
+        $ref: '#/components/responses/UnauthorizedError'
+      '404':
+        description: No trainer profile found
+
+  patch:
+    summary: Update my trainer profile (if PENDING)
+    tags:
+      - Trainers
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateTrainerProfileInput'
+    responses:
+      '200':
+        description: Profile updated
+      '400':
+        $ref: '#/components/responses/ValidationError'
+      '401':
+        $ref: '#/components/responses/UnauthorizedError'
+      '403':
+        description: Cannot update approved application
+
+  delete:
+    summary: Withdraw trainer application (if PENDING)
+    tags:
+      - Trainers
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: Application withdrawn
+      '401':
+        $ref: '#/components/responses/UnauthorizedError'
+      '403':
+        description: Cannot withdraw approved application
+
+/trainers:
+  get:
+    summary: Get all trainers (PUBLIC)
+    tags:
+      - Trainers
+    parameters:
+      - name: status
+        in: query
+        schema:
+          type: string
+          enum: [PENDING, APPROVED, REJECTED]
+      - name: skill
+        in: query
+        schema:
+          type: string
+      - name: page
+        in: query
+        schema:
+          type: integer
+          default: 1
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          default: 10
+    responses:
+      '200':
+        description: Trainers retrieved
+
+/trainers/{id}:
+  get:
+    summary: Get trainer by ID (ADMIN only)
+    tags:
+      - Trainers
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Trainer profile retrieved
+      '401':
+        $ref: '#/components/responses/UnauthorizedError'
+      '403':
+        $ref: '#/components/responses/ForbiddenError'
+      '404':
+        $ref: '#/components/responses/NotFoundError'
+
+  delete:
+    summary: Delete trainer application (ADMIN only)
+    tags:
+      - Trainers
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Application deleted
+      '401':
+        $ref: '#/components/responses/UnauthorizedError'
+      '403':
+        $ref: '#/components/responses/ForbiddenError'
+
+/trainers/{id}/status:
+  patch:
+    summary: Approve/reject trainer (ADMIN only)
+    tags:
+      - Trainers
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateTrainerStatusInput'
+    responses:
+      '200':
+        description: Status updated
+      '400':
+        $ref: '#/components/responses/ValidationError'
+      '401':
+        $ref: '#/components/responses/UnauthorizedError'
+      '403':
+        $ref: '#/components/responses/ForbiddenError'
+      '404':
+        $ref: '#/components/responses/NotFoundError'

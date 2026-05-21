@@ -1,0 +1,60 @@
+User:
+  type: object
+  properties:
+    id:
+      type: string
+      example: usr_2xK3pQ7VnM
+    name:
+      type: string
+      minLength: 2
+      maxLength: 100
+      example: John Doe
+    email:
+      type: string
+      format: email
+      example: john@example.com
+    phone:
+      type: string
+      pattern: '^\+?254[0-9]{9}$|^0[0-9]{9}$'
+      example: +254712345678
+    county:
+      type: string
+      minLength: 2
+      maxLength: 50
+      example: Nairobi
+    role:
+      type: string
+      enum: [LEARNER, TRAINER, ADMIN]
+      example: LEARNER
+    createdAt:
+      type: string
+      format: date-time
+    updatedAt:
+      type: string
+      format: date-time
+
+UserProfile:
+  type: object
+  properties:
+    id:
+      type: string
+    name:
+      type: string
+    email:
+      type: string
+    phone:
+      type: string
+    county:
+      type: string
+    role:
+      type: string
+    enrolments:
+      type: array
+      items:
+        $ref: './enrolment.yaml#/EnrolmentSummary'
+    certificates:
+      type: array
+      items:
+        $ref: './certificate.yaml#/CertificateSummary'
+    trainerProfile:
+      $ref: './trainer.yaml#/TrainerProfileSummary'

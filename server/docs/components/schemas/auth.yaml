@@ -1,0 +1,109 @@
+SignupRequest:
+  type: object
+  required:
+    - name
+    - email
+    - password
+  properties:
+    name:
+      type: string
+      minLength: 2
+      maxLength: 100
+      pattern: '^[a-zA-Z\s]+$'
+      example: John Doe
+    email:
+      type: string
+      format: email
+      minLength: 5
+      maxLength: 255
+      example: john@example.com
+    password:
+      type: string
+      format: password
+      minLength: 6
+      maxLength: 100
+      pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])'
+      description: Must contain uppercase, lowercase, number, and special character
+      example: Password123!
+    phone:
+      type: string
+      pattern: '^\+?254[0-9]{9}$|^0[0-9]{9}$'
+      example: +254712345678
+    county:
+      type: string
+      minLength: 2
+      maxLength: 50
+      example: Nairobi
+    role:
+      type: string
+      enum: [LEARNER, TRAINER]
+      default: LEARNER
+
+LoginRequest:
+  type: object
+  required:
+    - email
+    - password
+  properties:
+    email:
+      type: string
+      format: email
+      example: john@example.com
+    password:
+      type: string
+      format: password
+      example: Password123!
+
+LoginResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    user:
+      $ref: './user.yaml#/User'
+    token:
+      type: string
+      example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+    expiresIn:
+      type: integer
+      example: 604800000
+
+UpdateProfileRequest:
+  type: object
+  properties:
+    name:
+      type: string
+      minLength: 2
+      maxLength: 100
+      example: John Updated
+    phone:
+      type: string
+      pattern: '^\+?254[0-9]{9}$|^0[0-9]{9}$'
+      example: +254798765432
+    county:
+      type: string
+      minLength: 2
+      maxLength: 50
+      example: Mombasa
+
+ChangePasswordRequest:
+  type: object
+  required:
+    - currentPassword
+    - newPassword
+    - confirmPassword
+  properties:
+    currentPassword:
+      type: string
+      minLength: 1
+      example: OldPassword123!
+    newPassword:
+      type: string
+      minLength: 6
+      maxLength: 100
+      pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])'
+      example: NewPassword456!
+    confirmPassword:
+      type: string
+      example: NewPassword456!

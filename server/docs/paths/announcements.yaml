@@ -1,0 +1,41 @@
+/announcements:
+  get:
+    summary: Get all announcements (PUBLIC)
+    tags:
+      - Announcements
+    parameters:
+      - name: audience
+        in: query
+        schema:
+          type: string
+          enum: [all, learners, trainers]
+      - name: page
+        in: query
+        schema:
+          type: integer
+          default: 1
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          default: 10
+    responses:
+      '200':
+        description: Announcements retrieved
+
+/announcements/{id}:
+  get:
+    summary: Get announcement by ID (PUBLIC)
+    tags:
+      - Announcements
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Announcement retrieved
+      '404':
+        $ref: '#/components/responses/NotFoundError'

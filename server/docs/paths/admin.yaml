@@ -1,0 +1,203 @@
+/admin/announcements:
+  post:
+    summary: Create announcement (ADMIN only)
+    tags:
+      - Admin
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateAnnouncementInput'
+    responses:
+      '201':
+        description: Announcement created
+      '401':
+        $ref: '#/components/responses/UnauthorizedError'
+      '403':
+        $ref: '#/components/responses/ForbiddenError'
+
+/admin/announcements/{id}:
+  patch:
+    summary: Update announcement (ADMIN only)
+    tags:
+      - Admin
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateAnnouncementInput'
+    responses:
+      '200':
+        description: Announcement updated
+      '401':
+        $ref: '#/components/responses/UnauthorizedError'
+      '403':
+        $ref: '#/components/responses/ForbiddenError'
+      '404':
+        $ref: '#/components/responses/NotFoundError'
+
+  delete:
+    summary: Delete announcement (ADMIN only)
+    tags:
+      - Admin
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Announcement deleted
+      '401':
+        $ref: '#/components/responses/UnauthorizedError'
+      '403':
+        $ref: '#/components/responses/ForbiddenError'
+      '404':
+        $ref: '#/components/responses/NotFoundError'
+
+/admin/users:
+  post:
+    summary: Create user (ADMIN only)
+    tags:
+      - Admin
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SignupRequest'
+    responses:
+      '201':
+        description: User created
+      '400':
+        $ref: '#/components/responses/ValidationError'
+      '401':
+        $ref: '#/components/responses/UnauthorizedError'
+      '403':
+        $ref: '#/components/responses/ForbiddenError'
+
+  get:
+    summary: Get all users (ADMIN only)
+    tags:
+      - Admin
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: role
+        in: query
+        schema:
+          type: string
+          enum: [LEARNER, TRAINER, ADMIN]
+      - name: page
+        in: query
+        schema:
+          type: integer
+          default: 1
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          default: 10
+    responses:
+      '200':
+        description: Users retrieved
+      '401':
+        $ref: '#/components/responses/UnauthorizedError'
+      '403':
+        $ref: '#/components/responses/ForbiddenError'
+
+/admin/users/{userId}:
+  get:
+    summary: Get user by ID (ADMIN only)
+    tags:
+      - Admin
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: User retrieved
+      '401':
+        $ref: '#/components/responses/UnauthorizedError'
+      '403':
+        $ref: '#/components/responses/ForbiddenError'
+      '404':
+        $ref: '#/components/responses/NotFoundError'
+
+  patch:
+    summary: Update user role (ADMIN only)
+    tags:
+      - Admin
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              role:
+                type: string
+                enum: [LEARNER, TRAINER, ADMIN]
+    responses:
+      '200':
+        description: User role updated
+      '400':
+        $ref: '#/components/responses/ValidationError'
+      '401':
+        $ref: '#/components/responses/UnauthorizedError'
+      '403':
+        $ref: '#/components/responses/ForbiddenError'
+
+  delete:
+    summary: Delete user (ADMIN only, soft delete)
+    tags:
+      - Admin
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: User deleted
+      '400':
+        description: Cannot delete last admin
+      '401':
+        $ref: '#/components/responses/UnauthorizedError'
+      '403':
+        $ref: '#/components/responses/ForbiddenError'
+      '404':
+        $ref: '#/components/responses/NotFoundError'

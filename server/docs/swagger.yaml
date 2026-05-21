@@ -1,0 +1,178 @@
+openapi: 3.0.0
+info:
+  title: Training Management System API
+  version: 2.0.0
+  description: |
+    Complete API documentation for Training Sessions Management System.
+    
+    ## Features
+    * User authentication & profile management
+    * Session CRUD operations with role-based access
+    * Enrolment management with capacity checking
+    * Certificate issuance and verification
+    * Trainer application & approval workflow
+    * Admin user management
+    * Announcement system
+    
+    ## Authentication
+    This API uses JWT tokens for authentication. Include the token in requests:
+    
+    `Authorization: Bearer <your-token>`
+    
+    ## Role Hierarchy
+    * **ADMIN** - Full system access
+    * **TRAINER** - Create/manage sessions, view enrolments
+    * **LEARNER** - Enroll in sessions, view certificates
+    
+  contact:
+    name: API Support
+    email: support@trainingsystem.com
+    url: https://trainingsystem.com/support
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  
+servers:
+  - url: http://localhost:3000/api/v1
+    description: Development server
+  - url: https://staging-api.trainingsystem.com/api/v1
+    description: Staging server
+  - url: https://api.trainingsystem.com/api/v1
+    description: Production server
+
+tags:
+  - name: Authentication
+    description: User authentication and profile management
+  - name: Sessions
+    description: Training session management
+  - name: Enrolments
+    description: Session enrolment operations
+  - name: Certificates
+    description: Certificate issuance and verification
+  - name: Trainers
+    description: Trainer application and management
+  - name: Announcements
+    description: System announcements
+  - name: Admin
+    description: Administrative operations (ADMIN only)
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Enter your JWT token
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: auth_token
+      description: Authentication cookie
+
+  schemas:
+    # all schema files
+    User:
+      $ref: './components/schemas/user.yaml#/User'
+    UserProfile:
+      $ref: './components/schemas/user.yaml#/UserProfile'
+    
+    # Auth schemas
+    SignupRequest:
+      $ref: './components/schemas/auth.yaml#/SignupRequest'
+    LoginRequest:
+      $ref: './components/schemas/auth.yaml#/LoginRequest'
+    LoginResponse:
+      $ref: './components/schemas/auth.yaml#/LoginResponse'
+    UpdateProfileRequest:
+      $ref: './components/schemas/auth.yaml#/UpdateProfileRequest'
+    ChangePasswordRequest:
+      $ref: './components/schemas/auth.yaml#/ChangePasswordRequest'
+    
+    # Session schemas
+    Session:
+      $ref: './components/schemas/session.yaml#/Session'
+    CreateSessionInput:
+      $ref: './components/schemas/session.yaml#/CreateSessionInput'
+    UpdateSessionInput:
+      $ref: './components/schemas/session.yaml#/UpdateSessionInput'
+    SessionFilters:
+      $ref: './components/schemas/session.yaml#/SessionFilters'
+    
+    # Enrolment schemas
+    Enrolment:
+      $ref: './components/schemas/enrolment.yaml#/Enrolment'
+    CreateEnrolmentInput:
+      $ref: './components/schemas/enrolment.yaml#/CreateEnrolmentInput'
+    UpdateEnrolmentInput:
+      $ref: './components/schemas/enrolment.yaml#/UpdateEnrolmentInput'
+    BulkEnrolmentInput:
+      $ref: './components/schemas/enrolment.yaml#/BulkEnrolmentInput'
+    
+    # Certificate schemas
+    Certificate:
+      $ref: './components/schemas/certificate.yaml#/Certificate'
+    IssueCertificateInput:
+      $ref: './components/schemas/certificate.yaml#/IssueCertificateInput'
+    VerifyCertificateInput:
+      $ref: './components/schemas/certificate.yaml#/VerifyCertificateInput'
+    
+    # Trainer schemas
+    TrainerProfile:
+      $ref: './components/schemas/trainer.yaml#/TrainerProfile'
+    CreateTrainerProfileInput:
+      $ref: './components/schemas/trainer.yaml#/CreateTrainerProfileInput'
+    UpdateTrainerProfileInput:
+      $ref: './components/schemas/trainer.yaml#/UpdateTrainerProfileInput'
+    UpdateTrainerStatusInput:
+      $ref: './components/schemas/trainer.yaml#/UpdateTrainerStatusInput'
+    
+    # Announcement schemas
+    Announcement:
+      $ref: './components/schemas/announcement.yaml#/Announcement'
+    CreateAnnouncementInput:
+      $ref: './components/schemas/announcement.yaml#/CreateAnnouncementInput'
+    UpdateAnnouncementInput:
+      $ref: './components/schemas/announcement.yaml#/UpdateAnnouncementInput'
+    
+    # Common schemas
+    SuccessResponse:
+      $ref: './components/schemas/common.yaml#/SuccessResponse'
+    ErrorResponse:
+      $ref: './components/schemas/common.yaml#/ErrorResponse'
+    ValidationErrorResponse:
+      $ref: './components/schemas/common.yaml#/ValidationErrorResponse'
+    PaginatedResponse:
+      $ref: './components/schemas/common.yaml#/PaginatedResponse'
+    IdParam:
+      $ref: './components/schemas/common.yaml#/IdParam'
+
+  responses:
+    UnauthorizedError:
+      $ref: './components/responses.yaml#/UnauthorizedError'
+    ForbiddenError:
+      $ref: './components/responses.yaml#/ForbiddenError'
+    NotFoundError:
+      $ref: './components/responses.yaml#/NotFoundError'
+    ValidationError:
+      $ref: './components/responses.yaml#/ValidationError'
+
+security:
+  - bearerAuth: []
+  - cookieAuth: []
+
+# all path files
+paths:
+  /auth:
+    $ref: './paths/auth.yaml'
+  /sessions:
+    $ref: './paths/sessions.yaml'
+  /enrolments:
+    $ref: './paths/enrolments.yaml'
+  /certificates:
+    $ref: './paths/certificates.yaml'
+  /trainers:
+    $ref: './paths/trainers.yaml'
+  /announcements:
+    $ref: './paths/announcements.yaml'
+  /admin:
+    $ref: './paths/admin.yaml'

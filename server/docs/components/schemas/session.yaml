@@ -1,0 +1,196 @@
+Session:
+  type: object
+  properties:
+    id:
+      type: string
+      example: sess_2xK3pQ7VnM
+    title:
+      type: string
+      minLength: 3
+      maxLength: 200
+      example: Advanced JavaScript Workshop
+    skillArea:
+      type: string
+      minLength: 2
+      maxLength: 100
+      example: Programming
+    description:
+      type: string
+      maxLength: 2000
+      example: Deep dive into modern JavaScript features including async/await, closures, and prototypes
+    date:
+      type: string
+      format: date-time
+      example: 2024-12-15T10:00:00Z
+    durationMins:
+      type: integer
+      minimum: 30
+      maximum: 480
+      example: 120
+    locationType:
+      type: string
+      enum: [PHYSICAL, ONLINE]
+      example: ONLINE
+    venue:
+      type: string
+      minLength: 3
+      maxLength: 500
+      example: https://zoom.us/join/123456
+    county:
+      type: string
+      minLength: 2
+      maxLength: 50
+      example: Nairobi
+    capacity:
+      type: integer
+      minimum: 1
+      maximum: 100
+      example: 30
+    status:
+      type: string
+      enum: [SCHEDULED, IN_PROGRESS, COMPLETED, CANCELLED]
+      example: SCHEDULED
+    trainerId:
+      type: string
+      example: usr_2xK3pQ7VnM
+    trainer:
+      $ref: './user.yaml#/User'
+    enrolledCount:
+      type: integer
+      example: 15
+    createdAt:
+      type: string
+      format: date-time
+    updatedAt:
+      type: string
+      format: date-time
+
+CreateSessionInput:
+  type: object
+  required:
+    - title
+    - skillArea
+    - date
+    - durationMins
+    - locationType
+    - capacity
+  properties:
+    title:
+      type: string
+      minLength: 3
+      maxLength: 200
+      example: Advanced JavaScript Workshop
+    skillArea:
+      type: string
+      minLength: 2
+      maxLength: 100
+      example: Programming
+    description:
+      type: string
+      maxLength: 2000
+      example: Deep dive into modern JavaScript features
+    date:
+      type: string
+      format: date-time
+      example: 2024-12-15T10:00:00Z
+    durationMins:
+      type: integer
+      minimum: 30
+      maximum: 480
+      default: 120
+      example: 120
+    locationType:
+      type: string
+      enum: [PHYSICAL, ONLINE]
+      default: PHYSICAL
+      example: ONLINE
+    venue:
+      type: string
+      minLength: 3
+      maxLength: 500
+      example: https://zoom.us/join/123456
+    county:
+      type: string
+      minLength: 2
+      maxLength: 50
+      example: Nairobi
+    capacity:
+      type: integer
+      minimum: 1
+      maximum: 100
+      default: 30
+      example: 30
+    trainerId:
+      type: string
+      example: usr_2xK3pQ7VnM
+
+UpdateSessionInput:
+  type: object
+  properties:
+    title:
+      type: string
+      minLength: 3
+      maxLength: 200
+    skillArea:
+      type: string
+      minLength: 2
+      maxLength: 100
+    description:
+      type: string
+      maxLength: 2000
+    date:
+      type: string
+      format: date-time
+    durationMins:
+      type: integer
+      minimum: 30
+      maximum: 480
+    locationType:
+      type: string
+      enum: [PHYSICAL, ONLINE]
+    venue:
+      type: string
+      minLength: 3
+      maxLength: 500
+    county:
+      type: string
+      minLength: 2
+      maxLength: 50
+    capacity:
+      type: integer
+      minimum: 1
+      maximum: 100
+    status:
+      type: string
+      enum: [SCHEDULED, IN_PROGRESS, COMPLETED, CANCELLED]
+
+SessionFilters:
+  type: object
+  properties:
+    status:
+      type: string
+      enum: [SCHEDULED, IN_PROGRESS, COMPLETED, CANCELLED]
+    skillArea:
+      type: string
+    locationType:
+      type: string
+      enum: [PHYSICAL, ONLINE]
+    county:
+      type: string
+    trainerId:
+      type: string
+    fromDate:
+      type: string
+      format: date
+    toDate:
+      type: string
+      format: date
+    page:
+      type: integer
+      minimum: 1
+      default: 1
+    limit:
+      type: integer
+      minimum: 1
+      maximum: 100
+      default: 10

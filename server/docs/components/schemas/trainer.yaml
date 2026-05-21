@@ -1,0 +1,115 @@
+TrainerProfile:
+  type: object
+  properties:
+    id:
+      type: string
+      example: trn_2xK3pQ7VnM
+    userId:
+      type: string
+      example: usr_2xK3pQ7VnM
+    bio:
+      type: string
+      maxLength: 1000
+      example: Experienced software developer with 10 years of industry experience
+    skills:
+      type: array
+      minItems: 1
+      items:
+        type: string
+      example:
+        - JavaScript
+        - React
+        - Node.js
+        - Python
+    availability:
+      type: string
+      maxLength: 200
+      example: Weekends and weekday evenings
+    motivation:
+      type: string
+      maxLength: 1000
+      example: Passionate about teaching and mentoring the next generation of developers
+    status:
+      type: string
+      enum: [PENDING, APPROVED, REJECTED]
+      example: APPROVED
+    user:
+      $ref: './user.yaml#/User'
+    createdAt:
+      type: string
+      format: date-time
+    updatedAt:
+      type: string
+      format: date-time
+
+TrainerProfileSummary:
+  type: object
+  properties:
+    id:
+      type: string
+    status:
+      type: string
+    skills:
+      type: array
+      items:
+        type: string
+    appliedAt:
+      type: string
+      format: date-time
+
+CreateTrainerProfileInput:
+  type: object
+  required:
+    - skills
+  properties:
+    bio:
+      type: string
+      maxLength: 1000
+      example: Experienced software developer with 10 years of experience
+    skills:
+      type: array
+      minItems: 1
+      maxItems: 20
+      items:
+        type: string
+      example:
+        - JavaScript
+        - React
+        - Node.js
+    availability:
+      type: string
+      maxLength: 200
+      example: Weekends and weekday evenings
+    motivation:
+      type: string
+      maxLength: 1000
+      example: I want to share my knowledge and help others grow
+
+UpdateTrainerProfileInput:
+  type: object
+  properties:
+    bio:
+      type: string
+      maxLength: 1000
+    skills:
+      type: array
+      minItems: 1
+      maxItems: 20
+      items:
+        type: string
+    availability:
+      type: string
+      maxLength: 200
+    motivation:
+      type: string
+      maxLength: 1000
+
+UpdateTrainerStatusInput:
+  type: object
+  required:
+    - status
+  properties:
+    status:
+      type: string
+      enum: [APPROVED, REJECTED]
+      example: APPROVED

@@ -4,7 +4,10 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test": "jest"
+    "test": "jest",
+    "swagger:validate": "swagger-cli validate docs/swagger.yaml",
+    "swagger:generate": "swagger-cli bundle docs/swagger.yaml -o docs/swagger-bundled.yaml",
+    "swagger:serve": "swagger-ui-watcher docs/swagger.yaml"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.8.0",
@@ -30,6 +33,9 @@
   "devDependencies": {
     "jest": "^30.4.2",
     "prisma": "^7.8.0",
-    "supertest": "^7.2.2"
+    "supertest": "^7.2.2",
+    "swagger-cli": "^4.0.4",
+    "swagger-ui-watcher": "^2.1.13",
+    "yamljs": "^0.3.0"
   }
 }
