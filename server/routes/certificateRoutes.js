@@ -1,6 +1,6 @@
 const express = require('express');
 const certificatesRouter = express.Router();
-const { verifyToken, requireRole } = require('../middleware/authMiddleware')
+const { verifyToken, requireRole } = require('../middleware/authMiddleware');
 const certificatesController = require('../modules/certificates/certificateController');
 
 // Public routes

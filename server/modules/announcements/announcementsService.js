@@ -2,7 +2,7 @@ const announcementsModel = require('./announcementsModel');
 const logger = require('../../utils/logger');
 const userModel=require('../users/usersModel')
 async function createAnnouncement(data,id,role) {
-
+const user=awaitfindUserById(id)
   if (!data.title || !data.body) {
     throw new Error('Title and body are required');
   }
@@ -32,7 +32,6 @@ async function getAllAnnouncements(filters = {}, page = 1, limit = 10, userRole 
     filters.audience = 'all'; //  all tagged  announcements for learners
   }
   // ADMIN and TRAINER can see all types of  announcements
-  
   const { announcements, total } = await announcementsModel.getAllAnnouncements(filters, skip, limit);
   
   return {

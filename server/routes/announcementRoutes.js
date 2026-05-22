@@ -1,9 +1,10 @@
 const express = require('express');
 const announcementsRouter = express.Router();
-const { verifyToken, requireRole } = require('../../middleware/authMiddleware');
-const announcementsController = require('./announcementsController');
+const { verifyToken, requireRole } = require('../middleware/authMiddleware');
+const announcementsController = require('../modules/announcements/announcementsController');
 const { validate } = require('../../middleware/validate');
-const { createAnnouncementSchema, updateAnnouncementSchema } = require('../../validation');
+const { createAnnouncementSchema, updateAnnouncementSchema } = require('../../shared/validators/announcementValidation');
+
 
 // Public routes (no authentication required for viewing)
 announcementsRouter.get('/', announcementsController.getAllAnnouncements);

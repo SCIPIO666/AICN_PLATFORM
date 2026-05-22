@@ -1,7 +1,7 @@
 const enrolmentModel = require('./enrolmentsModel');
 const { getSession } = require('../sessions/sessionsModel');
 const logger = require('../../utils/logger');
-const { sendEnrolmentConfirmation } = require('../../utils/email/emailService');
+// const { sendEnrolmentConfirmation } = require('../../utils/email/emailService');
 
 async function createEnrolment(userId, sessionId) {
   const session = await getSession(sessionId);
@@ -26,9 +26,9 @@ async function createEnrolment(userId, sessionId) {
   const user = await prisma.user.findUnique({ where: { id: userId } });
   
   // confirmation email 
-  sendEnrolmentConfirmation(user.email, user.name, session).catch(err =>
-    logger.error(`Failed to send enrolment confirmation: ${err.message}`)
-  );
+  // sendEnrolmentConfirmation(user.email, user.name, session).catch(err =>
+  //   logger.error(`Failed to send enrolment confirmation: ${err.message}`)
+  // );
   
   return enrolment;
 }

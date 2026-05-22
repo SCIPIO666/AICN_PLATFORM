@@ -1,9 +1,6 @@
 const adminService = require('./adminService');
 const logger = require('../../utils/logger');
 
-/**
- * GET /api/admin/stats - ADMIN only
- */
 const getStats = async (req, res, next) => {
   try {
     const stats = await adminService.getStats(req.user.id, req.user.role);
@@ -17,27 +14,38 @@ const getStats = async (req, res, next) => {
   }
 };
 
-/**
- * GET /api/admin/users - ADMIN only
- * ?role=LEARNER|TRAINER|ADMIN&search=&page=&limit=
- */
 const getAllUsers = async (req, res, next) => {
   try {
     const filters = {};
     if (req.query.role) filters.role = req.query.role;
     if (req.query.search) filters.search = req.query.search;
     
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    
     const result = await adminService.getAllUsers(
       filters,
-      req.query.page,
-      req.query.limit,
-      req.user.id,
-      req.user.role
+      skip,           
+      limit,         
+      req.user.id,    
+      req.user.role   
     );
+    
+    // Calculate pagination metadata
+    const totalPages = Math.ceil(result.total / limit);
     
     res.status(200).json({
       success: true,
-      ...result
+      data: result.users,
+      pagination: {
+        page: page,
+        limit: limit,
+        total: result.total,
+        totalPages: totalPages,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1
+      }
     });
   } catch (err) {
     logger.error(`Failed to get users: ${err.message}`);
@@ -45,10 +53,6 @@ const getAllUsers = async (req, res, next) => {
   }
 };
 
-/**
- * PATCH /api/admin/users/:userId/role - ADMIN only
- * Body: { role: "LEARNER|TRAINER|ADMIN" }
- */
 const updateUserRole = async (req, res, next) => {
   try {
     const { userId } = req.params;

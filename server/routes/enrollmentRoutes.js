@@ -1,7 +1,7 @@
 const express = require('express');
 const enrolmentsRouter = express.Router();
-const { verifyToken, requireRole } = require('../../middleware/authMiddleware');
-const enrolmentsController = require('./enrolmentsController');
+const { verifyToken, requireRole } = require('../middleware/authMiddleware');
+const enrolmentsController = require('../modules/enrollments/enrolmentController');
 
 enrolmentsRouter.use(verifyToken); //all need verification
 

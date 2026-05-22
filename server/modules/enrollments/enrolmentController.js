@@ -1,4 +1,4 @@
-const enrolmentsService = require('./enrolmentsService');
+const enrolmentsService = require('./enrolmentService');
 const logger = require('../../utils/logger');
 
 const createEnrolment = async (req, res, next) => {

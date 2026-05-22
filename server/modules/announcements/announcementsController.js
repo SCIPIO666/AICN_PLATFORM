@@ -1,9 +1,7 @@
 const announcementsService = require('./announcementsService');
 const logger = require('../../utils/logger');
 
-/**
- * Create announcement (ADMIN only)
- */
+
 async function createAnnouncement(req, res, next) {
   try {
     const announcement = await announcementsService.createAnnouncement(
@@ -22,9 +20,7 @@ async function createAnnouncement(req, res, next) {
   }
 }
 
-/**
- * Get announcement by ID (PUBLIC with audience filter)
- */
+
 async function getAnnouncementById(req, res, next) {
   try {
     const announcement = await announcementsService.getAnnouncementById(
@@ -41,9 +37,7 @@ async function getAnnouncementById(req, res, next) {
   }
 }
 
-/**
- * Get all announcements (PUBLIC with filters)
- */
+
 async function getAllAnnouncements(req, res, next) {
   try {
     const filters = {};
@@ -68,9 +62,7 @@ async function getAllAnnouncements(req, res, next) {
   }
 }
 
-/**
- * Update announcement (ADMIN only)
- */
+
 async function updateAnnouncement(req, res, next) {
   try {
     const updated = await announcementsService.updateAnnouncement(
@@ -90,9 +82,7 @@ async function updateAnnouncement(req, res, next) {
   }
 }
 
-/**
- * Delete announcement (ADMIN only)
- */
+
 async function deleteAnnouncement(req, res, next) {
   try {
     const result = await announcementsService.deleteAnnouncement(

@@ -1,9 +1,9 @@
 const express = require('express');
 const trainersRouter = express.Router();
-const { verifyToken, requireRole } = require('../../middleware/authMiddleware');
-const trainersController = require('./trainersController');
-const { validate } = require('../../middleware/validate');
-const { createTrainerProfileSchema, updateTrainerProfileSchema, updateTrainerStatusSchema } = require('../../validation');
+const { verifyToken, requireRole } = require('../middleware/authMiddleware');
+const trainersController = require('../modules/trainers/trainersController');
+const { validate } = require('../middleware/validate');
+const { createTrainerProfileSchema, updateTrainerProfileSchema, updateTrainerStatusSchema } = require('../../shared/validators/trainerValidation');
 
 // Public routes 
 trainersRouter.get('/', trainersController.getAllTrainerApplications);

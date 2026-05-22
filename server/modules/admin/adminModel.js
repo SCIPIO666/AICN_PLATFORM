@@ -66,7 +66,7 @@ async function getAllUsers(filters = {}, skip = 0, take = 10) {
 
 async function updateUserRole(userId, newRole) {
   try {
-    // Check if this is the last admin
+
     if (newRole !== 'ADMIN') {
       const adminCount = await prisma.user.count({ where: { role: 'ADMIN', deletedAt: null } });
       const targetUser = await prisma.user.findUnique({ where: { id: userId } });
@@ -87,13 +87,12 @@ async function updateUserRole(userId, newRole) {
       }
     });
     
-    // If demoting from TRAINER to LEARNER, reject their trainer profile
     if (newRole === 'LEARNER') {
       await prisma.trainerProfile.updateMany({
         where: { userId },
         data: { status: 'REJECTED' }
       });
-    }
+    }//revoke approval status
     
     return updated;
   } catch (error) {

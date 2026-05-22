@@ -1,8 +1,8 @@
 
 const certificateModel = require('./certificatesModel');
 const { getSession } = require('../sessions/sessionsModel');
-const { generateCertificatePDF } = require('../../utils/pdf/pdfGenerator');
-const { sendCertificateEmail } = require('../../utils/email/emailService');
+// const { generateCertificatePDF } = require('../../utils/pdf/pdfGenerator');
+// const { sendCertificateEmail } = require('../../utils/email/emailService');
 const prisma = require('../../config/db');
 const logger = require('../../utils/logger');
 
@@ -43,31 +43,31 @@ async function issueCertificate(userId, sessionId, adminId, role) {
   const certificate = await certificateModel.createCertificate(userId, sessionId);
   
   try {
-    //  PDF
-    const pdfBuffer = await generateCertificatePDF({
-      certCode: certificate.certCode,
-      userName: enrolment.user.name,
-      sessionTitle: enrolment.session.title,
-      sessionDate: enrolment.session.date,
-      skillArea: enrolment.session.skillArea,
-      duration: enrolment.session.durationMins,
-      trainerName: enrolment.session.trainer?.name || 'AICN Training Team',
-      issueDate: certificate.issuedAt,
-      verifyUrl: `${process.env.FRONTEND_URL}/verify/${certificate.certCode}`
-    });
+    // //  PDF
+    // const pdfBuffer = await generateCertificatePDF({
+    //   certCode: certificate.certCode,
+    //   userName: enrolment.user.name,
+    //   sessionTitle: enrolment.session.title,
+    //   sessionDate: enrolment.session.date,
+    //   skillArea: enrolment.session.skillArea,
+    //   duration: enrolment.session.durationMins,
+    //   trainerName: enrolment.session.trainer?.name || 'AICN Training Team',
+    //   issueDate: certificate.issuedAt,
+    //   verifyUrl: `${process.env.FRONTEND_URL}/verify/${certificate.certCode}`
+    // });
     
-    // email with PDF attachment
-    await sendCertificateEmail(
-      enrolment.user.email,
-      enrolment.user.name,
-      enrolment.session.title,
-      certificate.certCode,
-      pdfBuffer,
-      {
-        skillArea: enrolment.session.skillArea,
-        durationMins: enrolment.session.durationMins
-      }
-    );
+    // // email with PDF attachment
+    // await sendCertificateEmail(
+    //   enrolment.user.email,
+    //   enrolment.user.name,
+    //   enrolment.session.title,
+    //   certificate.certCode,
+    //   pdfBuffer,
+    //   {
+    //     skillArea: enrolment.session.skillArea,
+    //     durationMins: enrolment.session.durationMins
+    //   }
+    // );
     
     logger.info(`Certificate issued and emailed to ${enrolment.user.email}`);
     

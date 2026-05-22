@@ -1,0 +1,21 @@
+# Dependency directories
+node_modules/
+aicn-trainsync/
+uploads/
+
+# IDE / Editor folders
+.vscode/
+.idea/
+
+# Operating System files
+.DS_Store
+Thumbs.db
+
+# Environment variables / Secrets (CRITICAL)
+.env
+.env.dev
+.env.production
+
+# Debug logs
+pino-debug.log
+logs/

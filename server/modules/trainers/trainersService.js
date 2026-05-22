@@ -1,9 +1,8 @@
 const trainersModel = require('./trainersModel');
-const { sendTrainerApplicationEmail, sendTrainerApprovalEmail } = require('../../utils/emailService');
+// const { sendTrainerApplicationEmail, sendTrainerApprovalEmail } = require('../../utils/emailService');
 const logger = require('../../utils/logger');
 
 async function applyForTrainer(userId, data) {
-  // if user already has an application
   const existing = await trainersModel.checkExistingApplication(userId);
   if (existing) {
     throw new Error('You already have a trainer application');
@@ -13,7 +12,6 @@ async function applyForTrainer(userId, data) {
     throw new Error('At least one skill is required');
   }
   
-  // create profile
   const profile = await trainersModel.createTrainerProfile(userId, data);
   
   // Send email notification to admins - later implementation
@@ -37,7 +35,7 @@ async function updateMyTrainerProfile(userId, updateData) {
     throw new Error('No trainer profile found');
   }
   
-  //  if application approved
+  //  if application already approved
   if (profile.status === 'APPROVED') {
     throw new Error('Approved applications cannot be modified. Please contact admin.');
   }
@@ -107,7 +105,7 @@ async function approveTrainerApplication(id, role) {
   const updated = await trainersModel.updateTrainerStatus(id, 'APPROVED');
   
   // Send approval email
-  await sendTrainerApprovalEmail(profile.user.email, profile.user.name);
+  // await sendTrainerApprovalEmail(profile.user.email, profile.user.name);
   
   return updated;
 }

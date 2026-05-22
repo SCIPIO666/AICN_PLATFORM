@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs')
 const jwt    = require('jsonwebtoken')
 const prisma=require('../../config/db')
 const logger=require('../../utils/logger')
-const { sendWelcomeEmail } = require('../../utils/email/emailService');
+// const { sendWelcomeEmail } = require('../../utils/email/emailService');
 const {findUser,
     findUserById,
     findManyUsers,
@@ -82,9 +82,9 @@ async function signup(name, email, password, phone, county) {
     const newUser = await createUser(name, email, password, phone, county);
     
     // welcome email 
-    sendWelcomeEmail(email, name).catch(err => 
-      logger.error(`Failed to send welcome email: ${err.message}`)
-    );
+    // sendWelcomeEmail(email, name).catch(err => 
+    //   logger.error(`Failed to send welcome email: ${err.message}`)
+    // );
     
     return newUser;
   } catch (error) {

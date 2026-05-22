@@ -1,9 +1,9 @@
 const express = require('express');
 const adminRouter = express.Router();
-const { verifyToken, requireRole } = require('../../middleware/authMiddleware');
-const adminController = require('./adminController');
-const { validate } = require('../../middleware/validate');
-const { createAnnouncementSchema, updateAnnouncementSchema } = require('../../validation');
+const { verifyToken, requireRole } = require('../middleware/authMiddleware');
+const adminController = require('../modules/admin/adminController');
+const { validate } = require('../middleware/validate');
+const { createAnnouncementSchema, updateAnnouncementSchema } = require('../../shared/validators/announcementValidation');
 
 // All admin routes require authentication and ADMIN role
 adminRouter.use(verifyToken);
