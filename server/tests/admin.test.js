@@ -12,7 +12,7 @@ describe('Admin Endpoints (New Module)', () => {
     learnerToken = generateTestToken('learner-123', 'LEARNER');
   });
 
-  describe('GET /api/admin/stats - Dashboard stats', () => {
+  describe('GET /api/v1/admin/stats - Dashboard stats', () => {
     it('should return stats for ADMIN', async () => {
       const mockStats = {
         learners: 150,
@@ -41,14 +41,14 @@ describe('Admin Endpoints (New Module)', () => {
 
     it('should reject non-ADMIN access to stats', async () => {
       const response = await request(app)
-        .get('/api/admin/stats')
+        .get('/api/v1/admin/stats')
         .set('Authorization', `Bearer ${learnerToken}`);
 
       expect(response.status).toBe(403);
     });
   });
 
-  describe('GET /api/admin/users - User management', () => {
+  describe('GET /api/v1/admin/users - User management', () => {
     it('should return paginated users for ADMIN', async () => {
       const mockUsers = [
         { id: '1', name: 'John', email: 'john@test.com', role: 'LEARNER' },
@@ -88,7 +88,7 @@ describe('Admin Endpoints (New Module)', () => {
       prisma.user.count.mockResolvedValue(0);
 
       const response = await request(app)
-        .get('/api/admin/users?search=john')
+        .get('/api/v1/admin/users?search=john')
         .set('Authorization', `Bearer ${adminToken}`);
 
       expect(response.status).toBe(200);
@@ -105,7 +105,7 @@ describe('Admin Endpoints (New Module)', () => {
     });
   });
 
-  describe('PATCH /api/admin/users/:userId/role - Update user role', () => {
+  describe('PATCH /api/v1/admin/users/:userId/role - Update user role', () => {
     it('should update user role as ADMIN', async () => {
       prisma.user.count.mockResolvedValueOnce(2); // Admin count for last admin check
       prisma.user.findUnique.mockResolvedValue({ id: 'user-123', role: 'LEARNER' });
@@ -116,7 +116,7 @@ describe('Admin Endpoints (New Module)', () => {
       });
 
       const response = await request(app)
-        .patch('/api/admin/users/user-123/role')
+        .patch('/api/v1/admin/users/user-123/role')
         .set('Authorization', `Bearer ${adminToken}`)
         .send({ role: 'TRAINER' });
 
