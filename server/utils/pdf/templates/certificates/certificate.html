@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate of Completion - AICN Training</title>
+    <link rel="stylesheet" href="certificate.css">
+</head>
+<body>
+    <div class="certificate-container">
+        <div class="certificate">
+            <!-- Ornate Border -->
+            <div class="certificate-border"></div>
+            
+            <!-- Corner Decorations -->
+            <div class="corner-decoration corner-tl"></div>
+            <div class="corner-decoration corner-tr"></div>
+            <div class="corner-decoration corner-bl"></div>
+            <div class="corner-decoration corner-br"></div>
+            
+            <!-- Header Section -->
+            <div class="certificate-header">
+                <div class="seal">
+                    <div class="seal-icon">🎓</div>
+                </div>
+                <h1 class="institution-name">AICN</h1>
+                <p class="institution-subtitle">Africa Institute of Computer Networking</p>
+            </div>
+            
+            <!-- Certificate Title -->
+            <div class="certificate-title">
+                <h2>CERTIFICATE OF COMPLETION</h2>
+                <p class="subtitle">This certificate is proudly presented to</p>
+            </div>
+            
+            <!-- Recipient Section -->
+            <div class="recipient-section">
+                <div class="presented-to">In recognition of excellence,</div>
+                <div class="recipient-name">{{userName}}</div>
+            </div>
+            
+            <!-- Course Details -->
+            <div class="course-details">
+                <div class="course-text">for successfully completing the professional training program</div>
+                <div class="course-title">{{sessionTitle}}</div>
+                
+                <div class="course-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Skill Area</div>
+                        <div class="meta-value">{{skillArea}}</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Duration</div>
+                        <div class="meta-value">{{duration}} Minutes</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Completion Date</div>
+                        <div class="meta-value">{{completionDate}}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Description -->
+            <div class="description-section">
+                <p class="description-text">
+                    This certificate acknowledges the dedication, commitment, and proficiency demonstrated by the recipient<br>
+                    in mastering the required competencies and achieving the learning outcomes of the program.
+                </p>
+            </div>
+            
+            <!-- Footer Section -->
+            <div class="certificate-footer">
+                <div class="signature-area">
+                    <div class="signature-line"></div>
+                    <div class="signature-name">{{trainerName}}</div>
+                    <div class="signature-title">Lead Trainer</div>
+                </div>
+                
+                <div class="qr-area">
+                    <div class="qr-code">
+                        <img src="{{qrCodeDataUrl}}" alt="Verification QR Code">
+                    </div>
+                    <div class="qr-label">Verify Online</div>
+                </div>
+                
+                <div class="seal-area">
+                    <div class="seal-stamp">★</div>
+                    <div class="signature-title">AICN Director</div>
+                    <div class="signature-name" style="font-size: 11px; margin-top: 5px;">Dr. Calvince Omondi</div>
+                </div>
+            </div>
+            
+            <!-- Certificate ID -->
+            <div class="certificate-id">
+                <span class="id-label">Certificate ID</span>
+                <span class="id-value">{{certCode}}</span>
+            </div>
+            
+            <div class="verify-url">
+                Verify at: {{verifyUrl}}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

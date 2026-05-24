@@ -14,7 +14,7 @@ const enrolmentsRouter = require('./routes/enrollmentRoutes');
 const certificatesRouter = require('./routes/certificateRoutes');
 const trainersRouter = require('./routes/trainersRoutes');
 const adminRouter = require('./routes/adminRoutes');
-
+const certificateTestRouter = require('./routes/certificateTestRouter');
 const app = express();
 
 // view engine setup
@@ -39,6 +39,9 @@ app.use('/api/v1/certificates', certificatesRouter);
 app.use('/api/v1/trainers', trainersRouter);
 app.use('/api/v1/admin', adminRouter);
 
+//pdf certificates test route 
+app.use('/api/v1/test/certificates', certificateTestRouter);
+
 
 // Health check'
 app.get('/api/v1/health', (req, res) => {
@@ -51,7 +54,7 @@ app.get('/api/v1/pdf/debug', async (req, res) => {
   try {
 
     const example = require('./utils/pdf/templates/example');
-    const {generatePdf} = require('./utils/pdf/service/pdfService');
+    const {generatePdf} = require('./utils/pdf/service/pdfGenerator');
     const data = {
       name: 'John Doe',
       age: 34,
