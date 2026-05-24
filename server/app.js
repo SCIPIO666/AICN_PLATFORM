@@ -1,10 +1,12 @@
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const setupSwagger = require('./config/swagger');
 const devLogger = require('./utils/logger');
+
 //routers
 const authRouter = require('./routes/authRoutes');
 const sessionsRouter = require('./routes/sessionRoutes');
@@ -29,8 +31,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 setupSwagger(app);
 
 
-//routes
-
+//route end points
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/sessions', sessionsRouter);
 app.use('/api/v1/enrolments', enrolmentsRouter);
@@ -44,6 +45,47 @@ app.get('/api/v1/health', (req, res) => {
   res.status(200).json({ status: 'OK', timestamp: new Date() });
 });
 
+//pdf generator test
+app.get('/api/v1/pdf/debug', async (req, res) => {
+
+  try {
+
+    const example = require('./utils/pdf/templates/example');
+    const {generatePdf} = require('./utils/pdf/service/pdfService');
+    const data = {
+      name: 'John Doe',
+      age: 34,
+      reportId: 'RPT-2024-001',
+      results: [
+        { test: 'Glucose', result: 'Normal', normalRange: '70-99 mg/dL' },
+        { test: 'HB', result: '13.5', normalRange: '13.5-17.5 g/dL' },
+        { test: 'Cholesterol', result: '190', normalRange: '<200 mg/dL' }
+      ]
+    };
+
+    const html = example(data);
+    const pdfBuffer = await generatePdf(html);
+
+    res.writeHead(200, {
+      'Content-Type': 'application/pdf',
+
+      'Content-Length': pdfBuffer.length,
+
+      'Content-Disposition':
+        'inline; filename="debug.pdf"',
+    });
+    res.end(pdfBuffer);
+
+  } catch (error) {
+
+    console.error(
+      'PDF generation failed:',
+      error
+    );
+
+    res.status(500).send(error.message);
+  }
+});
 //  404 error handler
 app.use(function(req, res, next) {
   next(createError(404));

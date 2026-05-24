@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Patient Report</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      line-height: 1.6;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #333;
+    }
+    .patient-info {
+      margin-bottom: 30px;
+      padding: 15px;
+      background-color: #f5f5f5;
+      border-radius: 5px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #4CAF50;
+      color: white;
+    }
+    .footer {
+      margin-top: 50px;
+      text-align: center;
+      font-size: 12px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Medical Test Report</h1>
+    <p>Generated on: <%= new Date().toLocaleDateString() %></p>
+  </div>
+
+  <div class="patient-info">
+    <h2>Patient Information</h2>
+    <p><strong>Name:</strong> <%= name %></p>
+    <p><strong>Age:</strong> <%= age %></p>
+    <p><strong>Report ID:</strong> <%= reportId || 'N/A' %></p>
+  </div>
+
+  <h2>Test Results</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Test Name</th>
+        <th>Result</th>
+        <th>Normal Range</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (results && results.length > 0) { %>
+        <% results.forEach(function(item) { %>
+          <tr>
+            <td><%= item.test %></td>
+            <td class="<%= item.result.toLowerCase() === 'normal' ? 'normal' : 'abnormal' %>">
+              <%= item.result %>
+            </td>
+            <td><%= item.normalRange || 'N/A' %></td>
+          </tr>
+        <% }); %>
+      <% } else { %>
+        <tr>
+          <td colspan="3">No test results available</td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+
+  <div class="footer">
+    <p>This is a computer-generated report. No signature required.</p>
+    <p>Lab: AICN Diagnostic Center</p>
+  </div>
+</body>
+</html>

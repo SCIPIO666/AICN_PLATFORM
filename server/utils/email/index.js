@@ -1,9 +1,3 @@
-const fs = require('fs');
-const path = require('path');
-const Handlebars = require('handlebars');
-const { transporter } = require('../../config/email');
-const logger = require('../logger');
-
 // Load and compile Handlebars templates
 const loadTemplate = (templateName) => {
   const templatePath = path.join(__dirname, 'emailTemplates', `${templateName}.hbs`);
@@ -183,12 +177,4 @@ const sendBulkCertificateEmails = async (recipients) => {
   }
 
   return results;
-};
-
-module.exports = {
-  sendWelcomeEmail,
-  sendCertificateEmail,
-  sendEnrolmentConfirmation,
-  sendTrainerStatusEmail,
-  sendBulkCertificateEmails
 };
