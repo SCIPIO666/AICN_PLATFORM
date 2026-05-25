@@ -1,7 +1,7 @@
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 const path = require('path');
-const logger = require('../utils/logger/logger');
+const logger = require('../utils/logger');
 
 
 const swaggerDocument = YAML.load(path.join(__dirname, '../docs/swagger.yaml'));
