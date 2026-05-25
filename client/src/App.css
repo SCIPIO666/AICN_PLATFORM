@@ -11,3 +11,16 @@
   --border-ui: #292524;
   --ring: #d97706;
 }
+:root[data-palette="acacia"][data-mode="light"] {
+  --bg-app: #faf7f2;
+  --bg-card: #ffffff;
+  --bg-elevated: #f1ece3;
+  --text-main: #1c1917;
+  --text-muted: #57534e;
+  --brand-primary: #b45309;
+  --brand-primary-contrast: #ffffff;
+  --brand-glow: rgba(180,83,9,0.22);
+  --accent-secondary: #15803d;
+  --border-ui: #e7e2d8;
+  --ring: #b45309;
+}
