@@ -1,7 +1,9 @@
-next: personally create all needed templates
+next: 
+//alter project to be a cpd training platform
+//personally create all needed templates from dribble/pintrest inspiration
 //read handlebars docs
-//marry email pdf and cloudinary across affected endpoints
-//modify endpoints affected by pdf storage and emailing
+//marry email pdf and cloudinary across affected endpoints with verify qr embedded
+//modify endpoints affected by pdf storage and emailing and qr
 //update docs
 //update/recreate tests
 //unit and intergration tests
