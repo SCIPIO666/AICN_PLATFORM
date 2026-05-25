@@ -101,16 +101,25 @@ model Enrolment {
 }
 
 model Certificate {
-  id        String   @id @default(cuid())
+  id        String @id @default(cuid())
   userId    String
   sessionId String
-  certCode  String   @unique @default(cuid())
-  issuedAt  DateTime @default(now())
+
+  certCode String @unique @default(cuid())
+
+  issuedAt DateTime @default(now())
+
+  pdfUrl      String?
+  pdfPublicId String?
+
+  emailedAt DateTime?
+
+  revokedAt DateTime?
 
   user    User    @relation(fields: [userId], references: [id])
   session Session @relation(fields: [sessionId], references: [id])
 
-  @@unique([userId, sessionId]) // one cert per user per session
+  @@unique([userId, sessionId])
 }
 
 model TrainerProfile {

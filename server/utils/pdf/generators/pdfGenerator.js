@@ -1,6 +1,6 @@
 const puppeteer = require('puppeteer');
-const { generateCertificateHTML } = require('./templates/certificates/certificateGenerator');
-const logger = require('../logger');
+const { generateCertificateHTML } = require('../templates/certificates/certificateGenerator');
+const logger = require('../../logger/logger');
 
 // Browser pool for production
 class BrowserPool {
