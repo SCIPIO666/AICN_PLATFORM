@@ -1,1 +1,10 @@
-next: add validation middlewares to end points,implement : announcements,trainers,email module,fix swagger ui to have end points
+next: personally create all needed templates
+//read handlebars docs
+//marry email pdf and cloudinary across affected endpoints
+//modify endpoints affected by pdf storage and emailing
+//update docs
+//update/recreate tests
+//unit and intergration tests
+
+
+//front end
