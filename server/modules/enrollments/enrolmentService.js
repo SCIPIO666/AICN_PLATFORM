@@ -1,38 +1,75 @@
 const enrolmentModel = require('./enrolmentsModel');
 const { getSession } = require('../sessions/sessionsModel');
 const logger = require('../../utils/logger');
-// const { sendEnrolmentConfirmation } = require('../../utils/email/emailService');
+const { sendEnrolmentConfirmationEmail } = require('../../utils/email/email services/aicnEmailsService');
+const prisma = require('../../config/db');
 
 async function createEnrolment(userId, sessionId) {
+  // Validate session
   const session = await getSession(sessionId);
   if (!session) throw new Error('Session not found');
   if (session.status !== 'SCHEDULED') throw new Error('Session is not available for enrolment');
   if (session.status === 'CANCELLED') throw new Error('Session has been cancelled');
   
-
+  // Check capacity
   const enrolmentCount = session._count?.enrolments || session.enrolments?.length || 0;
   if (enrolmentCount >= session.capacity) {
     throw new Error('Session is at full capacity');
   }
   
+  // Check for existing enrolment
   const existingEnrolment = await enrolmentModel.findEnrolmentByUserAndSession(userId, sessionId);
   if (existingEnrolment) {
     throw new Error('Already enrolled in this session');
   }
   
-  const enrolment = await enrolmentModel.createEnrolment({ userId, sessionId, status: 'ENROLLED' });
+  // Create enrolment
+  const enrolment = await enrolmentModel.createEnrolment({ 
+    userId, 
+    sessionId, 
+    status: 'ENROLLED' 
+  });
   
-  //  user email for confirmation
-  const user = await prisma.user.findUnique({ where: { id: userId } });
+  // Get user details for email
+  const user = await prisma.user.findUnique({ 
+    where: { id: userId },
+    select: {
+      email: true,
+      name: true
+    }
+  });
   
-  // confirmation email 
-  // sendEnrolmentConfirmation(user.email, user.name, session).catch(err =>
-  //   logger.error(`Failed to send enrolment confirmation: ${err.message}`)
-  // );
+  if (!user) {
+    logger.error(`User not found for enrolment: ${userId}`);
+    return enrolment;
+  }
+  
+  // Prepare email data
+  const sessionDate = session.date || session.startDate;
+  const sessionTime = session.time || `${session.startTime} - ${session.endTime}`;
+  const location = session.location || session.meetingLink || 'Virtual (Link will be sent)';
+  const duration = session.durationMins || session.duration || 120;
+  const trainerName = session.trainer?.name || 'AICN Training Faculty';
+  
+  // Send enrolment confirmation email (non-blocking)
+  sendEnrolmentConfirmationEmail({
+    to: user.email,
+    name: user.name,
+    sessionTitle: session.title,
+    sessionDate: sessionDate,
+    sessionTime: sessionTime,
+    location: location,
+    duration: duration,
+    sessionId: sessionId,
+    trainerName: trainerName
+  }).catch(err => {
+    logger.error(`Failed to send enrolment confirmation email to ${user.email}: ${err.message}`);
+  });
+  
+  logger.info(`User ${userId} enrolled in session ${sessionId}`);
   
   return enrolment;
 }
-
 async function getUserEnrolments(userId, filters = {}, page = 1, limit = 10) {
   const filtersWithUser = { ...filters, userId };
   const skip = (page - 1) * limit;

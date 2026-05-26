@@ -1,3 +1,4 @@
+module.exports = ({ name, approved, reason, trainerId, frontendUrl, supportEmail }) => `
 <!DOCTYPE html>
 <html>
 <head>
@@ -5,53 +6,116 @@
   <style>
     body {
       font-family: 'Arial', sans-serif;
+      line-height: 1.6;
       max-width: 600px;
       margin: 0 auto;
       padding: 20px;
+      background: #faf7f2;
     }
     .approved {
-      background: #dcfce7;
-      border: 1px solid #22c55e;
-      padding: 20px;
+      background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+      border: 2px solid #22c55e;
+      padding: 25px;
       text-align: center;
       border-radius: 10px;
       margin: 20px 0;
     }
     .rejected {
-      background: #fee2e2;
-      border: 1px solid #ef4444;
-      padding: 20px;
+      background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+      border: 2px solid #ef4444;
+      padding: 25px;
       text-align: center;
       border-radius: 10px;
       margin: 20px 0;
     }
+    .content {
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 10px;
+      border: 1px solid #e7e2d8;
+    }
+    .button {
+      display: inline-block;
+      background: #d97706;
+      color: white;
+      padding: 12px 24px;
+      text-decoration: none;
+      border-radius: 5px;
+      margin: 20px 0;
+      font-weight: bold;
+    }
+    .features-list {
+      background: #f1ece3;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+    }
+    .footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 12px;
+      color: #57534e;
+    }
   </style>
 </head>
 <body>
-  {{#if approved}}
+  ${approved ? `
   <div class="approved">
-    <h2>🎉 Congratulations, {{name}}!</h2>
-    <p>Your trainer application has been <strong>APPROVED</strong>.</p>
+    <h2>🎉 Congratulations, ${name}!</h2>
+    <p style="font-size: 18px;">Your trainer application has been <strong style="color: #15803d;">APPROVED</strong>!</p>
   </div>
-  <p>You can now:</p>
-  <ul>
-    <li>Create and manage training sessions</li>
-    <li>Track attendance for your sessions</li>
-    <li>Issue certificates to learners</li>
-    <li>Access trainer dashboard</li>
-  </ul>
-  <div style="text-align: center;">
-    <a href="{{frontendUrl}}/trainer/dashboard" style="background: #667eea; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
-      Go to Trainer Dashboard
-    </a>
+  <div class="content">
+    <p>Welcome to the AICN Trainer Community! We're thrilled to have you on board.</p>
+    
+    <div class="features-list">
+      <h3 style="color: #d97706; margin-top: 0;">✨ What you can do now:</h3>
+      <ul>
+        <li>Create and manage training sessions</li>
+        <li>Track attendance for your sessions</li>
+        <li>Issue certificates to learners</li>
+        <li>Access exclusive trainer dashboard</li>
+        <li>View analytics and feedback</li>
+      </ul>
+    </div>
+    
+    <div style="text-align: center;">
+      <a href="${frontendUrl}/trainer/dashboard" class="button">
+        🚀 Go to Trainer Dashboard
+      </a>
+    </div>
+    
+    <p>Need help getting started? Contact our trainer support team at <a href="mailto:${supportEmail}" style="color: #d97706;">${supportEmail}</a></p>
   </div>
-  {{else}}
+  ` : `
   <div class="rejected">
-    <h2>Trainer Application Update</h2>
-    <p>Dear {{name}},</p>
-    <p>Thank you for your interest in becoming a trainer. After careful review, we have decided not to proceed with your application at this time.</p>
+    <h2>📝 Trainer Application Update</h2>
+    <p>Dear <strong>${name}</strong>,</p>
+    <p>Thank you for your interest in becoming a trainer with AICN.</p>
+    <p>After careful review, we have decided not to proceed with your application at this time.</p>
+    ${reason ? `<p><strong>Reason:</strong> ${reason}</p>` : ''}
   </div>
-  <p>You may reapply in the future with additional qualifications or experience.</p>
-  {{/if}}
+  <div class="content">
+    <p>We encourage you to reapply in the future with additional qualifications or experience.</p>
+    <p>You may also:</p>
+    <ul>
+      <li>Continue as a learner to build your expertise</li>
+      <li>Attend more sessions to understand our training methodology</li>
+      <li>Gather more experience in your field</li>
+    </ul>
+    
+    <div style="text-align: center;">
+      <a href="${frontendUrl}/sessions" class="button">
+        📚 Browse Learning Sessions
+      </a>
+    </div>
+    
+    <p>Questions? Contact us at <a href="mailto:${supportEmail}" style="color: #d97706;">${supportEmail}</a></p>
+  </div>
+  `}
+  <div class="footer">
+    <p>© ${new Date().getFullYear()} AICN Training. All rights reserved.</p>
+    <p>Africa ICT & CS Network — Empowering Africa Digitally, Transforming Lives</p>
+  </div>
 </body>
 </html>
+`;

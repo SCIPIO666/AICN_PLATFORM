@@ -1,3 +1,4 @@
+module.exports = ({ name, role, tempPassword, frontendUrl, supportEmail, year }) => `
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,65 +7,88 @@
     body {
       font-family: 'Arial', sans-serif;
       line-height: 1.6;
-      color: #333;
       max-width: 600px;
       margin: 0 auto;
       padding: 20px;
+      background: #faf7f2;
     }
     .header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
       color: white;
       padding: 30px;
       text-align: center;
       border-radius: 10px 10px 0 0;
     }
     .content {
-      background: #f9fafb;
+      background: #ffffff;
       padding: 30px;
       border-radius: 0 0 10px 10px;
+      border: 1px solid #e7e2d8;
     }
     .button {
       display: inline-block;
-      background: #667eea;
+      background: #d97706;
       color: white;
       padding: 12px 24px;
       text-decoration: none;
       border-radius: 5px;
       margin: 20px 0;
+      font-weight: bold;
+    }
+    .temp-password {
+      background: #fef3c7;
+      padding: 15px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 18px;
+      text-align: center;
+      margin: 20px 0;
+      border: 1px solid #d97706;
     }
     .footer {
       text-align: center;
       padding: 20px;
       font-size: 12px;
-      color: #666;
+      color: #57534e;
     }
   </style>
 </head>
 <body>
   <div class="header">
-    <h1>Welcome to AICN Training, {{name}}! 🎉</h1>
+    <h1>Welcome to AICN, ${name}! 🎉</h1>
   </div>
   <div class="content">
-    <p>Thank you for joining our training platform. We're excited to have you on board!</p>
+    <p>Thank you for joining the <strong>Africa ICT &amp; CS Network</strong> training platform. We're excited to have you on board!</p>
     
-    <h3>What you can do next:</h3>
+    <h3>🎯 What you can do next:</h3>
     <ul>
       <li>Browse available training sessions</li>
       <li>Enroll in courses that match your interests</li>
       <li>Track your learning progress</li>
       <li>Earn certificates upon completion</li>
+      ${role === 'TRAINER' ? '<li>Create and manage your own sessions</li>' : ''}
     </ul>
     
+    ${tempPassword ? `
+    <div class="temp-password">
+      <strong>Temporary Password:</strong><br/>
+      <code style="font-size: 20px; color: #b45309;">${tempPassword}</code>
+      <p style="font-size: 12px; margin-top: 10px;">Please change this password after your first login.</p>
+    </div>
+    ` : ''}
+    
     <div style="text-align: center;">
-      <a href="{{frontendUrl}}/sessions" class="button">Explore Sessions</a>
+      <a href="${frontendUrl}/sessions" class="button">Explore Sessions</a>
     </div>
     
-    <p>If you have any questions, feel free to reply to this email or contact our support team.</p>
-    <p>Best regards,<br>The AICN Team</p>
+    <p>If you have any questions, feel free to reply to this email or contact our support team at <a href="mailto:${supportEmail}" style="color: #d97706;">${supportEmail}</a>.</p>
+    <p>Best regards,<br><strong>The AICN Team</strong></p>
+    <p style="font-style: italic; color: #d97706;">Empowering Africa Digitally, Transforming Lives</p>
   </div>
   <div class="footer">
-    <p>© 2026 AICN Training. All rights reserved.</p>
+    <p>© ${year} AICN Training. All rights reserved.</p>
     <p>You received this email because you registered on our platform.</p>
   </div>
 </body>
 </html>
+`;

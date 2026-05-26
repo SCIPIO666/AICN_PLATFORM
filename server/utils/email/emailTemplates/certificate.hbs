@@ -1,3 +1,4 @@
+module.exports = ({ name, sessionTitle, certCode, skillArea, duration, verifyUrl, year }) => `
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,75 +7,109 @@
     body {
       font-family: 'Arial', sans-serif;
       line-height: 1.6;
-      color: #333;
       max-width: 600px;
       margin: 0 auto;
       padding: 20px;
+      background: #faf7f2;
     }
-    .certificate-header {
+    .header {
+      background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+      color: white;
+      padding: 30px;
       text-align: center;
-      margin-bottom: 30px;
+      border-radius: 10px 10px 0 0;
     }
-    .certificate-icon {
-      font-size: 48px;
+    .content {
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 0 0 10px 10px;
+      border: 1px solid #e7e2d8;
     }
-    .congrats {
-      background: #f0fdf4;
-      border-left: 4px solid #22c55e;
-      padding: 15px;
+    .cert-badge {
+      text-align: center;
       margin: 20px 0;
     }
-    .cert-code {
-      background: #f3f4f6;
-      padding: 10px;
-      text-align: center;
-      font-family: monospace;
-      font-size: 18px;
+    .cert-badge svg {
+      width: 80px;
+      height: 80px;
+    }
+    .cert-details {
+      background: #f1ece3;
+      padding: 20px;
+      border-radius: 10px;
       margin: 20px 0;
-      border-radius: 5px;
+      border-left: 4px solid #d97706;
     }
     .button {
       display: inline-block;
-      background: #667eea;
+      background: #d97706;
       color: white;
       padding: 12px 24px;
       text-decoration: none;
       border-radius: 5px;
+      margin: 20px 0;
+      font-weight: bold;
+    }
+    .code {
+      font-family: monospace;
+      font-size: 16px;
+      background: #fef3c7;
+      padding: 5px 10px;
+      border-radius: 5px;
+      color: #b45309;
+    }
+    .footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 12px;
+      color: #57534e;
     }
   </style>
 </head>
 <body>
-  <div class="certificate-header">
-    <div class="certificate-icon">🏆</div>
-    <h2>Congratulations, {{name}}!</h2>
+  <div class="header">
+    <h1>🎓 Your Certificate is Ready!</h1>
   </div>
-  
-  <div class="congrats">
-    <p>You have successfully completed <strong>{{sessionTitle}}</strong>!</p>
-    <p>Your certificate is attached to this email.</p>
+  <div class="content">
+    <div class="cert-badge">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="80" height="80">
+        <circle cx="50" cy="50" r="45" fill="#d97706" opacity="0.1"/>
+        <circle cx="50" cy="50" r="35" fill="#d97706" opacity="0.2"/>
+        <polygon fill="#d97706" points="50,30 55,42 68,42 58,50 62,62 50,54 38,62 42,50 32,42 45,42"/>
+        <text x="50" y="80" text-anchor="middle" font-size="10" fill="#b45309" font-weight="bold">CERTIFIED</text>
+      </svg>
+    </div>
+    
+    <p>Dear <strong>${name}</strong>,</p>
+    <p>Congratulations on successfully completing <strong>${sessionTitle}</strong>! 🎉</p>
+    
+    <div class="cert-details">
+      <h3 style="color: #d97706; margin-top: 0;">📄 Certificate Details:</h3>
+      <p><strong>Course:</strong> ${sessionTitle}</p>
+      ${skillArea ? `<p><strong>Skill Area:</strong> ${skillArea}</p>` : ''}
+      ${duration ? `<p><strong>Duration:</strong> ${duration} hours</p>` : ''}
+      <p><strong>Certificate Code:</strong> <span class="code">${certCode}</span></p>
+    </div>
+    
+    <p>Your official certificate is attached to this email.</p>
+    
+    <div style="text-align: center;">
+      <a href="${verifyUrl}" class="button">
+        🔍 Verify Certificate Online
+      </a>
+    </div>
+    
+    <p>You can also verify this certificate anytime using the code above at: <a href="${process.env.FRONTEND_URL}/verify" style="color: #d97706;">${process.env.FRONTEND_URL}/verify</a></p>
+    
+    <p>Keep up the great work! This achievement demonstrates your commitment to professional development.</p>
+    
+    <p>Best regards,<br><strong>The AICN Team</strong></p>
+    <p style="font-style: italic; color: #d97706;">Empowering Africa Digitally, Transforming Lives</p>
   </div>
-  
-  <h3>Certificate Details:</h3>
-  <ul>
-    <li><strong>Course:</strong> {{sessionTitle}}</li>
-    <li><strong>Skill Area:</strong> {{skillArea}}</li>
-    <li><strong>Duration:</strong> {{duration}} minutes</li>
-    <li><strong>Issue Date:</strong> {{issueDate}}</li>
-  </ul>
-  
-  <div class="cert-code">
-    <strong>Certificate Code:</strong> {{certCode}}
+  <div class="footer">
+    <p>© ${year} AICN Training. All rights reserved.</p>
+    <p>Africa ICT & CS Network — Certificate of Completion</p>
   </div>
-  
-  <div style="text-align: center; margin: 30px 0;">
-    <a href="{{verifyUrl}}" class="button">Verify Certificate Online</a>
-  </div>
-  
-  <p>You can also download your certificate from your account dashboard anytime.</p>
-  
-  <hr>
-  <p style="font-size: 12px; color: #666;">
-    This is an automated message from AICN Training. Please do not reply to this email.
-  </p>
 </body>
 </html>
+`;

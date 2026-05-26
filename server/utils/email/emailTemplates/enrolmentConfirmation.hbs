@@ -1,3 +1,4 @@
+module.exports = ({ name, sessionTitle, sessionDate, sessionTime, location, duration, sessionId, trainerName, frontendUrl }) => `
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,51 +10,95 @@
       max-width: 600px;
       margin: 0 auto;
       padding: 20px;
+      background: #faf7f2;
     }
     .header {
-      background: #667eea;
+      background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
       color: white;
       padding: 20px;
       text-align: center;
       border-radius: 10px 10px 0 0;
     }
     .content {
-      background: #f9fafb;
+      background: #ffffff;
       padding: 30px;
       border-radius: 0 0 10px 10px;
+      border: 1px solid #e7e2d8;
     }
     .session-details {
-      background: white;
-      padding: 15px;
+      background: #f1ece3;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+      border-left: 4px solid #d97706;
+    }
+    .detail-row {
+      margin: 10px 0;
+    }
+    .detail-label {
+      font-weight: bold;
+      color: #b45309;
+    }
+    .button {
+      display: inline-block;
+      background: #d97706;
+      color: white;
+      padding: 12px 24px;
+      text-decoration: none;
       border-radius: 5px;
       margin: 20px 0;
-      border: 1px solid #e5e7eb;
+      font-weight: bold;
+    }
+    .footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 12px;
+      color: #57534e;
     }
   </style>
 </head>
 <body>
   <div class="header">
-    <h2>Enrolment Confirmation</h2>
+    <h2>✅ Enrolment Confirmed!</h2>
   </div>
   <div class="content">
-    <p>Dear {{name}},</p>
+    <p>Dear <strong>${name}</strong>,</p>
     <p>You have successfully enrolled in:</p>
     
     <div class="session-details">
-      <h3>{{sessionTitle}}</h3>
-      <p><strong>Date:</strong> {{sessionDate}}</p>
-      <p><strong>Time:</strong> {{sessionTime}}</p>
-      <p><strong>Location:</strong> {{location}}</p>
-      <p><strong>Duration:</strong> {{duration}} minutes</p>
+      <h3 style="color: #d97706; margin-top: 0;">📚 ${sessionTitle}</h3>
+      <div class="detail-row">
+        <span class="detail-label">🎓 Trainer:</span> ${trainerName}
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">📅 Date:</span> ${sessionDate}
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">⏰ Time:</span> ${sessionTime}
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">📍 Location:</span> ${location}
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">⏱️ Duration:</span> ${duration} minutes
+      </div>
     </div>
     
-    <p>Please check your dashboard for updates and reminders.</p>
+    <p>Please check your dashboard for updates, reminders, and session materials.</p>
     
     <div style="text-align: center;">
-      <a href="{{frontendUrl}}/sessions/{{sessionId}}" style="background: #667eea; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+      <a href="${frontendUrl}/sessions/${sessionId}" class="button">
         View Session Details
       </a>
     </div>
+    
+    <p>We look forward to seeing you at the session!</p>
+    <p>Best regards,<br><strong>The AICN Team</strong></p>
+  </div>
+  <div class="footer">
+    <p>© ${new Date().getFullYear()} AICN Training. All rights reserved.</p>
+    <p style="font-style: italic;">Empowering Africa Digitally, Transforming Lives</p>
   </div>
 </body>
 </html>
+`;
