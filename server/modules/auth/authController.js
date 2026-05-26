@@ -1,180 +1,305 @@
 const logger = require('../../utils/logger')
 const authService = require('./authService')
 
-
-
-
 /**
- * @swagger
- * /auth/login:
- *   post:
- *     summary: Login user
- *     description: Authenticates user and returns JWT token
- *     tags: [Authentication]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/LoginRequest'
- *     responses:
- *       200:
- *         description: Login successful
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/LoginResponse'
- *       401:
- *         description: Invalid credentials
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ErrorResponse'
- *       500:
- *         description: Server error
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ErrorResponse'
+ * Signup controller
  */
-async function login(req, res) {
+async function signup(req, res, next) {
     try {
-        const { email, password } = req.body
-        if (!email || !password) {
-            return res.status(400).json({ success: false, error: 'Email and password required' })
-        }
-
-        const result = await authService.login(email, password)
-        res.cookie('auth_token', result.token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            maxAge: result.expiresIn
-        })
-
-        return res.status(200).json({
-            success: true,
-            user: result.user,
-            token: result.token,
-            expiresIn: result.expiresIn
-        })
-    } catch (error) {
-        if (error.message === 'Invalid email or password') {
-            return res.status(401).json({ success: false, error: 'Invalid email or password' })
-        }
-        return res.status(500).json({ success: false, error: 'Login failed. Please try again later.' })
-    }
-}
-
-
-
-/**
- * @swagger
- * /auth/signup:
- *   post:
- *     summary: Register a new user
- *     description: Creates a new user account
- *     tags: [Authentication]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/SignupRequest'
- *     responses:
- *       201:
- *         description: User created successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                   example: User created successfully
- *                 user:
- *                   $ref: '#/components/schemas/User'
- *       400:
- *         description: Missing required fields or invalid input
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ErrorResponse'
- *       409:
- *         description: User already exists
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ErrorResponse'
- *       500:
- *         description: Server error
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ErrorResponse'
- */
-
-async function signup(req, res) {
-    try {
-        const { name, email, password, phone, county } = req.body
-
+        const { name, email, password, phone, county } = req.body;
+        
+        // Validate required fields
         if (!name || !email || !password) {
-            return res.status(400).json({ success: false, error: 'Name, email, and password are required' })
+            return res.status(400).json({
+                success: false,
+                message: 'Name, email, and password are required'
+            });
         }
-
-        const newUser = await authService.signup(name, email, password, phone, county)
-
-        return res.status(201).json({ success: true, user: newUser })
+        
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid email format'
+            });
+        }
+        
+        // Validate password strength
+        if (password.length < 6) {
+            return res.status(400).json({
+                success: false,
+                message: 'Password must be at least 6 characters long'
+            });
+        }
+        
+        const user = await authService.signup(name, email, password, phone, county);
+        
+        res.status(201).json({
+            success: true,
+            message: 'User registered successfully. Please check your email for confirmation.',
+            data: { user }
+        });
     } catch (error) {
-        logger.error(error.message)
-
-        if (error.message?.includes('already exists')) {
-            return res.status(409).json({ success: false, error: error.message })
+        logger.error(`Signup controller error: ${error.message}`);
+        
+        if (error.message.includes('already exists')) {
+            return res.status(409).json({
+                success: false,
+                message: error.message
+            });
         }
-
-        return res.status(500).json({ success: false, error: 'Signup failed. Please try again later.' })
+        
+        if (error.message.includes('deactivated')) {
+            return res.status(403).json({
+                success: false,
+                message: error.message
+            });
+        }
+        
+        res.status(500).json({
+            success: false,
+            message: error.message || 'Failed to create user'
+        });
     }
 }
 
-async function signout(req, res) {
+/**
+ * Login controller
+ */
+async function login(req, res, next) {
     try {
-        const token = req.cookies?.auth_token || req.headers.authorization?.split(' ')[1]
+        const { email, password } = req.body;
+        
+        if (!email || !password) {
+            return res.status(400).json({
+                success: false,
+                message: 'Email and password are required'
+            });
+        }
+        
+        const result = await authService.login(email, password);
+        
+        res.json({
+            success: true,
+            message: 'Login successful',
+            data: result
+        });
+    } catch (error) {
+        logger.error(`Login controller error: ${error.message}`);
+        res.status(401).json({
+            success: false,
+            message: error.message || 'Invalid credentials'
+        });
+    }
+}
 
+/**
+ * Signout controller
+ */
+async function signout(req, res, next) {
+    try {
+        const token = req.headers.authorization?.split(' ')[1];
+        
         if (!token) {
-            return res.status(400).json({ success: false, error: 'No token provided' })
+            return res.status(400).json({
+                success: false,
+                message: 'Token is required'
+            });
         }
-
-        const result = await authService.signout(token, req.userId)
-        res.clearCookie('auth_token')
-
-        return res.status(200).json({ success: true, message: result.message })
+        
+        const result = await authService.signout(token, req.user?.id);
+        
+        res.json({
+            success: true,
+            message: result.message
+        });
     } catch (error) {
-        logger.error(error.message)
-
-        if (error.message === 'Invalid token') {
-            return res.status(400).json({ success: false, error: 'Invalid token' })
-        }
-
-        return res.status(500).json({ success: false, error: 'Logout failed' })
+        logger.error(`Signout controller error: ${error.message}`);
+        res.status(500).json({
+            success: false,
+            message: error.message || 'Failed to sign out'
+        });
     }
 }
 
-async function me(req, res) {
+/**
+ * Get current user controller
+ */
+async function me(req, res, next) {
     try {
-        const user = await authService.me(req.userId)
-        return res.status(200).json({ success: true, user })
+        const user = await authService.me(req.user.id);
+        
+        res.json({
+            success: true,
+            data: { user }
+        });
     } catch (error) {
-        logger.error(error.message)
-
-        if (error.message === 'User not found') {
-            return res.status(404).json({ success: false, error: 'User not found' })
-        }
-
-        return res.status(500).json({ success: false, error: 'Failed to fetch user' })
+        logger.error(`Get user controller error: ${error.message}`);
+        res.status(404).json({
+            success: false,
+            message: error.message || 'User not found'
+        });
     }
 }
 
-module.exports = { login, signup, signout, me }
+/**
+ * Forgot password controller
+ */
+async function forgotPassword(req, res, next) {
+    try {
+        const { email } = req.body;
+        
+        if (!email) {
+            return res.status(400).json({
+                success: false,
+                message: 'Email is required'
+            });
+        }
+        
+        const result = await authService.forgotPassword(email);
+        
+        res.json({
+            success: true,
+            message: result.message
+        });
+    } catch (error) {
+        logger.error(`Forgot password controller error: ${error.message}`);
+        res.status(500).json({
+            success: false,
+            message: error.message || 'Failed to process password reset'
+        });
+    }
+}
+
+/**
+ * Reset password controller
+ */
+async function resetPassword(req, res, next) {
+    try {
+        const { token, newPassword } = req.body;
+        
+        if (!token || !newPassword) {
+            return res.status(400).json({
+                success: false,
+                message: 'Token and new password are required'
+            });
+        }
+        
+        // Validate password strength
+        if (newPassword.length < 6) {
+            return res.status(400).json({
+                success: false,
+                message: 'Password must be at least 6 characters long'
+            });
+        }
+        
+        const result = await authService.resetPassword(token, newPassword);
+        
+        res.json({
+            success: true,
+            message: result.message
+        });
+    } catch (error) {
+        logger.error(`Reset password controller error: ${error.message}`);
+        
+        if (error.message.includes('Invalid or expired')) {
+            return res.status(400).json({
+                success: false,
+                message: error.message
+            });
+        }
+        
+        res.status(500).json({
+            success: false,
+            message: error.message || 'Failed to reset password'
+        });
+    }
+}
+
+/**
+ * Change password controller (authenticated)
+ */
+async function changePassword(req, res, next) {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const userId = req.user.id;
+        
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({
+                success: false,
+                message: 'Current password and new password are required'
+            });
+        }
+        
+        // Validate password strength
+        if (newPassword.length < 6) {
+            return res.status(400).json({
+                success: false,
+                message: 'New password must be at least 6 characters long'
+            });
+        }
+        
+        const result = await authService.changePassword(userId, currentPassword, newPassword);
+        
+        res.json({
+            success: true,
+            message: result.message
+        });
+    } catch (error) {
+        logger.error(`Change password controller error: ${error.message}`);
+        
+        if (error.message.includes('Current password is incorrect')) {
+            return res.status(401).json({
+                success: false,
+                message: error.message
+            });
+        }
+        
+        res.status(500).json({
+            success: false,
+            message: error.message || 'Failed to change password'
+        });
+    }
+}
+
+/**
+ * Refresh token controller
+ */
+async function refreshToken(req, res, next) {
+    try {
+        const oldToken = req.headers.authorization?.split(' ')[1];
+        
+        if (!oldToken) {
+            return res.status(400).json({
+                success: false,
+                message: 'Token is required'
+            });
+        }
+        
+        const result = await authService.refreshToken(oldToken);
+        
+        res.json({
+            success: true,
+            message: 'Token refreshed successfully',
+            data: result
+        });
+    } catch (error) {
+        logger.error(`Refresh token controller error: ${error.message}`);
+        res.status(401).json({
+            success: false,
+            message: error.message || 'Failed to refresh token'
+        });
+    }
+}
+
+module.exports = {
+    signup,
+    login,
+    signout,
+    me,
+    forgotPassword,
+    resetPassword,
+    changePassword,
+    refreshToken
+};
