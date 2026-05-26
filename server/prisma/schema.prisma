@@ -101,25 +101,35 @@ model Enrolment {
 }
 
 model Certificate {
-  id        String @id @default(cuid())
+  id        String    @id @default(cuid())
+  certCode  String    @unique
   userId    String
   sessionId String
-
-  certCode String @unique @default(cuid())
-
-  issuedAt DateTime @default(now())
-
-  pdfUrl      String?
-  pdfPublicId String?
-
-  emailedAt DateTime?
-
+  issuedAt  DateTime  @default(now())
   revokedAt DateTime?
+
+  // PDF Storage fields
+  pdfUrl              String? // Cloudinary secure URL
+  pdfPublicId         String? // Cloudinary public ID for management
+  pdfVersion          Int? // Version for cache busting
+  pdfSize             Int? // File size in bytes
+  pdfFormat           String? // File format (pdf)
+  pdfResourceType     String? // "raw" for PDFs
+  pdfCreatedAt        DateTime? // Upload timestamp
+  pdfEtag             String? // Cache validation
+  pdfSignature        String? // Authentication signature
+  pdfAssetFolder      String? // Folder path in Cloudinary
+  pdfOriginalFilename String? // Original filename
+
+  // Error tracking
+  pdfGenerationFailed Boolean?  @default(false)
+  pdfFailureReason    String?
+  pdfFailedAt         DateTime?
 
   user    User    @relation(fields: [userId], references: [id])
   session Session @relation(fields: [sessionId], references: [id])
 
-  @@unique([userId, sessionId])
+  @@map("certificates")
 }
 
 model TrainerProfile {
