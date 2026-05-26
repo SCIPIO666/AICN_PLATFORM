@@ -111,5 +111,6 @@ app.listen(process.env.PORT,'localhost',()=>{
   devLogger.info(` Swagger UI: http://localhost:${process.env.PORT}/api-docs`);
   devLogger.info(` Swagger UI: http://localhost:${process.env.PORT}/swagger.json`);
   devLogger.info(` Health check: http://localhost:${process.env.PORT}/api/v1/health\n`);
+  
 })
 module.exports = app;

@@ -1,11 +1,6 @@
-const {
-  sendEmail,
-} = require('./emailService');
+const {sendEmail} = require('./emailService');
 
-const certificateEmailTemplate =
-  require(
-    '../templates/certificateEmail.template'
-  );
+const certificateEmailTemplate =require('../templates/certificateEmail.template');
 
 async function sendCertificateEmail({ to,name,sessionTitle,certCode,pdfBuffer}) {
 

@@ -106,12 +106,12 @@ async function generateCertificatePDF(data) {
             displayHeaderFooter: false
         });
         
-        logger.info(`✅ PDF generated successfully | Size: ${(pdfBuffer.length / 1024).toFixed(2)} KB`);
+        logger.info(`PDF generated successfully | Size: ${(pdfBuffer.length / 1024).toFixed(2)} KB`);
         
         return pdfBuffer;
         
     } catch (error) {
-        logger.error(`❌ PDF generation failed: ${error.message}`);
+        logger.error(` PDF generation failed: ${error.message}`);
         throw new Error(`Failed to generate certificate PDF: ${error.message}`);
     } finally {
         if (page) {
@@ -140,7 +140,7 @@ async function generateTestCertificate(outputPath = './test-certificate.pdf') {
     
     const pdfBuffer = await generateCertificatePDF(testData);
     fs.writeFileSync(outputPath, pdfBuffer);
-    logger.info(`📄 Test certificate saved to: ${outputPath}`);
+    logger.info(` Test certificate saved to: ${outputPath}`);
     return outputPath;
 }
 
