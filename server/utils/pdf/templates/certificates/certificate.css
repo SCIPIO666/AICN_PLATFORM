@@ -1,528 +1,573 @@
-/* Premium Certificate Template - AICN Training */
-/* Professional design with elegant typography and authentic elements */
+/* ================================================================
+   AICN CPD CERTIFICATE — v2
+   Design: Diagonal dark-panel split + gold wave sweep + warm ivory body
+   Brand palette: --brand-primary #b45309 / #d97706 amber-orange
+   Optimised for Puppeteer PDF @ A4 landscape 1122 × 794px
+   ================================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600&family=Montserrat:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Jost:wght@300;400;500;600&display=swap');
 
-/* Reset and Base Styles */
-* {
+/* ── Reset ───────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
-body {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 40px;
-  font-family: 'Montserrat', sans-serif;
+/* ── CSS Variables (brand palette) ──────────────────────────────── */
+:root {
+  /* brand */
+  --amber:         #d97706;
+  --amber-light:   #f5c842;
+  --amber-pale:    #fde68a;
+  --amber-deep:    #92400e;
+  --amber-deeper:  #78350f;
+
+  /* dark panel */
+  --panel-dark:    #121211;
+  --panel-mid:     #1a1a18;
+  --panel-edge:    #23211e;
+
+  /* body */
+  --ivory:         #faf7f2;
+  --ivory-warm:    #f1ece3;
+  --cream:         #e7e2d8;
+
+  /* text */
+  --ink:           #1c1917;
+  --ink-soft:      #292524;
+  --muted:         #57534e;
+  --faint:         #a8a29e;
+
+  /* accent */
+  --green-accent:  #15803d;
+
+  /* fonts */
+  --f-display:     'Cinzel', serif;
+  --f-body:        'Cormorant Garamond', serif;
+  --f-sans:        'Jost', sans-serif;
 }
 
-/* Main Certificate Container */
-.certificate-container {
-  max-width: 1100px;
-  width: 100%;
-  margin: 0 auto;
-  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.25));
+/* ── Page ────────────────────────────────────────────────────────── */
+html, body {
+  width:      1122px;
+  height:     794px;
+  overflow:   hidden;
+  background: #1a1a18;
 }
 
-/* Premium Certificate Card */
-.certificate {
-  background: #ffffff;
-  position: relative;
-  padding: 60px 50px 50px 50px;
-  border-radius: 4px;
-  overflow: hidden;
+/* ── Root container ──────────────────────────────────────────────── */
+.cert {
+  position:   relative;
+  width:      1122px;
+  height:     794px;
+  background: var(--ivory);
+  overflow:   hidden;
+  font-family: var(--f-sans);
 }
 
-/* Ornate Border Design */
-.certificate-border {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  right: 20px;
-  bottom: 20px;
-  border: 2px solid #d4af37;
+/* ================================================================
+   LEFT DARK PANEL — diagonal clip
+   ================================================================ */
+
+.panel {
+  position:   absolute;
+  top:        0;
+  left:       0;
+  width:      370px;
+  height:     100%;
+  background: var(--panel-dark);
+  /* diagonal right edge — sweeps right at bottom */
+  clip-path:  polygon(0 0, 100% 0, 80% 100%, 0 100%);
+  z-index:    2;
+}
+
+/* Subtle vertical texture on panel */
+.panel::before {
+  content:    '';
+  position:   absolute;
+  inset:      0;
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0px,
+    transparent 3px,
+    rgba(255,255,255,0.012) 3px,
+    rgba(255,255,255,0.012) 4px
+  );
   pointer-events: none;
-  border-radius: 2px;
 }
 
-.certificate-border::before {
-  content: '✦';
-  position: absolute;
-  top: -15px;
-  left: -15px;
-  font-size: 30px;
-  color: #d4af37;
-  background: white;
-  padding: 0 10px;
+/* Gold vertical accent stripe on panel */
+.panel::after {
+  content:    '';
+  position:   absolute;
+  top:        0;
+  right:      0;
+  width:      3px;
+  height:     100%;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    var(--amber) 20%,
+    var(--amber-light) 50%,
+    var(--amber) 80%,
+    transparent 100%
+  );
+  clip-path: none;
 }
 
-.certificate-border::after {
-  content: '✦';
-  position: absolute;
-  bottom: -15px;
-  right: -15px;
-  font-size: 30px;
-  color: #d4af37;
-  background: white;
-  padding: 0 10px;
+/* ================================================================
+   GOLD WAVE SWEEP — the hero decorative element
+   ================================================================ */
+
+.wave-sweep {
+  position:   absolute;
+  top:        0;
+  left:       0;
+  width:      100%;
+  height:     100%;
+  z-index:    3;
+  pointer-events: none;
 }
 
-/* Decorative Corner Elements */
-.corner-decoration {
-  position: absolute;
-  width: 60px;
-  height: 60px;
-  border-color: #d4af37;
-  border-style: solid;
-  z-index: 2;
+/* ================================================================
+   OUTER BORDER FRAME
+   ================================================================ */
+
+.border-frame {
+  position:   absolute;
+  inset:      14px;
+  border:     1.5px solid rgba(180, 83, 9, 0.35);
+  z-index:    10;
+  pointer-events: none;
 }
 
-.corner-tl {
-  top: 30px;
-  left: 30px;
-  border-top: 3px solid #d4af37;
-  border-left: 3px solid #d4af37;
+.border-frame-inner {
+  position:   absolute;
+  inset:      20px;
+  border:     0.75px solid rgba(180, 83, 9, 0.18);
+  z-index:    10;
+  pointer-events: none;
 }
 
-.corner-tr {
-  top: 30px;
-  right: 30px;
-  border-top: 3px solid #d4af37;
-  border-right: 3px solid #d4af37;
+/* Gold corner marks */
+.corner {
+  position:   absolute;
+  width:      40px;
+  height:     40px;
+  z-index:    11;
+}
+.corner-tl { top: 10px;    left: 10px;   border-top: 2.5px solid var(--amber); border-left:  2.5px solid var(--amber); }
+.corner-tr { top: 10px;    right: 10px;  border-top: 2.5px solid var(--amber); border-right: 2.5px solid var(--amber); }
+.corner-bl { bottom: 10px; left: 10px;   border-bottom: 2.5px solid var(--amber); border-left:  2.5px solid var(--amber); }
+.corner-br { bottom: 10px; right: 10px;  border-bottom: 2.5px solid var(--amber); border-right: 2.5px solid var(--amber); }
+
+/* ================================================================
+   PANEL CONTENT (left dark side)
+   ================================================================ */
+
+.panel-content {
+  position:       absolute;
+  top:            0;
+  left:           0;
+  width:          296px; /* narrower than panel clip to stay clear of diagonal */
+  height:         100%;
+  z-index:        5;
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  justify-content: center;
+  padding:        50px 28px 50px 36px;
+  gap:            20px;
 }
 
-.corner-bl {
-  bottom: 30px;
-  left: 30px;
-  border-bottom: 3px solid #d4af37;
-  border-left: 3px solid #d4af37;
+.panel-logo-ring {
+  width:        80px;
+  height:       80px;
+  border:       2.5px solid var(--amber);
+  border-radius: 50%;
+  display:      flex;
+  align-items:  center;
+  justify-content: center;
+  position:     relative;
 }
 
-.corner-br {
-  bottom: 30px;
-  right: 30px;
-  border-bottom: 3px solid #d4af37;
-  border-right: 3px solid #d4af37;
+.panel-logo-ring::before {
+  content:      '';
+  position:     absolute;
+  inset:        6px;
+  border:       1px solid rgba(217, 119, 6, 0.4);
+  border-radius: 50%;
 }
 
-/* Header Section */
-.certificate-header {
-  text-align: center;
-  margin-bottom: 30px;
-  position: relative;
-}
-
-.institution-name {
-  font-family: 'Cinzel', serif;
-  font-size: 42px;
-  font-weight: 800;
-  color: #1a1a2e;
-  letter-spacing: 4px;
-  margin-bottom: 8px;
-  text-transform: uppercase;
-  position: relative;
-  display: inline-block;
-}
-
-.institution-name::before,
-.institution-name::after {
-  content: '✦';
-  font-size: 24px;
-  color: #d4af37;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.institution-name::before {
-  left: -40px;
-}
-
-.institution-name::after {
-  right: -40px;
-}
-
-.institution-subtitle {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 12px;
-  color: #666;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  border-top: 1px solid #e0e0e0;
-  border-bottom: 1px solid #e0e0e0;
-  display: inline-block;
-  padding: 8px 20px;
-}
-
-/* Seal/Logo Area */
-.seal {
-  text-align: center;
-  margin: 20px 0;
-}
-
-.seal-icon {
-  font-size: 48px;
-  color: #d4af37;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-  display: inline-block;
-  animation: none;
-}
-
-/* Certificate Title */
-.certificate-title {
-  text-align: center;
-  margin: 30px 0 20px;
-}
-
-.certificate-title h2 {
-  font-family: 'Cinzel', serif;
-  font-size: 48px;
-  font-weight: 700;
-  color: #1a1a2e;
-  letter-spacing: 6px;
-  text-transform: uppercase;
-  position: relative;
-  display: inline-block;
-  padding: 0 30px;
-}
-
-.certificate-title h2::before,
-.certificate-title h2::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  width: 60px;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #d4af37, transparent);
-}
-
-.certificate-title h2::before {
-  right: 100%;
-  background: linear-gradient(90deg, #d4af37, transparent);
-}
-
-.certificate-title h2::after {
-  left: 100%;
-  background: linear-gradient(90deg, transparent, #d4af37);
-}
-
-.subtitle {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 14px;
-  color: #666;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  margin-top: 10px;
-}
-
-/* Recipient Section */
-.recipient-section {
-  text-align: center;
-  margin: 40px 0;
-}
-
-.presented-to {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 18px;
-  color: #555;
+.panel-logo-text {
+  font-family:    var(--f-display);
+  font-size:      22px;
+  font-weight:    700;
+  color:          var(--amber-light);
   letter-spacing: 2px;
+  position:       relative;
+  z-index:        1;
+}
+
+.panel-org {
+  font-family:    var(--f-display);
+  font-size:      8.5px;
+  font-weight:    600;
+  letter-spacing: 3.5px;
   text-transform: uppercase;
-  margin-bottom: 15px;
+  color:          var(--amber);
+  text-align:     center;
+  line-height:    1.7;
 }
 
-.recipient-name {
-  font-family: 'Playfair Display', serif;
-  font-size: 56px;
-  font-weight: 800;
-  color: #1a1a2e;
-  letter-spacing: 2px;
-  margin: 20px 0;
-  position: relative;
-  display: inline-block;
-  padding: 0 30px;
+.panel-rule {
+  width:      100%;
+  height:     1px;
+  background: linear-gradient(90deg, transparent, var(--amber), transparent);
 }
 
-.recipient-name::before,
-.recipient-name::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  width: 80px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, #d4af37, transparent);
+.panel-tagline {
+  font-family: var(--f-body);
+  font-size:   13px;
+  font-style:  italic;
+  color:       rgba(253, 230, 138, 0.55);
+  text-align:  center;
+  line-height: 1.7;
 }
 
-.recipient-name::before {
-  right: 100%;
-  background: linear-gradient(90deg, #d4af37, transparent);
+/* Seal badge on panel */
+.panel-seal {
+  margin-top:  8px;
 }
 
-.recipient-name::after {
-  left: 100%;
-  background: linear-gradient(90deg, transparent, #d4af37);
+.panel-seal img, .panel-seal svg {
+  width:  80px;
+  height: 80px;
 }
 
-/* Course Details */
-.course-details {
-  text-align: center;
-  margin: 30px 0;
+/* Year circle on panel bottom */
+.panel-year {
+  width:        56px;
+  height:       56px;
+  border:       2px solid rgba(217, 119, 6, 0.5);
+  border-radius: 50%;
+  display:      flex;
+  align-items:  center;
+  justify-content: center;
+  margin-top:   auto;
 }
 
-.course-text {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 16px;
-  color: #555;
+.panel-year-text {
+  font-family:    var(--f-display);
+  font-size:      13px;
+  font-weight:    700;
+  color:          var(--amber);
   letter-spacing: 1px;
 }
 
-.course-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 32px;
-  font-weight: 700;
-  color: #d4af37;
-  margin: 15px 0;
-  padding: 10px 0;
-  border-top: 2px solid #f0f0f0;
-  border-bottom: 2px solid #f0f0f0;
-  display: inline-block;
+/* ================================================================
+   MAIN BODY (right area)
+   ================================================================ */
+
+.cert-body {
+  position:       absolute;
+  top:            0;
+  left:           310px;   /* clears the diagonal panel */
+  right:          0;
+  height:         100%;
+  z-index:        6;
+  display:        flex;
+  flex-direction: column;
+  padding:        42px 52px 36px 60px;
 }
 
-.course-meta {
-  display: flex;
-  justify-content: center;
-  gap: 40px;
-  margin-top: 20px;
+/* ── Title block ─────────────────────────────────────────────────── */
+.cert-title-block {
+  margin-bottom: 6px;
+}
+
+.cert-pre-title {
+  font-family:    var(--f-sans);
+  font-size:      9.5px;
+  font-weight:    500;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color:          var(--amber-deep);
+  margin-bottom:  4px;
+}
+
+.cert-main-title {
+  font-family:    var(--f-display);
+  font-size:      36px;
+  font-weight:    900;
+  color:          var(--ink);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  line-height:    1;
+}
+
+.cert-main-title span {
+  color:          var(--amber);
+}
+
+/* Gold rule under title */
+.title-rule {
+  display:    flex;
+  align-items: center;
+  gap:        10px;
+  margin:     10px 0 14px;
+}
+
+.title-rule-line {
+  height:     1.5px;
+  background: linear-gradient(90deg, var(--amber), transparent);
+}
+
+.title-rule-line.long  { flex: 2; }
+.title-rule-line.short { flex: 1; }
+
+.title-rule-diamond {
+  width:     7px;
+  height:    7px;
+  background: var(--amber);
+  transform:  rotate(45deg);
+  flex-shrink: 0;
+}
+
+/* ── Presented to ────────────────────────────────────────────────── */
+.cert-presented {
+  font-family:    var(--f-sans);
+  font-size:      10px;
+  font-weight:    400;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color:          var(--muted);
+  margin-bottom:  4px;
+}
+
+/* ── Recipient name ──────────────────────────────────────────────── */
+.cert-name {
+  font-family:    var(--f-body);
+  font-size:      52px;
+  font-weight:    600;
+  font-style:     italic;
+  color:          var(--ink);
+  line-height:    1.05;
+  letter-spacing: 0.5px;
+  position:       relative;
+  display:        inline-block;
+  margin-bottom:  2px;
+}
+
+/* Underline flourish */
+.name-underline {
+  height:     1.5px;
+  width:      100%;
+  max-width:  520px;
+  background: linear-gradient(90deg, var(--amber), var(--amber-light) 50%, transparent);
+  margin-bottom: 16px;
+}
+
+/* ── Course line ─────────────────────────────────────────────────── */
+.cert-course-label {
+  font-family:    var(--f-sans);
+  font-size:      9px;
+  letter-spacing: 3.5px;
+  text-transform: uppercase;
+  color:          var(--muted);
+  margin-bottom:  4px;
+}
+
+.cert-course-name {
+  font-family:    var(--f-display);
+  font-size:      17px;
+  font-weight:    600;
+  color:          var(--amber-deep);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom:  14px;
+}
+
+/* ── Meta row ────────────────────────────────────────────────────── */
+.cert-meta {
+  display:   flex;
+  gap:       28px;
   flex-wrap: wrap;
+  margin-bottom: 14px;
 }
 
-.meta-item {
-  text-align: center;
+.meta-block {
+  display:        flex;
+  flex-direction: column;
+  gap:            2px;
 }
 
 .meta-label {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 11px;
+  font-family:    var(--f-sans);
+  font-size:      8px;
+  letter-spacing: 2.5px;
   text-transform: uppercase;
-  color: #999;
-  letter-spacing: 2px;
-  margin-bottom: 5px;
+  color:          var(--faint);
 }
 
 .meta-value {
-  font-family: 'Playfair Display', serif;
-  font-size: 14px;
-  color: #333;
+  font-family: var(--f-body);
+  font-size:   13px;
   font-weight: 600;
+  color:       var(--ink-soft);
 }
 
-/* Description Section */
-.description-section {
-  text-align: center;
-  margin: 30px 0;
-  padding: 0 40px;
+/* CPD badge inline */
+.cpd-pill {
+  display:        inline-flex;
+  align-items:    center;
+  gap:            5px;
+  background:     rgba(180, 83, 9, 0.08);
+  border:         1px solid rgba(180, 83, 9, 0.25);
+  padding:        3px 10px;
+  border-radius:  20px;
+  margin-bottom:  12px;
 }
 
-.description-text {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 13px;
-  line-height: 1.8;
-  color: #666;
-  font-style: italic;
+.cpd-pill-dot {
+  width:        6px;
+  height:       6px;
+  background:   var(--amber);
+  border-radius: 50%;
+  flex-shrink:  0;
 }
 
-/* Footer Section */
-.certificate-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-top: 40px;
-  padding-top: 30px;
-  border-top: 2px solid #f0f0f0;
-  position: relative;
-}
-
-.signature-area {
-  text-align: center;
-  flex: 1;
-}
-
-.signature-line {
-  width: 200px;
-  height: 1px;
-  background: #333;
-  margin: 10px auto;
-  position: relative;
-}
-
-.signature-line::before {
-  content: '●';
-  position: absolute;
-  left: -10px;
-  top: -4px;
-  font-size: 8px;
-  color: #d4af37;
-}
-
-.signature-line::after {
-  content: '●';
-  position: absolute;
-  right: -10px;
-  top: -4px;
-  font-size: 8px;
-  color: #d4af37;
-}
-
-.signature-name {
-  font-family: 'Playfair Display', serif;
-  font-size: 14px;
-  font-weight: 600;
-  color: #333;
-  margin-top: 10px;
-}
-
-.signature-title {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 10px;
-  color: #999;
+.cpd-pill-text {
+  font-family:    var(--f-sans);
+  font-size:      8.5px;
+  font-weight:    500;
+  letter-spacing: 2px;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-top: 4px;
+  color:          var(--amber-deep);
 }
 
-.qr-area {
-  text-align: center;
-  flex: 1;
+/* ── Footer ──────────────────────────────────────────────────────── */
+.cert-footer {
+  margin-top:    auto;
+  padding-top:   14px;
+  border-top:    1px solid var(--cream);
+  display:       flex;
+  align-items:   flex-end;
+  justify-content: space-between;
+  gap:           16px;
 }
 
-.qr-code {
-  display: inline-block;
-  padding: 8px;
-  background: white;
-  border-radius: 8px;
+/* Signature blocks */
+.sig-block {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  gap:            3px;
+  min-width:      150px;
 }
 
-.qr-code img {
-  width: 80px;
-  height: 80px;
-  display: block;
+.sig-image {
+  height:      36px;
+  margin-bottom: 2px;
+}
+
+.sig-line {
+  width:      150px;
+  height:     1px;
+  background: var(--amber-deep);
+  opacity:    0.5;
+}
+
+.sig-name {
+  font-family:    var(--f-body);
+  font-size:      12px;
+  font-weight:    600;
+  font-style:     italic;
+  color:          var(--ink);
+}
+
+.sig-title {
+  font-family:    var(--f-sans);
+  font-size:      7.5px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color:          var(--faint);
+}
+
+/* QR block */
+.qr-block {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  gap:            5px;
+}
+
+.qr-frame {
+  padding:        5px;
+  border:         1.5px solid var(--amber);
+  border-radius:  4px;
+  background:     white;
+}
+
+.qr-frame img {
+  width:        72px;
+  height:       72px;
+  display:      block;
 }
 
 .qr-label {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 9px;
-  color: #999;
-  margin-top: 5px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.seal-area {
-  text-align: center;
-  flex: 1;
-}
-
-.seal-stamp {
-  font-size: 48px;
-  opacity: 0.8;
-}
-
-/* Certificate ID Section */
-.certificate-id {
-  text-align: center;
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px solid #f0f0f0;
-}
-
-.id-label {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 9px;
-  color: #999;
-  text-transform: uppercase;
+  font-family:    var(--f-sans);
+  font-size:      7px;
   letter-spacing: 2px;
-  display: block;
-  margin-bottom: 5px;
+  text-transform: uppercase;
+  color:          var(--faint);
 }
 
-.id-value {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 11px;
-  color: #666;
-  letter-spacing: 1px;
+/* Cert code block */
+.code-block {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  gap:            3px;
 }
 
-
-.verify-url {
-  text-align: center;
-  margin-top: 10px;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 9px;
-  color: #bbb;
+.code-label {
+  font-family:    var(--f-sans);
+  font-size:      7px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color:          var(--faint);
 }
 
-
-.certificate::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: radial-gradient(circle at 10% 20%, rgba(212, 175, 55, 0.02) 1px, transparent 1px);
-  background-size: 30px 30px;
-  pointer-events: none;
-  z-index: 0;
+.code-value {
+  font-family:    'Courier New', monospace;
+  font-size:      10px;
+  font-weight:    700;
+  letter-spacing: 2.5px;
+  color:          var(--ink-soft);
+  background:     var(--ivory-warm);
+  border:         1px solid var(--cream);
+  padding:        3px 10px;
 }
 
-
-@media print {
-  body {
-    background: white;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .certificate-container {
-    box-shadow: none;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .certificate {
-    border-radius: 0;
-    padding: 40px;
-  }
-  
-  .qr-code img {
-    print-color-adjust: exact;
-    -webkit-print-color-adjust: exact;
-  }
+.code-verify {
+  font-family: var(--f-sans);
+  font-size:   7px;
+  color:       var(--faint);
+  letter-spacing: 0.5px;
 }
 
-@media (max-width: 768px) {
-  .certificate {
-    padding: 30px 20px;
-  }
-  
-  .recipient-name {
-    font-size: 36px;
-  }
-  
-  .course-title {
-    font-size: 24px;
-  }
-  
-  .certificate-footer {
-    flex-direction: column;
-    gap: 20px;
-    align-items: center;
-  }
-  
-  .signature-area, .qr-area, .seal-area {
-    width: 100%;
-  }
+/* Excellence badge area */
+.badge-area {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  gap:            3px;
+}
+
+.badge-area img,
+.badge-area svg {
+  width:  70px;
+  height: 70px;
 }

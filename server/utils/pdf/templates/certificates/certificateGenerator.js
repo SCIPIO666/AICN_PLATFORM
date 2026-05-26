@@ -7,6 +7,18 @@ const QRCode = require('qrcode');
  * @param {Object} data - Certificate data
  * @returns {Promise<string>} Complete HTML string
  */
+
+// data object---- {
+// verifyUrl,
+// userName,
+// sessionTitle,
+//  skillArea ,
+//     duration ,
+//    completionDate ,
+//    issueDate,
+//  trainerName 
+
+// }
 async function generateCertificateHTML(data) {
     // Read CSS file
     const cssPath = path.join(__dirname, 'certificate.css');

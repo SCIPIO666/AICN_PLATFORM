@@ -11,7 +11,7 @@ datasource db {
   provider = "postgresql"
 }
 
-// ─── ENUMS ───────────────────────────────────────────────────────────────────
+//enums
 
 enum Role {
   LEARNER
@@ -44,7 +44,7 @@ enum TrainerStatus {
   REJECTED
 }
 
-// ─── MODELS ──────────────────────────────────────────────────────────────────
+//models
 
 model User {
   id        String   @id @default(cuid())

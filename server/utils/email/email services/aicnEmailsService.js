@@ -7,40 +7,12 @@ const certificateEmailTemplate =
     '../templates/certificateEmail.template'
   );
 
-async function sendCertificateEmail({
-
-  to,
-
-  name,
-
-  sessionTitle,
-
-  certCode,
-
-  pdfBuffer,
-
-}) {
+async function sendCertificateEmail({ to,name,sessionTitle,certCode,pdfBuffer}) {
 
   const html =
-    certificateEmailTemplate({
+    certificateEmailTemplate({name,sessionTitle,certCode,});
 
-      name,
-
-      sessionTitle,
-
-      certCode,
-    });
-
-  return await sendEmail({
-
-    to,
-
-    subject:
-      'Your AICN Certificate',
-
-    html,
-
-    attachments: [
+  return await sendEmail({to,subject:'Your AICN Certificate',html,attachments: [
       {
         filename: `${certCode}.pdf`,
 
@@ -61,10 +33,14 @@ async function sendCertificateEmail({
   async function sendWelcomeEmail(){
 
   }
+  async function sendPasswordResetEmail(){
+
+  }
 module.exports ={
   sendCertificateEmail,
   sendEnrolmentConfirmationEmail,
   sendTrainerApprovalEmail,
-  sendWelcomeEmail
+  sendWelcomeEmail,
+  sendPasswordResetEmail
 
 }

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 110" width="90" height="110">
+  <defs>
+    <radialGradient id="medal-top" cx="50%" cy="30%" r="70%">
+      <stop offset="0%"   stop-color="#fde68a"/>
+      <stop offset="60%"  stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#78350f"/>
+    </radialGradient>
+    <radialGradient id="medal-ring" cx="40%" cy="35%" r="70%">
+      <stop offset="0%"   stop-color="#f5c842"/>
+      <stop offset="100%" stop-color="#92400e"/>
+    </radialGradient>
+    <filter id="m-shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#00000035"/>
+    </filter>
+  </defs>
+
+  <!-- Ribbon left -->
+  <polygon fill="#1c1917" points="27,0 45,0 45,68 30,58 15,68 15,0" />
+  <polygon fill="#292524" points="30,0 45,0 45,68 37,62 30,56 30,0"/>
+  <!-- Ribbon right -->
+  <polygon fill="#1c1917" points="45,0 63,0 75,68 60,58 45,68 45,0"/>
+  <polygon fill="#292524" points="45,0 60,0 60,56 53,62 45,68 45,0"/>
+
+  <!-- Ribbon gold trim lines -->
+  <line x1="30" y1="0" x2="30" y2="56" stroke="#d97706" stroke-width="1.5"/>
+  <line x1="60" y1="0" x2="60" y2="56" stroke="#d97706" stroke-width="1.5"/>
+
+  <!-- Medal circle -->
+  <circle cx="45" cy="75" r="30" fill="url(#medal-ring)" filter="url(#m-shadow)"/>
+  <circle cx="45" cy="75" r="26" fill="#1c1917"/>
+  <circle cx="45" cy="75" r="23" fill="none" stroke="#d97706" stroke-width="1.2"/>
+  <circle cx="45" cy="75" r="19" fill="url(#medal-top)" opacity="0.15"/>
+
+  <!-- Checkmark -->
+  <path d="M34 75 L41 82 L57 67" fill="none" stroke="#f5c842" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- CPD text -->
+  <text x="45" y="102" text-anchor="middle" font-family="Georgia,serif" font-size="7" fill="#d97706" letter-spacing="2">CPD VERIFIED</text>
+</svg>

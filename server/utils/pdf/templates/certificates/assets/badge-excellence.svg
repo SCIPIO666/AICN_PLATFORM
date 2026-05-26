@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <radialGradient id="wreath-center" cx="50%" cy="40%" r="65%">
+      <stop offset="0%"   stop-color="#fde68a"/>
+      <stop offset="50%"  stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#78350f"/>
+    </radialGradient>
+    <filter id="w-shadow">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#00000030"/>
+    </filter>
+  </defs>
+
+  <!-- Laurel wreath left side — leaf cluster -->
+  <g fill="#15803d" opacity="0.85">
+    <ellipse cx="18" cy="50" rx="7" ry="12" transform="rotate(-30 18 50)"/>
+    <ellipse cx="14" cy="40" rx="6" ry="11" transform="rotate(-15 14 40)"/>
+    <ellipse cx="16" cy="30" rx="5.5" ry="10" transform="rotate(5 16 30)"/>
+    <ellipse cx="22" cy="22" rx="5" ry="9" transform="rotate(20 22 22)"/>
+    <ellipse cx="30" cy="17" rx="4.5" ry="8" transform="rotate(38 30 17)"/>
+    <ellipse cx="22" cy="60" rx="6" ry="10" transform="rotate(-45 22 60)"/>
+    <ellipse cx="20" cy="70" rx="5.5" ry="9" transform="rotate(-60 20 70)"/>
+    <ellipse cx="24" cy="78" rx="5" ry="8" transform="rotate(-75 24 78)"/>
+  </g>
+  <!-- Wreath right side -->
+  <g fill="#15803d" opacity="0.85">
+    <ellipse cx="82" cy="50" rx="7" ry="12" transform="rotate(30 82 50)"/>
+    <ellipse cx="86" cy="40" rx="6" ry="11" transform="rotate(15 86 40)"/>
+    <ellipse cx="84" cy="30" rx="5.5" ry="10" transform="rotate(-5 84 30)"/>
+    <ellipse cx="78" cy="22" rx="5" ry="9" transform="rotate(-20 78 22)"/>
+    <ellipse cx="70" cy="17" rx="4.5" ry="8" transform="rotate(-38 70 17)"/>
+    <ellipse cx="78" cy="60" rx="6" ry="10" transform="rotate(45 78 60)"/>
+    <ellipse cx="80" cy="70" rx="5.5" ry="9" transform="rotate(60 80 70)"/>
+    <ellipse cx="76" cy="78" rx="5" ry="8" transform="rotate(75 76 78)"/>
+  </g>
+
+  <!-- Gold stem lines -->
+  <path d="M26 85 Q50 90 74 85" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round"/>
+  <path d="M22 14 Q50 8 78 14" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Center circle -->
+  <circle cx="50" cy="50" r="28" fill="url(#wreath-center)" filter="url(#w-shadow)"/>
+  <circle cx="50" cy="50" r="24" fill="#1c1917"/>
+  <circle cx="50" cy="50" r="21" fill="none" stroke="#d97706" stroke-width="1"/>
+
+  <!-- Star -->
+  <polygon fill="#f5c842" points="50,32 53.5,43 65,43 55.5,50 59,61 50,54 41,61 44.5,50 35,43 46.5,43"/>
+
+  <!-- Excellence text arc (simulated with tspan) -->
+  <text x="50" y="71" text-anchor="middle" font-family="Georgia,serif" font-size="5.5" fill="#d97706" letter-spacing="1.8">EXCELLENCE</text>
+</svg>
