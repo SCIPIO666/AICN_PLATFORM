@@ -16,31 +16,34 @@ const getStats = async (req, res, next) => {
 
 const getAllUsers = async (req, res, next) => {
   try {
-    const filters = {};
-    if (req.query.role) filters.role = req.query.role;
-    if (req.query.search) filters.search = req.query.search;
+   
+    const { role, search, page, limit } = req.query;
     
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+   
+    const filters = {};
+    if (role) filters.role = role;
+    if (search) filters.search = search;
+    
+    
     const skip = (page - 1) * limit;
     
     const result = await adminService.getAllUsers(
       filters,
       skip,           
-      limit,         
+      limit,          /
       req.user.id,    
       req.user.role   
     );
     
-    // Calculate pagination metadata
+   
     const totalPages = Math.ceil(result.total / limit);
     
     res.status(200).json({
       success: true,
       data: result.users,
       pagination: {
-        page: page,
-        limit: limit,
+        page: page,          
+        limit: limit,       
         total: result.total,
         totalPages: totalPages,
         hasNextPage: page < totalPages,
@@ -53,31 +56,18 @@ const getAllUsers = async (req, res, next) => {
   }
 };
 
-async function updateUserRoleController(req, res) {
+
+const updateUserRoleController = async (req, res, next) => {
   try {
-    const { userId, newRole } = req.params || req.body;
-    const adminId = req.user?.id; 
-    const adminRole = req.user?.role;
-    const { approvalMessage, rejectionReason, isRejection } = req.body;
-
-    if (!userId) {
-      return res.status(400).json({
-        success: false,
-        message: 'User ID is required'
-      });
-    }
-
-    if (!newRole) {
-      return res.status(400).json({
-        success: false,
-        message: 'New role is required'
-      });
-    }
-    const updatedUser = await adminRole.updateUserRole(
+  
+    const { userId } = req.params;      
+    const { newRole, approvalMessage, rejectionReason, isRejection } = req.body;
+    
+    const updatedUser = await adminService.updateUserRole(
       userId, 
       newRole, 
-      adminId, 
-      adminRole,
+      req.user.id, 
+      req.user.role,
       {
         approvalMessage,
         rejectionReason,
@@ -135,13 +125,11 @@ async function updateUserRoleController(req, res) {
       error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
-}
+};
 
-/**
- * POST /api/admin/announcements - ADMIN only
- */
 const createAnnouncement = async (req, res, next) => {
   try {
+
     const announcement = await adminService.createAnnouncement(
       req.body,
       req.user.id,
@@ -159,18 +147,18 @@ const createAnnouncement = async (req, res, next) => {
   }
 };
 
-/**
- * GET /api/admin/announcements - ADMIN only
- */
 const getAllAnnouncements = async (req, res, next) => {
   try {
+
+    const { audience, page, limit } = req.query;
+    
     const filters = {};
-    if (req.query.audience) filters.audience = req.query.audience;
+    if (audience) filters.audience = audience;
     
     const result = await adminService.getAllAnnouncements(
       filters,
-      req.query.page,
-      req.query.limit,
+      page,   
+      limit,  
       req.user.id,
       req.user.role
     );
@@ -185,14 +173,15 @@ const getAllAnnouncements = async (req, res, next) => {
   }
 };
 
-/**
- * PUT /api/admin/announcements/:id - ADMIN only
- */
 const updateAnnouncement = async (req, res, next) => {
   try {
+
+    const { id } = req.params;  
+    const updateData = req.body; 
+    
     const updated = await adminService.updateAnnouncement(
-      req.params.id,
-      req.body,
+      id,
+      updateData,
       req.user.id,
       req.user.role
     );
@@ -208,13 +197,12 @@ const updateAnnouncement = async (req, res, next) => {
   }
 };
 
-/**
- * DELETE /api/admin/announcements/:id - ADMIN only
- */
 const deleteAnnouncement = async (req, res, next) => {
   try {
+    const { id } = req.params;  
+    
     await adminService.deleteAnnouncement(
-      req.params.id,
+      id,
       req.user.id,
       req.user.role
     );
@@ -232,7 +220,7 @@ const deleteAnnouncement = async (req, res, next) => {
 module.exports = {
   getStats,
   getAllUsers,
-  updateUserRole,
+  updateUserRoleController, 
   createAnnouncement,
   getAllAnnouncements,
   updateAnnouncement,
