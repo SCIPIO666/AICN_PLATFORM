@@ -185,7 +185,7 @@ async function deleteUser(email) {
     }
 }
 
-async function createUser(name, email, password, phone, county) {
+async function createUser(name, email, password, phone, county,role = 'LEARNER') {
     try {
         // if user already exists
         const existingUser = await prisma.user.findUnique({
@@ -209,7 +209,7 @@ async function createUser(name, email, password, phone, county) {
                 password: hashedPassword,
                 phone,
                 county,
-                role: 'LEARNER' // default,later apply for role upgrade
+                role
             },
             select: {
                 id: true,

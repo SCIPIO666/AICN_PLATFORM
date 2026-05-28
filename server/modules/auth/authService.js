@@ -83,8 +83,9 @@ async function signout(token, userId) {
 
 /**
  * Signup new user with welcome email
+ * FIXED: Added role parameter with default value
  */
-async function signup(name, email, password, phone, county) {
+async function signup(name, email, password, phone, county, role = 'LEARNER') {
     try {
         // Check for existing user
         const existingUser = await findUser(email);
@@ -95,8 +96,8 @@ async function signup(name, email, password, phone, county) {
             throw new Error(`User with email ${email} already exists`);
         }
         
-        // Create new user
-        const newUser = await createUser(name, email, password, phone, county);
+        // Create new user with role
+        const newUser = await createUser(name, email, password, phone, county, role);
         
         // Send welcome email (non-blocking)
         sendWelcomeEmail({
@@ -115,7 +116,7 @@ async function signup(name, email, password, phone, county) {
             });
         });
         
-        logger.info(`New user registered: ${newUser.email} (ID: ${newUser.id})`);
+        logger.info(`New user registered: ${newUser.email} (ID: ${newUser.id}, Role: ${newUser.role})`);
         
         // Return user without password
         const { password: _, ...safeUser } = newUser;
@@ -133,7 +134,10 @@ async function me(userId) {
     try {
         const user = await findUserById(userId);
         if (!user) throw new Error('User not found');
-        return user;
+        
+        // Remove password from response
+        const { password: _, ...safeUser } = user;
+        return safeUser;
     } catch (error) {
         logger.error(`Get user failed for ${userId}: ${error.message}`);
         throw error;
@@ -172,8 +176,8 @@ async function forgotPassword(email) {
         // Find user
         const user = await findUser(email);
         if (!user) {
-            //  for security no revealing user doesnt exist
-            return { success: true, message: 'reset link will be sent to user email' };
+            // For security, don't reveal that user doesn't exist
+            return { success: true, message: 'If an account exists with this email, a password reset link will be sent.' };
         }
         
         // Generate reset token
@@ -204,10 +208,10 @@ async function forgotPassword(email) {
             logger.info(`Password reset email sent to ${user.email}`);
         } catch (emailError) {
             logger.error(`Failed to send password reset email to ${user.email}:`, emailError);
-            // always returning success for security
+            // Still return success for security
         }
         
-        return { success: true, message: 'Password reset email sent' };
+        return { success: true, message: 'If an account exists with this email, a password reset link will be sent.' };
     } catch (error) {
         logger.error(`Forgot password failed for ${email}: ${error.message}`);
         throw error;
@@ -219,7 +223,7 @@ async function forgotPassword(email) {
  */
 async function resetPassword(token, newPassword) {
     try {
-        //valid token
+        // Find valid token
         const user = await prisma.user.findFirst({
             where: {
                 resetPasswordToken: token,
@@ -236,7 +240,7 @@ async function resetPassword(token, newPassword) {
         // Hash new password
         const hashedPassword = await bcrypt.hash(newPassword, 12);
         
-        // Updating passwords
+        // Update password and clear reset token
         await prisma.user.update({
             where: { id: user.id },
             data: {
@@ -248,7 +252,7 @@ async function resetPassword(token, newPassword) {
         
         logger.info(`Password reset successful for ${user.email}`);
         
-        return { success: true, message: 'Password has been reset' };
+        return { success: true, message: 'Password has been reset successfully' };
     } catch (error) {
         logger.error(`Reset password failed: ${error.message}`);
         throw error;
@@ -272,6 +276,11 @@ async function changePassword(userId, currentPassword, newPassword) {
         const isValid = await bcrypt.compare(currentPassword, user.password);
         if (!isValid) {
             throw new Error('Current password is incorrect');
+        }
+        
+        // Validate new password strength (additional security)
+        if (newPassword.length < 6) {
+            throw new Error('New password must be at least 6 characters');
         }
         
         const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -324,6 +333,8 @@ async function refreshToken(oldToken) {
                 expiresAt: new Date(decoded.exp * 1000)
             }
         });
+        
+        logger.info(`Token refreshed for user ${decoded.email}`);
         
         return {
             token: newToken,

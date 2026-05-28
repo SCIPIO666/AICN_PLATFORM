@@ -1,44 +1,20 @@
-const logger = require('../../utils/logger')
-const authService = require('./authService')
+const logger = require('../../utils/logger');
+const authService = require('./authService');
 
 /**
  * Signup controller
+ * NOTE: Request body is already validated by middleware
  */
 async function signup(req, res, next) {
     try {
-        const { name, email, password, phone, county } = req.body;
+        const { name, email, password, phone, county, role } = req.body;
         
-        // Validate required fields
-        if (!name || !email || !password) {
-            return res.status(400).json({
-                success: false,
-                message: 'Name, email, and password are required'
-            });
-        }
-        
-        // Validate email format
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid email format'
-            });
-        }
-        
-        // Validate password strength
-        if (password.length < 6) {
-            return res.status(400).json({
-                success: false,
-                message: 'Password must be at least 6 characters long'
-            });
-        }
-        
-        const user = await authService.signup(name, email, password, phone, county);
+        const user = await authService.signup(name, email, password, phone, county, role);
         
         res.status(201).json({
             success: true,
             message: 'User registered successfully. Please check your email for confirmation.',
-            data: { user }
+            data: { user: { id: user.id, name: user.name, email: user.email, role: user.role } }
         });
     } catch (error) {
         logger.error(`Signup controller error: ${error.message}`);
@@ -57,26 +33,17 @@ async function signup(req, res, next) {
             });
         }
         
-        res.status(500).json({
-            success: false,
-            message: error.message || 'Failed to create user'
-        });
+        next(error); 
     }
 }
 
 /**
  * Login controller
+ * NOTE: Request body is already validated by middleware
  */
 async function login(req, res, next) {
     try {
         const { email, password } = req.body;
-        
-        if (!email || !password) {
-            return res.status(400).json({
-                success: false,
-                message: 'Email and password are required'
-            });
-        }
         
         const result = await authService.login(email, password);
         
@@ -87,6 +54,7 @@ async function login(req, res, next) {
         });
     } catch (error) {
         logger.error(`Login controller error: ${error.message}`);
+        
         res.status(401).json({
             success: false,
             message: error.message || 'Invalid credentials'
@@ -145,17 +113,11 @@ async function me(req, res, next) {
 
 /**
  * Forgot password controller
+ * NOTE: Request body is already validated by middleware
  */
 async function forgotPassword(req, res, next) {
     try {
         const { email } = req.body;
-        
-        if (!email) {
-            return res.status(400).json({
-                success: false,
-                message: 'Email is required'
-            });
-        }
         
         const result = await authService.forgotPassword(email);
         
@@ -174,25 +136,11 @@ async function forgotPassword(req, res, next) {
 
 /**
  * Reset password controller
+ * NOTE: Request body is already validated by middleware
  */
 async function resetPassword(req, res, next) {
     try {
         const { token, newPassword } = req.body;
-        
-        if (!token || !newPassword) {
-            return res.status(400).json({
-                success: false,
-                message: 'Token and new password are required'
-            });
-        }
-        
-        // Validate password strength
-        if (newPassword.length < 6) {
-            return res.status(400).json({
-                success: false,
-                message: 'Password must be at least 6 characters long'
-            });
-        }
         
         const result = await authService.resetPassword(token, newPassword);
         
@@ -219,26 +167,12 @@ async function resetPassword(req, res, next) {
 
 /**
  * Change password controller (authenticated)
+ * NOTE: Request body is already validated by middleware
  */
 async function changePassword(req, res, next) {
     try {
         const { currentPassword, newPassword } = req.body;
         const userId = req.user.id;
-        
-        if (!currentPassword || !newPassword) {
-            return res.status(400).json({
-                success: false,
-                message: 'Current password and new password are required'
-            });
-        }
-        
-        // Validate password strength
-        if (newPassword.length < 6) {
-            return res.status(400).json({
-                success: false,
-                message: 'New password must be at least 6 characters long'
-            });
-        }
         
         const result = await authService.changePassword(userId, currentPassword, newPassword);
         
@@ -265,19 +199,25 @@ async function changePassword(req, res, next) {
 
 /**
  * Refresh token controller
+ * NOTE: Token can come from body or header
  */
 async function refreshToken(req, res, next) {
     try {
-        const oldToken = req.headers.authorization?.split(' ')[1];
+        // Try to get token from body first, then from header
+        let token = req.body.token;
         
-        if (!oldToken) {
+        if (!token) {
+            token = req.headers.authorization?.split(' ')[1];
+        }
+        
+        if (!token) {
             return res.status(400).json({
                 success: false,
-                message: 'Token is required'
+                message: 'Refresh token is required'
             });
         }
         
-        const result = await authService.refreshToken(oldToken);
+        const result = await authService.refreshToken(token);
         
         res.json({
             success: true,
