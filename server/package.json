@@ -17,9 +17,11 @@
     "test:trainers": "jest tests/trainers",
     "test:admin": "jest tests/admin"
   },
-    "jest": {
+  "jest": {
     "testEnvironment": "node",
-    "setupFilesAfterEnv": ["<rootDir>/tests/setup.js"],
+    "setupFilesAfterEnv": [
+      "<rootDir>/tests/setup.js"
+    ],
     "testTimeout": 10000,
     "verbose": true,
     "collectCoverageFrom": [
@@ -42,6 +44,7 @@
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "bcryptjs": "^2.4.3",
+    "cloudinary": "^2.10.0",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.6",
     "debug": "~2.6.9",

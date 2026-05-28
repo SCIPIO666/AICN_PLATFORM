@@ -2,7 +2,7 @@ const express = require('express');
 const enrolmentsRouter = express.Router();
 const { verifyToken, requireRole } = require('../middleware/authMiddleware');
 const enrolmentsController = require('../modules/enrollments/enrolmentController');
-const  validate  = require('../../middleware/validate');
+const  validate  = require('../middleware/validate');
 
 // Import validation schemas
 const { 

@@ -2,7 +2,7 @@ const express = require('express');
 const adminRouter = express.Router();
 const { verifyToken, requireRole } = require('../middleware/authMiddleware');
 const adminController = require('../modules/admin/adminController');
-const validate  = require('../middleware/validate');
+const  validate  = require('../middleware/validate');
 
 //  validation schemas
 const { 

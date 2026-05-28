@@ -14,7 +14,6 @@ const enrolmentsRouter = require('./routes/enrollmentRoutes');
 const certificatesRouter = require('./routes/certificateRoutes');
 const trainersRouter = require('./routes/trainersRoutes');
 const adminRouter = require('./routes/adminRoutes');
-const certificateTestRouter = require('./routes/certificateTestRouter');
 const app = express();
 
 // view engine setup
@@ -38,9 +37,6 @@ app.use('/api/v1/enrolments', enrolmentsRouter);
 app.use('/api/v1/certificates', certificatesRouter);
 app.use('/api/v1/trainers', trainersRouter);
 app.use('/api/v1/admin', adminRouter);
-
-//pdf certificates test route 
-app.use('/api/v1/test/certificates', certificateTestRouter);
 
 
 // Health check'

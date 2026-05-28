@@ -2,7 +2,7 @@ const express = require('express');
 const announcementsRouter = express.Router();
 const { verifyToken, requireRole } = require('../middleware/authMiddleware');
 const announcementsController = require('../modules/announcements/announcementsController');
-const validate = require('../middleware/validate'); 
+const  validate  = require('../middleware/validate');
 const { 
   createAnnouncementSchema, 
   updateAnnouncementSchema,

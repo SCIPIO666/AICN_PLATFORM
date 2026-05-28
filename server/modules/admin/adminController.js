@@ -30,7 +30,7 @@ const getAllUsers = async (req, res, next) => {
     const result = await adminService.getAllUsers(
       filters,
       skip,           
-      limit,          /
+      limit,          
       req.user.id,    
       req.user.role   
     );
