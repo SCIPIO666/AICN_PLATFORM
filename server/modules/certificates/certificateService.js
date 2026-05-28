@@ -7,12 +7,10 @@ const {generateCertificatePDF}  = require('../../utils/pdf/templates/certificate
 const prisma = require('../../config/db');
 const logger = require('../../utils/logger');
 
-
 async function issueCertificate(userId, sessionId, adminId, role) {
   if (role !== 'ADMIN') {
     throw new Error('Only ADMIN can issue certificates');
   }
-  
 
   const enrolment = await prisma.enrolment.findFirst({
     where: {
@@ -34,17 +32,17 @@ async function issueCertificate(userId, sessionId, adminId, role) {
     throw new Error('User has not completed the session');
   }
   
-  // certificate already exists and not revoked
+  // Check if certificate already exists and not revoked
   const existingCert = await certificateModel.getCertificateByUserAndSession(userId, sessionId);
   if (existingCert && !existingCert.revokedAt) {
     throw new Error('Certificate already issued for this session');
   }
   
-  //  certificate record
+  // Create certificate record
   const certificate = await certificateModel.createCertificate(userId, sessionId);
   
   try {
-    //  PDF
+    // Generate PDF
     const pdfBuffer = await generateCertificatePDF({
       certCode: certificate.certCode,
       userName: enrolment.user.name,
@@ -57,7 +55,7 @@ async function issueCertificate(userId, sessionId, adminId, role) {
       verifyUrl: `${process.env.FRONTEND_URL}/verify/${certificate.certCode}`
     });
     
-    //email with PDF attachment
+    // Send email with PDF attachment
     await sendCertificateEmail(
       enrolment.user.email,
       enrolment.user.name,
@@ -72,23 +70,60 @@ async function issueCertificate(userId, sessionId, adminId, role) {
     
     logger.info(`Certificate issued and emailed to ${enrolment.user.email}`);
     
-    //  PDF URL 
-  const uploadResult = await uploadPdf(pdfBuffer, userId, certificate.id);
-// store the secure_url in database
-await prisma.certificate.update({
-  where: { id: certificate.id },
-  data: { pdfUrl: uploadResult.secure_url }
-});
+    // Upload to Cloudinary and get all PDF details
+    const uploadResult = await uploadPdf(pdfBuffer, userId, certificate.id);
     
-    return certificate;
+    // Update certificate with ALL PDF details
+    await prisma.certificate.update({
+      where: { id: certificate.id },
+      data: {
+        // Core storage info
+        pdfUrl: uploadResult.secureUrl,
+        pdfPublicId: uploadResult.publicId,
+        
+        // Additional metadata (add these fields to your schema first)
+        pdfVersion: uploadResult.version,
+        pdfSize: uploadResult.bytes,
+        pdfFormat: uploadResult.format,
+        pdfResourceType: uploadResult.resourceType,
+        pdfCreatedAt: new Date(uploadResult.createdAt),
+        pdfEtag: uploadResult.etag,
+        pdfSignature: uploadResult.signature,
+        pdfAssetFolder: uploadResult.assetFolder,
+        pdfOriginalFilename: uploadResult.originalFilename
+      }
+    });
+    
+    logger.info(`Certificate PDF stored at: ${uploadResult.secureUrl}`);
+    logger.info(`PDF Size: ${(uploadResult.bytes / 1024).toFixed(2)} KB`);
+    
+    return {
+      ...certificate,
+      pdfDetails: {
+        url: uploadResult.secureUrl,
+        publicId: uploadResult.publicId,
+        size: uploadResult.bytes,
+        version: uploadResult.version
+      }
+    };
     
   } catch (error) {
-    //  PDF/email fails, still return certificate while logging error
-    logger.error(`Certificate issued but email failed: ${error.message}`);
+    // Log error but still return certificate record
+    logger.error(`Certificate issued but storage/email failed: ${error.message}`);
+    
+    // Optionally mark certificate as failed for retry
+    await prisma.certificate.update({
+      where: { id: certificate.id },
+      data: { 
+        pdfGenerationFailed: true,
+        pdfFailureReason: error.message,
+        pdfFailedAt: new Date()
+      }
+    });
+    
     return certificate;
   }
 }
-
 
 async function batchIssueCertificates(sessionId, adminId, role) {
   if (role !== 'ADMIN') {
