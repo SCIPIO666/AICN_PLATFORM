@@ -2,20 +2,49 @@ const express = require('express');
 const certificatesRouter = express.Router();
 const { verifyToken, requireRole } = require('../middleware/authMiddleware');
 const certificatesController = require('../modules/certificates/certificateController');
+const  validate  = require('../../middleware/validate');
 
-// Public routes
-certificatesRouter.get('/verify/:certCode', certificatesController.verifyCertificate);
+// Import validation schemas
+const { 
+  issueCertificateSchema,
+  verifyCertificateSchema,
+  batchIssueCertificatesSchema,
+  getCertificatesQuerySchema
+} = require('../../shared/validators/certificateValidation');
 
-// Protected routes
+// ============ PUBLIC ROUTES ============
+// GET /verify/:certCode - Public certificate verification
+certificatesRouter.get(
+  '/verify/:certCode',
+  validate(verifyCertificateSchema, 'params'),  // ADD VALIDATION
+  certificatesController.verifyCertificate
+);
+
+// ============ PROTECTED ROUTES (Authentication required) ============
 certificatesRouter.use(verifyToken);
-certificatesRouter.get('/my', certificatesController.getMyCertificates);
-certificatesRouter.post('/batch/:sessionId', 
-  verifyToken, 
-  requireRole(['ADMIN']), 
+
+// GET /my - Get current user's certificates
+certificatesRouter.get(
+  '/my',
+  validate(getCertificatesQuerySchema, 'query'),  
+  certificatesController.getMyCertificates
+);
+
+// ============ ADMIN ONLY ROUTES ============
+// POST /batch/:sessionId - Batch issue certificates for a session
+certificatesRouter.post(
+  '/batch/:sessionId',
+  requireRole(['ADMIN']),
+  validate(batchIssueCertificatesSchema, 'params'),  
   certificatesController.batchIssueCertificates
 );
 
-certificatesRouter.post('/', requireRole(['ADMIN']), certificatesController.issueCertificate);
-
+// POST / - Issue single certificate (admin only)
+certificatesRouter.post(
+  '/',
+  requireRole(['ADMIN']),
+  validate(issueCertificateSchema, 'body'),  
+  certificatesController.issueCertificate
+);
 
 module.exports = certificatesRouter;
