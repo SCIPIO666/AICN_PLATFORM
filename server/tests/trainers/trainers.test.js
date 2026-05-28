@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('../../server');
+const app = require('../../app');
 const { cleanDatabase, createTestUser, prisma } = require('../helpers/dbHelper');
 const { setupTestTokens } = require('../helpers/authHelper');
 
