@@ -1,6 +1,7 @@
 next: 
-//extend admin services for trainer approval to accomodate email
-//add cron job/quees for session remiinders
+//add cron job/quees for session reminders
+
+
 //check validations
 //add validation middleware
 //update docs to match end points

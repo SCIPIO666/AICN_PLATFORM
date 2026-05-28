@@ -2,10 +2,12 @@ const announcementsService = require('./announcementsService');
 const logger = require('../../utils/logger');
 
 
+//all params queries and bosy data validated by zod schemas and validate middleware
 async function createAnnouncement(req, res, next) {
   try {
+
     const announcement = await announcementsService.createAnnouncement(
-      req.body,
+      req.body,     
       req.user.id,
       req.user.role
     );
@@ -20,11 +22,12 @@ async function createAnnouncement(req, res, next) {
   }
 }
 
-
 async function getAnnouncementById(req, res, next) {
   try {
+    const { id } = req.params;
+    
     const announcement = await announcementsService.getAnnouncementById(
-      req.params.id,
+      id,  
       req.user?.role || 'LEARNER'
     );
     res.status(200).json({
@@ -37,18 +40,19 @@ async function getAnnouncementById(req, res, next) {
   }
 }
 
-
 async function getAllAnnouncements(req, res, next) {
   try {
+    const { audience, fromDate, toDate, page, limit } = req.query;
+  
     const filters = {};
-    if (req.query.audience) filters.audience = req.query.audience;
-    if (req.query.fromDate) filters.fromDate = req.query.fromDate;
-    if (req.query.toDate) filters.toDate = req.query.toDate;
+    if (audience) filters.audience = audience;
+    if (fromDate) filters.fromDate = fromDate;
+    if (toDate) filters.toDate = toDate;
     
     const result = await announcementsService.getAllAnnouncements(
       filters,
-      req.query.page,
-      req.query.limit,
+      page,  
+      limit,   
       req.user?.role || 'LEARNER'
     );
     
@@ -62,12 +66,15 @@ async function getAllAnnouncements(req, res, next) {
   }
 }
 
-
 async function updateAnnouncement(req, res, next) {
   try {
+
+    const { id } = req.params;    
+    const updateData = req.body;  
+    
     const updated = await announcementsService.updateAnnouncement(
-      req.params.id,
-      req.body,
+      id,
+      updateData,
       req.user.id,
       req.user.role
     );
@@ -82,11 +89,12 @@ async function updateAnnouncement(req, res, next) {
   }
 }
 
-
 async function deleteAnnouncement(req, res, next) {
   try {
+    const { id } = req.params;  
+    
     const result = await announcementsService.deleteAnnouncement(
-      req.params.id,
+      id,
       req.user.id,
       req.user.role
     );

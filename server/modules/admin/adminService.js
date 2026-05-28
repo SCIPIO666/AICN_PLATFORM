@@ -1,5 +1,6 @@
 const adminModel = require('./adminModel');
 const announcementsModel = require('../announcements/announcementsModel');
+const {sendTrainerApprovalEmail}=require('../../utils/email/email services/aicnEmailsService')
 
 async function getStats(adminId, role) {
   if (role !== 'ADMIN') throw new Error('Access denied');
@@ -23,7 +24,7 @@ async function getAllUsers(filters = {}, page = 1, limit = 10, adminId, role) {
   };
 }
 
-async function updateUserRole(userId, newRole, adminId, role) {
+async function updateUserRole(userId, newRole, adminId, role, options = {}) {
   if (role !== 'ADMIN') throw new Error('Access denied');
   
   const validRoles = ['LEARNER', 'TRAINER', 'ADMIN'];
@@ -31,8 +32,55 @@ async function updateUserRole(userId, newRole, adminId, role) {
     throw new Error('Invalid role');
   }
   
-  return await adminModel.updateUserRole(userId, newRole);
+  // Get user details before updating
+  const user = await adminModel.getUserById(userId);
+  if (!user) {
+    throw new Error('User not found');
+  }
+  
+  // Check if role is actually changing
+  if (user.role === newRole) {
+    throw new Error(`User already has the ${newRole} role`);
+  }
+  
+  // Update the user role
+  const updatedUser = await adminModel.updateUserRole(userId, newRole);
+  
+  // Send email notification for trainer role changes
+  if (newRole === 'TRAINER' && user.email) {
+    try {
+      await sendTrainerApprovalEmail({
+        to: user.email,
+        name: user.name || user.fullName || 'Trainer',
+        approved: true,
+        reason: options.approvalMessage || null,
+        trainerId: userId
+      });
+    } catch (emailError) {
+      console.error('Failed to send trainer approval email:', emailError);
+      // Don't throw - email failure shouldn't block role update
+    }
+  }
+  
+  // ejection email 
+  if (options.isRejection === true && user.email) {
+    try {
+      await sendTrainerApprovalEmail({
+        to: user.email,
+        name: user.name || user.fullName || 'User',
+        approved: false,
+        reason: options.rejectionReason || 'Your trainer application was not approved at this time.',
+        trainerId: userId
+      });
+    } catch (emailError) {
+      console.error('Failed to send rejection email:', emailError);
+    }
+  }
+
+  
+  return updatedUser;
 }
+
 
 async function createAnnouncement(data, adminId, role) {
   if (role !== 'ADMIN') throw new Error('Access denied');

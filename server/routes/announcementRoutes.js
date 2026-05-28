@@ -2,20 +2,53 @@ const express = require('express');
 const announcementsRouter = express.Router();
 const { verifyToken, requireRole } = require('../middleware/authMiddleware');
 const announcementsController = require('../modules/announcements/announcementsController');
-const { validate } = require('../../middleware/validate');
-const { createAnnouncementSchema, updateAnnouncementSchema } = require('../../shared/validators/announcementValidation');
+const validate = require('../middleware/validate'); 
+const { 
+  createAnnouncementSchema, 
+  updateAnnouncementSchema,
+  announcementFiltersSchema,
+  idParamSchema  
+} = require('../../shared/validators/announcementValidation');
 
+// ============= public=============
 
-// Public routes (no authentication required for viewing)
-announcementsRouter.get('/', announcementsController.getAllAnnouncements);
-announcementsRouter.get('/:id', announcementsController.getAnnouncementById);
+announcementsRouter.get(
+  '/', 
+  validate(announcementFiltersSchema, 'query'), 
+  announcementsController.getAllAnnouncements
+);
 
-// Admin only routes (full CRUD)
+// GET /announcements/:id -  param validation
+announcementsRouter.get(
+  '/:id', 
+  validate(idParamSchema, 'params'), 
+  announcementsController.getAnnouncementById
+);
+
+// ============= RBAC admin only=============
 announcementsRouter.use(verifyToken);
 announcementsRouter.use(requireRole(['ADMIN']));
 
-announcementsRouter.post('/', validate(createAnnouncementSchema), announcementsController.createAnnouncement);
-announcementsRouter.put('/:id', validate(updateAnnouncementSchema), announcementsController.updateAnnouncement);
-announcementsRouter.delete('/:id', announcementsController.deleteAnnouncement);
+// POST /announcements - create new
+announcementsRouter.post(
+  '/', 
+  validate(createAnnouncementSchema, 'body'), 
+  announcementsController.createAnnouncement
+);
+
+// PUT /announcements/:id 
+announcementsRouter.put(
+  '/:id',
+  validate(idParamSchema, 'params'),      
+  validate(updateAnnouncementSchema, 'body'), 
+  announcementsController.updateAnnouncement
+);
+
+// DELETE /announcements/:id - delete
+announcementsRouter.delete(
+  '/:id',
+  validate(idParamSchema, 'params'), 
+  announcementsController.deleteAnnouncement
+);
 
 module.exports = announcementsRouter;

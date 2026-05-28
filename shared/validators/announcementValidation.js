@@ -38,8 +38,14 @@ const announcementFiltersSchema = z.object({
   limit: z.coerce.number().int().positive().max(100).default(10).optional()
 });
 
+
+const idParamSchema = z.object({
+  id: z.string().uuid('Invalid announcement ID format - must be a valid UUID')
+});
+
 module.exports = {
   createAnnouncementSchema,
   updateAnnouncementSchema,
-  announcementFiltersSchema
+  announcementFiltersSchema,
+  idParamSchema 
 };

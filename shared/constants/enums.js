@@ -1,4 +1,4 @@
-// Shared enums extracted from Prisma schema
+// Shared enums from Prisma schema
 
 const Role = {
   LEARNER: 'LEARNER',
@@ -37,7 +37,7 @@ const AnnouncementAudience = {
   TRAINERS: 'trainers'
 };
 
-// Arrays for validation
+// arrays 
 const RoleValues = Object.values(Role);
 const SessionStatusValues = Object.values(SessionStatus);
 const LocationTypeValues = Object.values(LocationType);
@@ -46,7 +46,7 @@ const TrainerStatusValues = Object.values(TrainerStatus);
 const AnnouncementAudienceValues = Object.values(AnnouncementAudience);
 
 module.exports = {
-  // Enum objects
+  // objects
   Role,
   SessionStatus,
   LocationType,
@@ -54,7 +54,7 @@ module.exports = {
   TrainerStatus,
   AnnouncementAudience,
   
-  // Value arrays for validation
+  // arrays
   RoleValues,
   SessionStatusValues,
   LocationTypeValues,
