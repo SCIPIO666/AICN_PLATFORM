@@ -172,8 +172,8 @@ async function forgotPassword(email) {
         // Find user
         const user = await findUser(email);
         if (!user) {
-            // Don't reveal that user doesn't exist for security
-            return { success: true, message: 'If email exists, reset link will be sent' };
+            //  for security no revealing user doesnt exist
+            return { success: true, message: 'reset link will be sent to user email' };
         }
         
         // Generate reset token
@@ -189,7 +189,7 @@ async function forgotPassword(email) {
             }
         });
         
-        // Send password reset email (non-blocking but await for error handling)
+        // Send password reset email (non-blocking)
         try {
             await sendPasswordResetEmail({
                 to: user.email,
@@ -204,7 +204,7 @@ async function forgotPassword(email) {
             logger.info(`Password reset email sent to ${user.email}`);
         } catch (emailError) {
             logger.error(`Failed to send password reset email to ${user.email}:`, emailError);
-            // Still return success for security, but log the error
+            // always returning success for security
         }
         
         return { success: true, message: 'Password reset email sent' };
@@ -219,7 +219,7 @@ async function forgotPassword(email) {
  */
 async function resetPassword(token, newPassword) {
     try {
-        // Find user by valid token
+        //valid token
         const user = await prisma.user.findFirst({
             where: {
                 resetPasswordToken: token,
@@ -234,9 +234,9 @@ async function resetPassword(token, newPassword) {
         }
         
         // Hash new password
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        const hashedPassword = await bcrypt.hash(newPassword, 12);
         
-        // Update password and clear reset fields
+        // Updating passwords
         await prisma.user.update({
             where: { id: user.id },
             data: {
@@ -269,16 +269,13 @@ async function changePassword(userId, currentPassword, newPassword) {
             throw new Error('User not found');
         }
         
-        // Verify current password
         const isValid = await bcrypt.compare(currentPassword, user.password);
         if (!isValid) {
             throw new Error('Current password is incorrect');
         }
         
-        // Hash new password
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         
-        // Update password
         await prisma.user.update({
             where: { id: userId },
             data: { password: hashedPassword }

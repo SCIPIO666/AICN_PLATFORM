@@ -1,12 +1,13 @@
 next: 
-//alter project to be a cpd training platform
-//personally create all needed templates from dribble/pintrest inspiration
-//read handlebars docs
-//marry email pdf and cloudinary across affected endpoints with verify qr embedded
-//modify endpoints affected by pdf storage and emailing and qr
-//update docs
-//update/recreate tests
+//extend admin services for trainer approval to accomodate email
+//add cron job/quees for session remiinders
+//check validations
+//add validation middleware
+//update docs to match end points
+//update tests
 //unit and intergration tests
 
+//backend all end points confirmation to be working
 
-//front end
+
+//front end begins

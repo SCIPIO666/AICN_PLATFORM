@@ -47,15 +47,17 @@ enum TrainerStatus {
 //models
 
 model User {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  password  String
-  phone     String?
-  county    String?
-  role      Role     @default(LEARNER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                   String    @id @default(cuid())
+  name                 String
+  email                String    @unique
+  password             String
+  phone                String?
+  county               String?
+  role                 Role      @default(LEARNER)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  resetPasswordToken   String?
+  resetPasswordExpires DateTime?
 
   // Relations
   enrolments      Enrolment[]
