@@ -23,6 +23,13 @@ const past = (daysAgo, hour = 9) => {
   return d
 }
 
+// Generate unique certificate code
+const generateCertCode = (userId, sessionId) => {
+  const timestamp = Date.now()
+  const random = Math.random().toString(36).substring(2, 8).toUpperCase()
+  return `AICN-${userId.substring(0,4)}-${sessionId.substring(0,4)}-${random}`
+}
+
 // ========== Main seeder function ===================
 
 async function main() {
@@ -394,19 +401,19 @@ async function main() {
   // =============Enrolments================================
 
   // Completed session 1 — Cyber Hygiene Nairobi
-  const e1 = await prisma.enrolment.create({ data: { userId: learner1.id, sessionId: session1.id, status: 'ATTENDED' } })
-  const e2 = await prisma.enrolment.create({ data: { userId: learner4.id, sessionId: session1.id, status: 'ATTENDED' } })
-  const e3 = await prisma.enrolment.create({ data: { userId: learner5.id, sessionId: session1.id, status: 'ABSENT'   } })
+  await prisma.enrolment.create({ data: { userId: learner1.id, sessionId: session1.id, status: 'ATTENDED' } })
+  await prisma.enrolment.create({ data: { userId: learner4.id, sessionId: session1.id, status: 'ATTENDED' } })
+  await prisma.enrolment.create({ data: { userId: learner5.id, sessionId: session1.id, status: 'ABSENT'   } })
 
   // Completed session 2 — Data Analysis Kisumu
-  const e4 = await prisma.enrolment.create({ data: { userId: learner2.id, sessionId: session2.id, status: 'ATTENDED' } })
-  const e5 = await prisma.enrolment.create({ data: { userId: learner6.id, sessionId: session2.id, status: 'ATTENDED' } })
+  await prisma.enrolment.create({ data: { userId: learner2.id, sessionId: session2.id, status: 'ATTENDED' } })
+  await prisma.enrolment.create({ data: { userId: learner6.id, sessionId: session2.id, status: 'ATTENDED' } })
 
   // Completed session 3 — Content Creation Online
-  const e6 = await prisma.enrolment.create({ data: { userId: learner1.id, sessionId: session3.id, status: 'ATTENDED' } })
-  const e7 = await prisma.enrolment.create({ data: { userId: learner2.id, sessionId: session3.id, status: 'ATTENDED' } })
-  const e8 = await prisma.enrolment.create({ data: { userId: learner3.id, sessionId: session3.id, status: 'ATTENDED' } })
-  const e9 = await prisma.enrolment.create({ data: { userId: learner5.id, sessionId: session3.id, status: 'ABSENT'   } })
+  await prisma.enrolment.create({ data: { userId: learner1.id, sessionId: session3.id, status: 'ATTENDED' } })
+  await prisma.enrolment.create({ data: { userId: learner2.id, sessionId: session3.id, status: 'ATTENDED' } })
+  await prisma.enrolment.create({ data: { userId: learner3.id, sessionId: session3.id, status: 'ATTENDED' } })
+  await prisma.enrolment.create({ data: { userId: learner5.id, sessionId: session3.id, status: 'ABSENT'   } })
 
   // Upcoming session 4 — Digital Marketing Nairobi
   await prisma.enrolment.create({ data: { userId: learner1.id, sessionId: session4.id, status: 'ENROLLED' } })
@@ -428,17 +435,59 @@ async function main() {
   // Only issued to ATTENDED enrolments on COMPLETED sessions
 
   // Session 1 — Cyber Hygiene
-  await prisma.certificate.create({ data: { userId: learner1.id, sessionId: session1.id } })
-  await prisma.certificate.create({ data: { userId: learner4.id, sessionId: session1.id } })
+  await prisma.certificate.create({ 
+    data: { 
+      userId: learner1.id, 
+      sessionId: session1.id,
+      certCode: generateCertCode(learner1.id, session1.id)
+    } 
+  })
+  await prisma.certificate.create({ 
+    data: { 
+      userId: learner4.id, 
+      sessionId: session1.id,
+      certCode: generateCertCode(learner4.id, session1.id)
+    } 
+  })
 
   // Session 2 — Data Analysis Kisumu
-  await prisma.certificate.create({ data: { userId: learner2.id, sessionId: session2.id } })
-  await prisma.certificate.create({ data: { userId: learner6.id, sessionId: session2.id } })
+  await prisma.certificate.create({ 
+    data: { 
+      userId: learner2.id, 
+      sessionId: session2.id,
+      certCode: generateCertCode(learner2.id, session2.id)
+    } 
+  })
+  await prisma.certificate.create({ 
+    data: { 
+      userId: learner6.id, 
+      sessionId: session2.id,
+      certCode: generateCertCode(learner6.id, session2.id)
+    } 
+  })
 
   // Session 3 — Content Creation Online
-  await prisma.certificate.create({ data: { userId: learner1.id, sessionId: session3.id } })
-  await prisma.certificate.create({ data: { userId: learner2.id, sessionId: session3.id } })
-  await prisma.certificate.create({ data: { userId: learner3.id, sessionId: session3.id } })
+  await prisma.certificate.create({ 
+    data: { 
+      userId: learner1.id, 
+      sessionId: session3.id,
+      certCode: generateCertCode(learner1.id, session3.id)
+    } 
+  })
+  await prisma.certificate.create({ 
+    data: { 
+      userId: learner2.id, 
+      sessionId: session3.id,
+      certCode: generateCertCode(learner2.id, session3.id)
+    } 
+  })
+  await prisma.certificate.create({ 
+    data: { 
+      userId: learner3.id, 
+      sessionId: session3.id,
+      certCode: generateCertCode(learner3.id, session3.id)
+    } 
+  })
 
   logger.info(' Issued 7 certificates')
 

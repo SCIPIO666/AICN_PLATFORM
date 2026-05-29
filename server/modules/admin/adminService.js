@@ -1,14 +1,21 @@
+// admin/adminService.js
 const adminModel = require('./adminModel');
 const announcementsModel = require('../announcements/announcementsModel');
-const {sendTrainerApprovalEmail}=require('../../utils/email/email services/aicnEmailsService')
+const { sendTrainerApprovalEmail } = require('../../utils/email/email services/aicnEmailsService');
+const { AuthorizationError, NotFoundError, BusinessLogicError } = require('../../utils/errors/customErrors');
+const logger = require('../../utils/logger');
 
 async function getStats(adminId, role) {
-  if (role !== 'ADMIN') throw new Error('Access denied');
+  if (role !== 'ADMIN') {
+    throw new AuthorizationError('Only administrators can access statistics');
+  }
   return await adminModel.getStats();
 }
 
 async function getAllUsers(filters = {}, page = 1, limit = 10, adminId, role) {
-  if (role !== 'ADMIN') throw new Error('Access denied');
+  if (role !== 'ADMIN') {
+    throw new AuthorizationError('Only administrators can view all users');
+  }
   
   const skip = (page - 1) * limit;
   const { users, total } = await adminModel.getAllUsers(filters, skip, limit);
@@ -25,70 +32,60 @@ async function getAllUsers(filters = {}, page = 1, limit = 10, adminId, role) {
 }
 
 async function updateUserRole(userId, newRole, adminId, role, options = {}) {
-  if (role !== 'ADMIN') throw new Error('Access denied');
+  if (role !== 'ADMIN') {
+    throw new AuthorizationError('Only administrators can update user roles');
+  }
   
   const validRoles = ['LEARNER', 'TRAINER', 'ADMIN'];
   if (!validRoles.includes(newRole)) {
-    throw new Error('Invalid role');
+    throw new BusinessLogicError(`Invalid role. Valid roles: ${validRoles.join(', ')}`);
   }
   
-  // Get user details before updating
   const user = await adminModel.getUserById(userId);
   if (!user) {
-    throw new Error('User not found');
+    throw new NotFoundError('User');
   }
   
-  // Check if role is actually changing
   if (user.role === newRole) {
-    throw new Error(`User already has the ${newRole} role`);
+    throw new BusinessLogicError(`User already has the ${newRole} role`);
   }
   
-  // Update the user role
   const updatedUser = await adminModel.updateUserRole(userId, newRole);
   
-  // Send email notification for trainer role changes
   if (newRole === 'TRAINER' && user.email) {
-    try {
-      await sendTrainerApprovalEmail({
-        to: user.email,
-        name: user.name || user.fullName || 'Trainer',
-        approved: true,
-        reason: options.approvalMessage || null,
-        trainerId: userId
-      });
-    } catch (emailError) {
-      console.error('Failed to send trainer approval email:', emailError);
-      // Don't throw - email failure shouldn't block role update
-    }
+    sendTrainerApprovalEmail({
+      to: user.email,
+      name: user.name || 'Trainer',
+      approved: true,
+      reason: options.approvalMessage || null,
+      trainerId: userId
+    }).catch(err => logger.error('Failed to send trainer approval email:', err));
   }
   
-  // ejection email 
   if (options.isRejection === true && user.email) {
-    try {
-      await sendTrainerApprovalEmail({
-        to: user.email,
-        name: user.name || user.fullName || 'User',
-        approved: false,
-        reason: options.rejectionReason || 'Your trainer application was not approved at this time.',
-        trainerId: userId
-      });
-    } catch (emailError) {
-      console.error('Failed to send rejection email:', emailError);
-    }
+    sendTrainerApprovalEmail({
+      to: user.email,
+      name: user.name || 'User',
+      approved: false,
+      reason: options.rejectionReason || 'Your trainer application was not approved at this time.',
+      trainerId: userId
+    }).catch(err => logger.error('Failed to send rejection email:', err));
   }
-
   
   return updatedUser;
 }
 
-
 async function createAnnouncement(data, adminId, role) {
-  if (role !== 'ADMIN') throw new Error('Access denied');
+  if (role !== 'ADMIN') {
+    throw new AuthorizationError('Only administrators can create announcements');
+  }
   return await announcementsModel.createAnnouncement(data);
 }
 
 async function getAllAnnouncements(filters = {}, page = 1, limit = 10, adminId, role) {
-  if (role !== 'ADMIN') throw new Error('Access denied');
+  if (role !== 'ADMIN') {
+    throw new AuthorizationError('Only administrators can view all announcements');
+  }
   
   const skip = (page - 1) * limit;
   const { announcements, total } = await announcementsModel.getAllAnnouncements(filters, skip, limit);
@@ -105,12 +102,16 @@ async function getAllAnnouncements(filters = {}, page = 1, limit = 10, adminId, 
 }
 
 async function updateAnnouncement(id, data, adminId, role) {
-  if (role !== 'ADMIN') throw new Error('Access denied');
+  if (role !== 'ADMIN') {
+    throw new AuthorizationError('Only administrators can update announcements');
+  }
   return await announcementsModel.updateAnnouncement(id, data);
 }
 
 async function deleteAnnouncement(id, adminId, role) {
-  if (role !== 'ADMIN') throw new Error('Access denied');
+  if (role !== 'ADMIN') {
+    throw new AuthorizationError('Only administrators can delete announcements');
+  }
   return await announcementsModel.deleteAnnouncement(id);
 }
 
