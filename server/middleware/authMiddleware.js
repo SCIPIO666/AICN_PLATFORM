@@ -1,33 +1,64 @@
+const jwt = require('jsonwebtoken');
+const prisma = require('../config/db');
+
 const verifyToken = async (req, res, next) => {
-    const token = req.cookies?.auth_token || req.headers.authorization?.split(' ')[1]
+  try {
+    const authHeader = req.headers.authorization;
+
+    const token =
+      req.cookies?.auth_token ||
+      (authHeader?.startsWith('Bearer ')
+        ? authHeader.split(' ')[1]
+        : null);
 
     if (!token) {
-        return res.status(401).json({ error: 'No token provided' })
+      return res.status(401).json({
+        error: 'No token provided'
+      });
     }
 
-    try {
-        const payload = jwt.verify(token, process.env.JWT_SECRET)
+    const payload = jwt.verify(
+      token,
+      process.env.JWT_SECRET
+    );
 
-        const isBlacklisted = await prisma.blacklistedToken.findUnique({
-            where: { token }
-        })
+    // Check blacklist
+    const isBlacklisted =
+      await prisma.blacklistedToken.findUnique({
+        where: { token }
+      });
 
-        if (isBlacklisted) {
-            return res.status(401).json({ error: 'Token has been revoked. Please login again.' })
-        }
-
-        req.userId   = payload.userId
-        req.userRole = payload.role
-        next()
-    } catch {
-        return res.status(401).json({ error: 'Invalid or expired token' })
+    if (isBlacklisted) {
+      return res.status(401).json({
+        error:
+          'Token has been revoked. Please login again.'
+      });
     }
-}
-const requireRole = (...roles) => (req, res, next) => {
-  if (!roles.includes(req.userRole)) {
-    return res.status(403).json({ error: 'Forbidden' })
+
+    req.userId = payload.userId;
+    req.userRole = payload.role;
+
+    next();
+  } catch (error) {
+    return res.status(401).json({
+      error: 'Invalid or expired token'
+    });
   }
-  next()
-}
+};
 
-module.exports = { verifyToken, requireRole }
+const requireRole = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.userRole)) {
+      return res.status(403).json({
+        error: 'Forbidden'
+      });
+    }
+
+    next();
+  };
+};
+
+module.exports = {
+  verifyToken,
+  requireRole
+};

@@ -3,7 +3,7 @@ info:
   title: AICN Training Management System API
   version: 2.1.0
   description: |
-    Complete API documentation for the redesigned Training Management System.
+    Complete API documentation for the AICN Training Management System.
     
     ## Features
     * Public session browsing with advanced filters
