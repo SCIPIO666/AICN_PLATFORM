@@ -19,6 +19,9 @@ info:
     
     `Authorization: Bearer <your-token>`
     
+    ## Base URL
+    All endpoints are prefixed with `/api/v1`
+    
     ## Role-Based Access Control
     
     | Role | Permissions |
@@ -38,11 +41,11 @@ info:
     url: https://opensource.org/licenses/MIT
 
 servers:
-  - url: http://localhost:3000/api
+  - url: http://localhost:3000/api/v1
     description: Development server
-  - url: https://staging-api.aicn.africa/api
+  - url: https://staging-api.aicn.africa/api/v1
     description: Staging server
-  - url: https://api.aicn.africa/api
+  - url: https://api.aicn.africa/api/v1
     description: Production server
 
 tags:
@@ -584,7 +587,7 @@ components:
           nullable: true
         downloadUrl:
           type: string
-          example: https://api.aicn.africa/api/certificates/me/download/cm3n7t4xg0000j4k5a1b2c3d
+          example: https://api.aicn.africa/api/v1/certificates/me/download/cm3n7t4xg0000j4k5a1b2c3d
         user:
           $ref: '#/components/schemas/User'
         session:
@@ -874,31 +877,16 @@ components:
     AdminStats:
       type: object
       properties:
-        totalUsers:
-          type: integer
-          example: 250
-        totalLearners:
+        learners:
           type: integer
           example: 200
-        totalTrainers:
+        trainers:
           type: integer
           example: 40
-        totalAdmins:
-          type: integer
-          example: 10
-        totalSessions:
+        sessions:
           type: integer
           example: 50
-        upcomingSessions:
-          type: integer
-          example: 15
-        completedSessions:
-          type: integer
-          example: 35
-        totalEnrolments:
-          type: integer
-          example: 450
-        totalCertificates:
+        certificates:
           type: integer
           example: 320
         pendingTrainerApplications:
@@ -966,6 +954,8 @@ components:
           example: false
         message:
           type: string
+        code:
+          type: string
         errors:
           type: array
           items:
@@ -986,6 +976,8 @@ components:
         success:
           type: boolean
           example: true
+        message:
+          type: string
         data:
           type: array
         pagination:
@@ -1014,6 +1006,7 @@ components:
           example:
             success: false
             message: Unauthorized: No token provided
+            code: AUTHENTICATION_ERROR
 
     ForbiddenError:
       description: Insufficient permissions - user lacks required role
@@ -1024,6 +1017,7 @@ components:
           example:
             success: false
             message: Access denied. Admin role required.
+            code: AUTHORIZATION_ERROR
 
     NotFoundError:
       description: Resource not found
@@ -1034,6 +1028,7 @@ components:
           example:
             success: false
             message: Session not found
+            code: NOT_FOUND
 
     ValidationError:
       description: Validation failed - request data doesn't meet schema requirements
@@ -1044,6 +1039,7 @@ components:
           example:
             success: false
             message: Validation failed
+            code: VALIDATION_ERROR
             errors:
               - field: email
                 message: Invalid email format
@@ -1058,9 +1054,31 @@ components:
           example:
             success: false
             message: User with email john@example.com already exists
+            code: CONFLICT_ERROR
 
 # ==================== PATH DEFINITIONS ====================
 paths:
+  # ==================== HEALTH CHECK ====================
+  /health:
+    get:
+      summary: Health check endpoint
+      description: Returns the API health status
+      tags: [System]
+      responses:
+        '200':
+          description: API is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: OK
+                  timestamp:
+                    type: string
+                    format: date-time
+
   # ==================== AUTHENTICATION ====================
   /auth/signup:
     post:
@@ -1252,8 +1270,15 @@ paths:
       summary: Refresh JWT token
       description: Generates a new token and invalidates the old one
       tags: [Authentication]
-      security:
-        - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
       responses:
         '200':
           description: Token refreshed successfully
@@ -1275,6 +1300,8 @@ paths:
                         type: string
                       expiresIn:
                         type: integer
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
 
   # ==================== SESSIONS ====================
   /sessions:
@@ -1431,8 +1458,7 @@ paths:
                 properties:
                   success:
                     type: boolean
-                    example: true
-                  message:
+                    example: true                  message:
                     type: string
                     example: Session updated successfully
                   data:
@@ -1537,10 +1563,6 @@ paths:
           schema:
             type: string
             enum: [ENROLLED, ATTENDED, ABSENT, CANCELLED]
-        - name: sessionId
-          in: query
-          schema:
-            type: string
         - name: fromDate
           in: query
           schema:
@@ -1760,33 +1782,6 @@ paths:
           description: Certificate not found
         '410':
           description: Certificate has been revoked
-
-  /certificates/me/download/{id}:
-    get:
-      summary: Download certificate PDF
-      tags: [Certificates]
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: PDF file
-          content:
-            application/pdf:
-              schema:
-                type: string
-                format: binary
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          description: Cannot download certificate for another user
-        '404':
-          $ref: '#/components/responses/NotFoundError'
 
   /certificates/batch/{sessionId}:
     post:
