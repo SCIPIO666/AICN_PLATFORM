@@ -8,5 +8,6 @@ app.listen(process.env.PORT,'localhost',()=>{
   devLogger.info(` Swagger UI: http://localhost:${process.env.PORT}/api-docs`);
   devLogger.info(` Swagger UI: http://localhost:${process.env.PORT}/swagger.json`);
   devLogger.info(` Health check: http://localhost:${process.env.PORT}/api/v1/health\n`);
+devLogger.info(' Auth info available at: http://localhost:3000/api-docs/auth-info');
   
 })

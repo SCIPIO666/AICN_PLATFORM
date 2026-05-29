@@ -14,7 +14,7 @@ const setupSwagger = (app) => {
     customSiteTitle: 'AICN Training API - v2.0',
     swaggerOptions: {
       persistAuthorization: true,
-      docExpansion: 'list',
+      docExpansion:  'none',
       filter: true,
       showRequestDuration: true,
       defaultModelsExpandDepth: 3,
@@ -26,6 +26,17 @@ const setupSwagger = (app) => {
     }
   }));
   
+//testing endpoint
+   app.get('/api-docs/auth-info', (req, res) => {
+    res.json({
+      message: 'To authenticate, get token from POST /auth/login and click "Authorize" button',
+      exampleLogin: {
+        email: 'admin@example.com',
+        password: 'your-password'
+      }
+    });
+  });
+
   // raw YAML spec
   app.get('/swagger.yaml', (req, res) => {
     res.setHeader('Content-Type', 'text/yaml');
