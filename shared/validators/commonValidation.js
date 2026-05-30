@@ -10,7 +10,7 @@ const paginationSchema = z.object({
 
 // Common ID schema
 const idSchema = z.object({
-  id: z.string().cuid({ message: 'Invalid ID format' })
+id: z.string().regex(/^c[a-z0-9]{24}$/, 'Invalid CUID format'),
 });
 
 // Common date range schema

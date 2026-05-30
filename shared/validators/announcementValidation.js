@@ -40,7 +40,7 @@ const announcementFiltersSchema = z.object({
 
 
 const idParamSchema = z.object({
-  id: z.string().uuid('Invalid announcement ID format - must be a valid UUID')
+  id: z.string().regex(/^c[a-z0-9]{24}$/, 'Invalid CUID format')
 });
 
 module.exports = {

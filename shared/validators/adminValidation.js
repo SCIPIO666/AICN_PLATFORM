@@ -34,7 +34,7 @@ const updateUserRoleSchema = z.object({
 
 // ID param schema (reuse or create)
 const idParamSchema = z.object({
-  id: z.string().uuid('Invalid ID format - must be a valid UUID'),
+id: z.string().regex(/^c[a-z0-9]{24}$/, 'Invalid CUID format'),
   userId: z.string().uuid('Invalid user ID format - must be a valid UUID')
 });
 

@@ -2,22 +2,21 @@ const { z } = require('zod');
 
 // ID validation (assuming UUID format - adjust if using CUID)
 const idParamSchema = z.object({
-  id: z.string().uuid('Invalid ID format - must be a valid UUID'),
+ id: z.string().regex(/^c[a-z0-9]{24}$/, 'Invalid CUID format'),
   sessionId: z.string().uuid('Invalid session ID format - must be a valid UUID'),
   userId: z.string().uuid('Invalid user ID format - must be a valid UUID')
 });
 
 // Issue certificate validation
 const issueCertificateSchema = z.object({
-  userId: z.string()
-    .uuid('Invalid user ID format - must be a valid UUID'),
+  userId: z.string().regex(/^c[a-z0-9]{24}$/, 'Invalid CUID format'),
   sessionId: z.string()
     .uuid('Invalid session ID format - must be a valid UUID')
 });
 
 // Single issue certificate (alternative schema for body)
 const issueSingleCertificateSchema = z.object({
-  userId: z.string().uuid(),
+  userId: z.string().regex(/^c[a-z0-9]{24}$/, 'Invalid CUID format'),
   sessionId: z.string().uuid()
 });
 
@@ -31,13 +30,12 @@ const verifyCertificateSchema = z.object({
 
 // Batch issue certificates validation
 const batchIssueCertificatesSchema = z.object({
-  sessionId: z.string()
-    .uuid('Invalid session ID format - must be a valid UUID')
+  sessionId:  z.string().regex(/^c[a-z0-9]{24}$/, 'Invalid CUID format'),
 });
 
 // Certificate filters validation
 const certificateFiltersSchema = z.object({
-  userId: z.string().uuid().optional(),
+  userId:  z.string().regex(/^c[a-z0-9]{24}$/).optional(),
   sessionId: z.string().uuid().optional(),
   fromDate: z.string().datetime({ offset: true }).optional(),
   toDate: z.string().datetime({ offset: true }).optional(),
