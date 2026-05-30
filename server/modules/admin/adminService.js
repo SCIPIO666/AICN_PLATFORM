@@ -1,5 +1,6 @@
 // admin/adminService.js
 const adminModel = require('./adminModel');
+const usersModel=require('../users/usersModel')
 const announcementsModel = require('../announcements/announcementsModel');
 const { sendTrainerApprovalEmail } = require('../../utils/email/email services/aicnEmailsService');
 const { AuthorizationError, NotFoundError, BusinessLogicError } = require('../../utils/errors/customErrors');
@@ -41,7 +42,7 @@ async function updateUserRole(userId, newRole, adminId, role, options = {}) {
     throw new BusinessLogicError(`Invalid role. Valid roles: ${validRoles.join(', ')}`);
   }
   
-  const user = await adminModel.getUserById(userId);
+  const user = await usersModel.findUserById(userId);
   if (!user) {
     throw new NotFoundError('User');
   }
@@ -105,6 +106,9 @@ async function updateAnnouncement(id, data, adminId, role) {
   if (role !== 'ADMIN') {
     throw new AuthorizationError('Only administrators can update announcements');
   }
+  
+  logger.info(`Admin ${adminId} updated announcement ${id}`);
+  
   return await announcementsModel.updateAnnouncement(id, data);
 }
 
@@ -112,9 +116,11 @@ async function deleteAnnouncement(id, adminId, role) {
   if (role !== 'ADMIN') {
     throw new AuthorizationError('Only administrators can delete announcements');
   }
+  
+  logger.info(`Admin ${adminId} deleted announcement ${id}`);
+  
   return await announcementsModel.deleteAnnouncement(id);
 }
-
 module.exports = {
   getStats,
   getAllUsers,

@@ -8,7 +8,7 @@ const  validate  = require('../middleware/validate');
 const { 
   createAnnouncementSchema, 
   updateAnnouncementSchema,
-  announcementFiltersSchema  
+  announcementFiltersSchema  ,
 } = require('../../shared/validators/announcementValidation');
 
 const { 
@@ -16,6 +16,8 @@ const {
   updateUserRoleSchema,
   idParamSchema 
 } = require('../../shared/validators/adminValidation');
+
+const {userIdParamSchema}=require('../../shared/validators/commonValidation')
 
 // to all admin routes
 adminRouter.use(verifyToken);
@@ -36,7 +38,7 @@ adminRouter.get(
 // PATCH /users/:userId/role - with param + body validation
 adminRouter.patch(
   '/users/:userId/role',
-  validate(idParamSchema, 'params'),           
+  validate(userIdParamSchema, 'params'),           
   validate(updateUserRoleSchema, 'body'),      
   adminController.updateUserRoleController     
 );
@@ -58,7 +60,7 @@ adminRouter.get(
 // PUT /announcements/:id - update
 adminRouter.put(
   '/announcements/:id',
-  validate(idParamSchema, 'params'),           
+  validate(require('../../shared/validators/announcementValidation').idParamSchema, 'params'),           
   validate(updateAnnouncementSchema, 'body'),
   adminController.updateAnnouncement
 );
@@ -66,7 +68,7 @@ adminRouter.put(
 // DELETE /announcements/:id
 adminRouter.delete(
   '/announcements/:id',
-  validate(idParamSchema, 'params'),          
+  validate(require('../../shared/validators/announcementValidation').idParamSchema, 'params'),          
   adminController.deleteAnnouncement
 );
 

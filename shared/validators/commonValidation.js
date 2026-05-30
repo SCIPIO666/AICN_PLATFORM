@@ -12,7 +12,9 @@ const paginationSchema = z.object({
 const idSchema = z.object({
 id: z.string().regex(/^c[a-z0-9]{24}$/, 'Invalid CUID format'),
 });
-
+const userIdParamSchema = z.object({
+  userId: z.string().regex(/^c[a-z0-9]{24}$/, 'Invalid user ID format')
+});
 // Common date range schema
 const dateRangeSchema = z.object({
   fromDate: z.string().datetime().optional(),
@@ -44,5 +46,6 @@ module.exports = {
   idSchema,
   dateRangeSchema,
   successResponseSchema,
-  errorResponseSchema
+  errorResponseSchema,
+  userIdParamSchema
 };
