@@ -19,7 +19,7 @@ const {
 
 // All admin routes require authentication and ADMIN role
 adminRouter.use(verifyToken);
-adminRouter.use(requireRole(['ADMIN']));
+adminRouter.use(requireRole('ADMIN'));
 
 // ============ STATS ============
 // No validation needed (only user from token)

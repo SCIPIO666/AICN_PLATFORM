@@ -2,7 +2,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const prisma = require('../../config/db');
+const {prisma} = require('../../config/db');
 const logger = require('../../utils/logger');
 const { sendWelcomeEmail, sendPasswordResetEmail } = require('../../utils/email/email services/aicnEmailsService');
 const { findUser, findUserById, createUser, findUserWithPassword } = require('../users/usersModel');

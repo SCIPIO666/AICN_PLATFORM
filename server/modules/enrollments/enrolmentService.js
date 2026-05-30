@@ -3,7 +3,7 @@ const enrolmentModel = require('./enrolmentsModel');
 const { getSession } = require('../sessions/sessionsModel');
 const logger = require('../../utils/logger');
 const { sendEnrolmentConfirmationEmail } = require('../../utils/email/email services/aicnEmailsService');
-const prisma = require('../../config/db');
+const {prisma }= require('../../config/db');
 const { NotFoundError, BusinessLogicError, AuthorizationError } = require('../../utils/errors/customErrors');
 
 async function createEnrolment(userId, sessionId) {

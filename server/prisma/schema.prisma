@@ -1,7 +1,5 @@
-// This is your Prisma schema file,
+// This is your Prisma schema file
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
   provider = "prisma-client-js"
@@ -58,6 +56,7 @@ model User {
   updatedAt            DateTime  @updatedAt
   resetPasswordToken   String?
   resetPasswordExpires DateTime?
+  deletedAt            DateTime? // Soft delete field
 
   // Relations
   enrolments      Enrolment[]
@@ -74,7 +73,7 @@ model Session {
   date         DateTime
   durationMins Int           @default(120)
   locationType LocationType  @default(PHYSICAL)
-  venue        String? // physical address or online  links
+  venue        String? // physical address or online links
   county       String?
   capacity     Int           @default(30)
   status       SessionStatus @default(SCHEDULED)
@@ -82,6 +81,7 @@ model Session {
   trainer      User?         @relation("TrainerSessions", fields: [trainerId], references: [id])
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+  deletedAt    DateTime? // Soft delete field
 
   // Relations
   enrolments   Enrolment[]
@@ -95,6 +95,7 @@ model Enrolment {
   status    EnrolmentStatus @default(ENROLLED)
   createdAt DateTime        @default(now())
   updatedAt DateTime        @updatedAt
+  deletedAt DateTime? // Soft delete field
 
   user    User    @relation(fields: [userId], references: [id])
   session Session @relation(fields: [sessionId], references: [id])
@@ -127,6 +128,7 @@ model Certificate {
   pdfGenerationFailed Boolean?  @default(false)
   pdfFailureReason    String?
   pdfFailedAt         DateTime?
+  deletedAt           DateTime? // Soft delete field
 
   user    User    @relation(fields: [userId], references: [id])
   session Session @relation(fields: [sessionId], references: [id])
@@ -144,23 +146,25 @@ model TrainerProfile {
   status       TrainerStatus @default(PENDING)
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+  deletedAt    DateTime? // Soft delete field
 
   user User @relation(fields: [userId], references: [id])
 }
 
 model Announcement {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   title     String
   body      String
-  audience  String   @default("all") // "all" | "learners" | "trainers"
-  createdAt DateTime @default(now())
+  audience  String    @default("all") // "all" | "learners" | "trainers"
+  createdAt DateTime  @default(now())
+  deletedAt DateTime? // Soft delete field
 }
 
 // auth
 model BlacklistedToken {
   id        String   @id @default(cuid())
   token     String   @unique
-  userId    Int
+  userId    String
   expiresAt DateTime
   createdAt DateTime @default(now())
 

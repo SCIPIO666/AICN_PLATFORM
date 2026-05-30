@@ -1,6 +1,6 @@
 // trainers/trainersService.js
 const trainersModel = require('./trainersModel');
-const prisma = require('../../config/db');
+const { prisma} = require('../../config/db');
 const logger = require('../../utils/logger');
 const { NotFoundError, BusinessLogicError, AuthorizationError } = require('../../utils/errors/customErrors');
 
@@ -152,7 +152,7 @@ async function getApprovedTrainers(filters = {}, page = 1, limit = 10) {
     
     const trainers = await prisma.trainerProfile.findMany({
       where,
-      include: { user: { select: { id: true, name: true, email: true, profilePicture: true } }, _count: { select: { sessions: { where: { status: 'COMPLETED' } } } } },
+      include: { user: { select: { id: true, name: true, email: true } }, _count: { select: { sessions: { where: { status: 'COMPLETED' } } } } },
       skip, take: limit, orderBy: { updatedAt: 'desc' }
     });
     
