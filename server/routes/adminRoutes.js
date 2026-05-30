@@ -17,13 +17,13 @@ const {
   idParamSchema 
 } = require('../../shared/validators/adminValidation');
 
-// All admin routes require authentication and ADMIN role
+// to all admin routes
 adminRouter.use(verifyToken);
 adminRouter.use(requireRole('ADMIN'));
 
 // ============ STATS ============
 // No validation needed (only user from token)
-adminRouter.get('/stats', adminController.getStats);
+adminRouter.get('/stats',adminController.getStats);
 
 // ============ USER MANAGEMENT ============
 // GET /users - with query validation
