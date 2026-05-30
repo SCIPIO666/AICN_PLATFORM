@@ -8,7 +8,7 @@ const  validate  = require('../middleware/validate');
 const { 
   createAnnouncementSchema, 
   updateAnnouncementSchema,
-  announcementFiltersSchema  // Make sure this exists
+  announcementFiltersSchema  
 } = require('../../shared/validators/announcementValidation');
 
 const { 
@@ -52,7 +52,7 @@ adminRouter.post(
 // GET /announcements - with query validation
 adminRouter.get(
   '/announcements',
-  validate(announcementFiltersSchema, 'query'),  
+  validate(announcementFiltersSchema, 'query'),  adminController.getAllAnnouncements
 );
 
 // PUT /announcements/:id - update
