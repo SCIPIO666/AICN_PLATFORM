@@ -4,7 +4,7 @@ const { getSession } = require('../sessions/sessionsModel');
 const { sendCertificateEmail } = require('../../utils/email/email services/aicnEmailsService');
 const uploadPdf = require('../../utils/media storage/uploadPdf');
 const { generateCertificatePDF } = require('../../utils/pdf/templates/certificates/certificateGenerator');
-const prisma = require('../../config/db');
+const {prisma} = require('../../config/db');
 const logger = require('../../utils/logger');
 const { AuthorizationError, NotFoundError, BusinessLogicError } = require('../../utils/errors/customErrors');
 
@@ -95,7 +95,7 @@ async function batchIssueCertificates(sessionId, adminId, role) {
   }
   
   const attendedEnrolments = await prisma.enrolment.findMany({
-    where: { sessionId, status: 'ATTENDED', certificate: null },
+    where: { sessionId, status: 'ATTENDED', certificate: false },
     include: { user: true, session: { include: { trainer: true } } }
   });
   
@@ -109,6 +109,10 @@ async function batchIssueCertificates(sessionId, adminId, role) {
     try {
       await issueCertificate(enrolment.userId, sessionId, adminId, role);
       results.issued++;
+      await prisma.enrolment.update({
+        where: { sessionId, status: 'ATTENDED',userId:enrolment.userId },
+        data : { certificate: true}
+      })
     } catch (error) {
       results.failed++;
       results.errors.push({ userId: enrolment.userId, userName: enrolment.user.name, error: error.message });

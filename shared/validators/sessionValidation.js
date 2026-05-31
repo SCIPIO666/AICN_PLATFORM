@@ -48,14 +48,14 @@ const createSessionSchema = z.object({
     .optional()
     .nullable(),
   
-  meetingLink: z.string()
-    .url('Must be a valid URL for online sessions')
-    .optional()
-    .nullable()
-    .refine(val => {
-      // If locationType is ONLINE, meeting link is required
-      return true; // Handled by refine below
-    }, 'Meeting link is required for online sessions'),
+  // meetingLink: z.string()
+  //   .url('Must be a valid URL for online sessions')
+  //   .optional()
+  //   .nullable()
+  //   .refine(val => {
+  //     // If locationType is ONLINE, meeting link is required
+  //     return true; // Handled by refine below
+  //   }, 'Meeting link is required for online sessions'),
   
   county: z.string()
     .min(2, 'County must be at least 2 characters')

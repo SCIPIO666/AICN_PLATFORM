@@ -55,5 +55,5 @@ module.exports = {
   enums,
   
   // Middleware
-  validate: require('../middleware/validate').validate
+  validate: require('../../server/middleware/validate').validate
 };

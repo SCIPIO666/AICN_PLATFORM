@@ -17,7 +17,7 @@ const issueCertificateSchema = z.object({
 // Single issue certificate (alternative schema for body)
 const issueSingleCertificateSchema = z.object({
   userId: z.string().regex(/^c[a-z0-9]{24}$/, 'Invalid CUID format'),
-  sessionId: z.string().uuid()
+  sessionId: z.string()
 });
 
 // Verify certificate validation

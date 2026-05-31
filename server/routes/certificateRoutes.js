@@ -34,7 +34,7 @@ certificatesRouter.get(
 // POST /batch/:sessionId - Batch issue certificates for a session
 certificatesRouter.post(
   '/batch/:sessionId',
-  requireRole(['ADMIN']),
+  requireRole('ADMIN'),
   validate(batchIssueCertificatesSchema, 'params'),  
   certificatesController.batchIssueCertificates
 );
@@ -42,8 +42,8 @@ certificatesRouter.post(
 // POST / - Issue single certificate (admin only)
 certificatesRouter.post(
   '/',
-  requireRole(['ADMIN']),
-  validate(issueCertificateSchema, 'body'),  
+  requireRole('ADMIN'),
+  validate(require('../../shared/validators').issueCertificateSchema, 'body'),  
   certificatesController.issueCertificate
 );
 

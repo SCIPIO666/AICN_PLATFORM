@@ -34,7 +34,7 @@ sessionRouter.get(
 sessionRouter.post(
   '/', 
   verifyToken, 
-  requireRole(['ADMIN']),
+  requireRole('ADMIN'),
   validate(createSessionSchema, 'body'), 
   sessionsController.createSession
 );
@@ -43,7 +43,7 @@ sessionRouter.post(
 sessionRouter.put(
   '/:id', 
   verifyToken, 
-  requireRole(['ADMIN']),
+  requireRole('ADMIN'),
   validate(idParamSchema, 'params'),  
   validate(updateSessionSchema, 'body'),  
   sessionsController.updateSession
@@ -53,7 +53,7 @@ sessionRouter.put(
 sessionRouter.delete(
   '/:id', 
   verifyToken, 
-  requireRole(['ADMIN']),
+  requireRole('ADMIN'),
   validate(idParamSchema, 'params'), 
   sessionsController.deleteSession
 );

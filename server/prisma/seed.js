@@ -27,7 +27,7 @@ const past = (daysAgo, hour = 9) => {
 const generateCertCode = (userId, sessionId) => {
   const timestamp = Date.now()
   const random = Math.random().toString(36).substring(2, 8).toUpperCase()
-  return `AICN-${userId.substring(0,4)}-${sessionId.substring(0,4)}-${random}`
+  return `CERT-${userId.substring(0,4)}-${sessionId.substring(0,4)}-${random}`
 }
 
 // ========== Main seeder function ===================

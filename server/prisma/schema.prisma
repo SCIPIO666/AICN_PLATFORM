@@ -66,22 +66,23 @@ model User {
 }
 
 model Session {
-  id           String        @id @default(cuid())
+  id           String       @id @default(cuid())
   title        String
   skillArea    String
   description  String?
   date         DateTime
-  durationMins Int           @default(120)
-  locationType LocationType  @default(PHYSICAL)
+  durationMins Int          @default(120)
+  locationType LocationType @default(PHYSICAL)
   venue        String? // physical address or online links
-  county       String?
-  capacity     Int           @default(30)
-  status       SessionStatus @default(SCHEDULED)
-  trainerId    String?
-  trainer      User?         @relation("TrainerSessions", fields: [trainerId], references: [id])
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  deletedAt    DateTime? // Soft delete field
+
+  county    String?
+  capacity  Int           @default(30)
+  status    SessionStatus @default(SCHEDULED)
+  trainerId String?
+  trainer   User?         @relation("TrainerSessions", fields: [trainerId], references: [id])
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  deletedAt DateTime? // Soft delete field
 
   // Relations
   enrolments   Enrolment[]
@@ -96,6 +97,8 @@ model Enrolment {
   createdAt DateTime        @default(now())
   updatedAt DateTime        @updatedAt
   deletedAt DateTime? // Soft delete field
+
+  certificate Boolean @default(false)
 
   user    User    @relation(fields: [userId], references: [id])
   session Session @relation(fields: [sessionId], references: [id])

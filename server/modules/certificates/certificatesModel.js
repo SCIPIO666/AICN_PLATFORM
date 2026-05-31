@@ -95,8 +95,24 @@ async function getSessionCertificates(sessionId) {
     throw error;
   }
 }
-
+ async function getCertificateByUserAndSession(userId, sessionId){
+ try {
+    return await prisma.certificate.findFirst({
+      where: { userId, sessionId },
+      include: {
+        user: {
+          select: { id: true, name: true, email: true }
+        },
+        session: true
+      }
+    });
+  } catch (error) {
+    logger.error(`Failed to get certificate: ${error.message}`);
+    throw error;
+  }
+ }
 module.exports = {
+  getCertificateByUserAndSession,
   createCertificate,
   getCertificateById,
   getCertificateByCode,
