@@ -47,7 +47,7 @@ enrolmentsRouter.patch(
   '/:id/attend',
   validate(idParamSchema, 'params'),  
   validate(markAttendanceSchema, 'body'),  
-  requireRole(['TRAINER', 'ADMIN']),
+  requireRole('TRAINER', 'ADMIN'),
   enrolmentsController.markAttendance
 );
 

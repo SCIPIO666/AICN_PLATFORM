@@ -25,7 +25,7 @@ certificatesRouter.use(verifyToken);
 
 // GET /my - Get current user's certificates
 certificatesRouter.get(
-  '/my',
+  '/me',
   validate(getCertificatesQuerySchema, 'query'),  
   certificatesController.getMyCertificates
 );

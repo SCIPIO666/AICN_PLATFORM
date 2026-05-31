@@ -90,13 +90,14 @@ model Session {
 }
 
 model Enrolment {
-  id        String          @id @default(cuid())
-  userId    String
-  sessionId String
-  status    EnrolmentStatus @default(ENROLLED)
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @updatedAt
-  deletedAt DateTime? // Soft delete field
+  id                 String          @id @default(cuid())
+  userId             String
+  sessionId          String
+  status             EnrolmentStatus @default(ENROLLED)
+  cancellationReason String?
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+  deletedAt          DateTime? // Soft delete field
 
   certificate Boolean @default(false)
 
