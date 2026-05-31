@@ -12,7 +12,8 @@ const {
   rejectionSchema,
   trainerFiltersSchema,
   trainerSessionFiltersSchema,
-  idParamSchema
+  idParamSchema,
+  approvalSchema
 } = require('../../shared/validators/trainerValidation');
 
 // ============ PUBLIC ROUTES (No authentication) ============
@@ -51,7 +52,7 @@ trainersRouter.delete('/me', trainersController.withdrawApplication);
 // Get my sessions (Trainer/Admin only)
 trainersRouter.get(
   '/me/sessions',
-  requireRole(['TRAINER', 'ADMIN']),
+  requireRole('TRAINER', 'ADMIN'),
   validate(trainerSessionFiltersSchema, 'query'),
   trainersController.getMySessions
 );
@@ -61,7 +62,7 @@ trainersRouter.get(
 // Get ALL applications (including PENDING) - Admin only
 trainersRouter.get(
   '/admin/applications',
-  requireRole(['ADMIN']),
+  requireRole('ADMIN'),
   validate(trainerFiltersSchema, 'query'),
   trainersController.getAllTrainerApplications
 );
@@ -69,7 +70,7 @@ trainersRouter.get(
 // Get application by ID
 trainersRouter.get(
   '/admin/applications/:id',
-  requireRole(['ADMIN']),
+  requireRole('ADMIN'),
   validate(idParamSchema, 'params'),
   trainersController.getTrainerApplicationById
 );
@@ -77,16 +78,16 @@ trainersRouter.get(
 // Approve application
 trainersRouter.patch(
   '/admin/applications/:id/approve',
-  requireRole(['ADMIN']),
+  requireRole('ADMIN'),
   validate(idParamSchema, 'params'),
-  validate(updateTrainerStatusSchema, 'body'),
+  validate(approvalSchema, 'body'),
   trainersController.approveTrainerApplication
 );
 
 // Reject application
 trainersRouter.patch(
   '/admin/applications/:id/reject',
-  requireRole(['ADMIN']),
+  requireRole('ADMIN'),
   validate(idParamSchema, 'params'),
   validate(rejectionSchema, 'body'),
   trainersController.rejectTrainerApplication
@@ -95,7 +96,7 @@ trainersRouter.patch(
 // Delete application
 trainersRouter.delete(
   '/admin/applications/:id',
-  requireRole(['ADMIN']),
+  requireRole('ADMIN'),
   validate(idParamSchema, 'params'),
   trainersController.deleteTrainerApplication
 );

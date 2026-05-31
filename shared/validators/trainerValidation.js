@@ -1,5 +1,5 @@
 const { z } = require('zod');
-const { TrainerStatusValues } = require('../constants/enums');
+const { TrainerStatusValues,TrainerApprovalStatusValues } = require('../constants/enums');
 
 // ID param validation (ADD THIS)
 const idParamSchema = z.object({
@@ -55,10 +55,11 @@ const updateTrainerProfileSchema = z.object({
 
 // Admin update trainer status validation
 const updateTrainerStatusSchema = z.object({
-  status: z.enum(TrainerStatusValues)
+  status: z.enum(TrainerStatusValues),
+  
 });
 
-// Rejection validation (ADD THIS)
+// Rejection validation 
 const rejectionSchema = z.object({
   reason: z.string()
     .min(10, 'Rejection reason must be at least 10 characters')
@@ -69,8 +70,13 @@ const rejectionSchema = z.object({
     .max(1000, 'Feedback must not exceed 1000 characters')
     .optional()
 });
+const approvalSchema = z.object({
+  message: z.string()
+    .max(1000, 'Message must not exceed 1000 characters')
+    .optional()
+});
 
-// Trainer filters validation (ENHANCED)
+// Trainer filters validation 
 const trainerFiltersSchema = z.object({
   status: z.enum(TrainerStatusValues).optional(),
   skill: z.string()
@@ -101,5 +107,6 @@ module.exports = {
   updateTrainerStatusSchema,
   rejectionSchema,
   trainerFiltersSchema,
+  approvalSchema,
   trainerSessionFiltersSchema
 };

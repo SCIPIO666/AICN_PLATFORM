@@ -31,6 +31,9 @@ const TrainerStatus = {
   REJECTED: 'REJECTED'
 };
 
+const ApproveTrainerStatus={
+  APPROVED: 'APPROVED',
+}
 const AnnouncementAudience = {
   ALL: 'all',
   LEARNERS: 'learners',
@@ -43,6 +46,7 @@ const SessionStatusValues = Object.values(SessionStatus);
 const LocationTypeValues = Object.values(LocationType);
 const EnrolmentStatusValues = Object.values(EnrolmentStatus);
 const TrainerStatusValues = Object.values(TrainerStatus);
+const TrainerApprovalStatusValues=Object.values(ApproveTrainerStatus)
 const AnnouncementAudienceValues = Object.values(AnnouncementAudience);
 
 module.exports = {
@@ -60,5 +64,6 @@ module.exports = {
   LocationTypeValues,
   EnrolmentStatusValues,
   TrainerStatusValues,
-  AnnouncementAudienceValues
+  AnnouncementAudienceValues,
+  TrainerApprovalStatusValues
 };

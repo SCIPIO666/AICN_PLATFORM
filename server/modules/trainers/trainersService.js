@@ -152,17 +152,43 @@ async function getApprovedTrainers(filters = {}, page = 1, limit = 10) {
     
     const trainers = await prisma.trainerProfile.findMany({
       where,
-      include: { user: { select: { id: true, name: true, email: true } }, _count: { select: { sessions: { where: { status: 'COMPLETED' } } } } },
-      skip, take: limit, orderBy: { updatedAt: 'desc' }
+      include: { 
+        user: { 
+          select: { 
+            id: true, 
+            name: true, 
+            email: true,
+            trainedSessions: {  
+              where: { status: 'COMPLETED' },
+              select: { id: true }  
+            }
+          } 
+        }
+      },
+      skip, 
+      take: limit, 
+      orderBy: { updatedAt: 'desc' }
     });
     
     const formattedTrainers = trainers.map(trainer => ({
-      id: trainer.id, userId: trainer.user.id, name: trainer.user.name, profilePicture: trainer.user.profilePicture || null,
-      skills: trainer.skills || [], bio: trainer.bio || null, availability: trainer.availability || null,
-      totalCompletedSessions: trainer._count.sessions, joinedAt: trainer.createdAt
+      id: trainer.id,
+      userId: trainer.user.id,
+      name: trainer.user.name,
+      profilePicture: trainer.user.profilePicture || null,
+      skills: trainer.skills || [],
+      bio: trainer.bio || null,
+      availability: trainer.availability || null,
+      totalCompletedSessions: trainer.user.trainedSessions.length, 
+      joinedAt: trainer.createdAt
     }));
     
-    return { trainers: formattedTrainers, total, page: parseInt(page), limit: parseInt(limit), totalPages: Math.ceil(total / limit) };
+    return { 
+      trainers: formattedTrainers, 
+      total, 
+      page: parseInt(page), 
+      limit: parseInt(limit), 
+      totalPages: Math.ceil(total / limit) 
+    };
   } catch (error) {
     logger.error(`Failed to get approved trainers: ${error.message}`);
     throw new Error('Unable to fetch approved trainers');
