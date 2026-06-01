@@ -27,7 +27,7 @@ announcementsRouter.get(
 
 // ============= RBAC admin only=============
 announcementsRouter.use(verifyToken);
-announcementsRouter.use(requireRole(['ADMIN']));
+announcementsRouter.use(requireRole('ADMIN'));
 
 // POST /announcements - create new
 announcementsRouter.post(
