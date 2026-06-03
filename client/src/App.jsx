@@ -13,8 +13,8 @@ import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
 
 // Placeholders for modules
-import Dashboard from './pages/Dashboard';
-import Unauthorized from './pages/Unauthorized';
+import Dashboard from './pages/DashboardPage';
+import Unauthorized from './pages/shared/Unauthorized';
 
 const queryClient = new QueryClient();
 
