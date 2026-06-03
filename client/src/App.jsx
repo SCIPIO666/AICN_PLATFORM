@@ -4,7 +4,9 @@ import { Toaster } from './components/ui/toaster';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './routes/ProtectedRoute';
 import PublicRoute from './routes/PublicRoute';
+import RoleBasedRoute from './routes/RoleBasedRoute';
 import AppLayout from './layouts/AppLayout';
+import { learnerRoutes, trainerRoutes, adminRoutes, sharedRoutes } from './routes';
 
 // Auth Pages
 import Login from './pages/auth/Login';
@@ -12,9 +14,10 @@ import Signup from './pages/auth/Signup';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
 
-// Placeholders for modules
-import Dashboard from './pages/DashboardPage';
+// Shared Pages
 import Unauthorized from './pages/shared/Unauthorized';
+import LandingPage from './pages/shared/LandingPage';
+import VerifyCertificate from './pages/shared/VerifyCertificate';
 
 const queryClient = new QueryClient();
 
@@ -25,6 +28,8 @@ function App() {
         <AuthProvider>
           <Routes>
             {/* Public routes */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/verify-certificate" element={<VerifyCertificate />} />
             <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
             <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
             <Route path="/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
@@ -33,9 +38,57 @@ function App() {
 
             {/* Protected routes with layout */}
             <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              {/* Additional module routes will be added here */}
+              {/* Role-based redirect */}
+              <Route path="/dashboard" element={<RoleBasedRoute />} />
+              
+
+              {learnerRoutes.map(route => (
+                <Route 
+                  key={route.path}
+                  path={`/dashboard/${route.path}`}
+                  element={
+                    <RoleBasedRoute allowedRoles={route.roles}>
+                      {route.element}
+                    </RoleBasedRoute>
+                  }
+                />
+              ))}
+              
+              {trainerRoutes.map(route => (
+                <Route 
+                  key={route.path}
+                  path={`/dashboard/${route.path}`}
+                  element={
+                    <RoleBasedRoute allowedRoles={route.roles}>
+                      {route.element}
+                    </RoleBasedRoute>
+                  }
+                />
+              ))}
+              
+              {adminRoutes.map(route => (
+                <Route 
+                  key={route.path}
+                  path={`/dashboard/${route.path}`}
+                  element={
+                    <RoleBasedRoute allowedRoles={route.roles}>
+                      {route.element}
+                    </RoleBasedRoute>
+                  }
+                />
+              ))}
+              
+              {sharedRoutes.map(route => (
+                <Route 
+                  key={route.path}
+                  path={`/dashboard/${route.path}`}
+                  element={
+                    <ProtectedRoute>
+                      {route.element}
+                    </ProtectedRoute>
+                  }
+                />
+              ))}
             </Route>
           </Routes>
           <Toaster />
