@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 
-// Client-side filter state only - not cached by React Query
 const useUIFiltersStore = create((set) => ({
   // Session filters
   sessionFilters: {
@@ -43,6 +42,18 @@ const useUIFiltersStore = create((set) => ({
   
   setTrainerFilters: (newFilters) => set((state) => ({ 
     trainerFilters: { ...state.trainerFilters, ...newFilters, page: 1 } 
+  })),
+  
+  // Admin user filters
+  userFilters: {
+    role: '',
+    search: '',
+    page: 1,
+    limit: 10,
+  },
+  
+  setUserFilters: (newFilters) => set((state) => ({ 
+    userFilters: { ...state.userFilters, ...newFilters, page: 1 } 
   })),
 }));
 

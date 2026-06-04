@@ -7,6 +7,7 @@ const useUIModalStore = create((set) => ({
     enrolment: false,
     certificate: false,
     announcement: false,
+    trainerApplication: false,
   },
   modalData: null,
   
@@ -17,11 +18,18 @@ const useUIModalStore = create((set) => ({
   
   closeModal: (modalName) => set((state) => ({ 
     modals: { ...state.modals, [modalName]: false },
-    modalData: null 
+    modalData: modalName === state.modalData?.type ? null : state.modalData
   })),
   
   closeAllModals: () => set({ 
-    modals: { login: false, signup: false, enrolment: false, certificate: false, announcement: false },
+    modals: { 
+      login: false, 
+      signup: false, 
+      enrolment: false, 
+      certificate: false, 
+      announcement: false,
+      trainerApplication: false,
+    },
     modalData: null 
   }),
 }));
