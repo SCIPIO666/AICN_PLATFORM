@@ -1,4 +1,3 @@
-
 import LearnerDashboard from '../pages/learner/Dashboard';
 import Sessions from '../pages/learner/Sessions';
 import MyEnrolments from '../pages/learner/MyEnrolments';
@@ -20,7 +19,7 @@ import Announcements from '../pages/admin/Announcements';
 import Profile from '../pages/shared/Profile';
 import Settings from '../pages/shared/Settings';
 
-/
+
 export const learnerRoutes = [
   { path: "learner", element: <LearnerDashboard />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
   { path: "learner/sessions", element: <Sessions />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },

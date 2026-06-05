@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'; // Add Outlet here
 import AppLayout from '../layouts/AppLayout';
 import ProtectedRoute from './ProtectedRoute';
 import PublicRoute from './PublicRoute';
@@ -15,13 +15,13 @@ import Unauthorized from '../pages/shared/Unauthorized';
 import LandingPage from '../pages/shared/LandingPage';
 import VerifyCertificate from '../pages/shared/VerifyCertificate';
 
-// Import your routes
+// routes
 import { learnerRoutes, trainerRoutes, adminRoutes, sharedRoutes } from './index';
 
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <AppLayout />, // Root layout without auth check
+    element: <AppLayout />,
     children: [
       // Public routes
       { index: true, element: <LandingPage /> },
@@ -35,7 +35,7 @@ export const router = createBrowserRouter([
       // Protected routes
       {
         path: 'dashboard',
-        element: <ProtectedRoute><div><Outlet /></div></ProtectedRoute>, // You can use a DashboardLayout
+        element: <ProtectedRoute><div><Outlet /></div></ProtectedRoute>,
         children: [
           { index: true, element: <RoleBasedRoute /> },
           

@@ -1,12 +1,8 @@
 import { Navigate } from 'react-router-dom';
-import { useAuthStore } from '../stores';
-import { useMe } from '../hooks/useAuth';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function ProtectedRoute({ children, allowedRoles = [] }) {
-  const { isAuthenticated, token, isLoading: isAuthLoading } = useAuthStore();
-  const { data: user, isLoading: isUserLoading } = useMe();
-  
-  const isLoading = isAuthLoading || isUserLoading;
+  const { user, isLoading, isAuthenticated } = useAuth();
   
   if (isLoading) {
     return (
@@ -16,7 +12,7 @@ export default function ProtectedRoute({ children, allowedRoles = [] }) {
     );
   }
   
-  if (!isAuthenticated || !token || !user) {
+  if (!isAuthenticated || !user) {
     return <Navigate to="/login" replace />;
   }
   
