@@ -1,92 +1,216 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import useAuthStore from '../stores/useAuthStore';
 import * as authAPI from '../api/auth';
+import useAuthStore from '../stores/useAuthStore';
+import { useUIModalStore } from '../stores';
 
-// Query keys
+// ===== QUERY KEYS =====
 export const authKeys = {
+  all: ['auth'],
   me: ['auth', 'me'],
+  permissions: ['auth', 'permissions'],
 };
 
-// Hook for getting current user
+// ===== HOOK: Get Current User (Auto-fetch on mount) =====
 export const useMe = () => {
-  const { setAuth, clearAuth } = useAuthStore();
+  const { setAuth, clearAuth, isAuthenticated, token } = useAuthStore();
   
   return useQuery({
     queryKey: authKeys.me,
     queryFn: async () => {
-      const user = await authAPI.getMe();
-      setAuth(user, null); // token is already in storage
-      return user;
+      try {
+        const user = await authAPI.getMe();
+        setAuth(user, token); // Preserve existing token
+        return user;
+      } catch (error) {
+        // If token is invalid, clear auth
+        if (error.response?.status === 401) {
+          clearAuth();
+        }
+        throw error;
+      }
     },
-    retry: false,
+    enabled: !!token, // Only run if we have a token
     staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: false,
   });
 };
 
-// Hook for login
+// ===== HOOK: Login =====
 export const useLogin = () => {
   const queryClient = useQueryClient();
-  const { setAuth } = useAuthStore();
+  const { setAuth, setLoading, setError } = useAuthStore();
+  const { closeModal } = useUIModalStore();
   
   return useMutation({
     mutationFn: ({ email, password }) => authAPI.login(email, password),
+    onMutate: () => {
+      setLoading(true);
+      setError(null);
+    },
     onSuccess: (data) => {
       setAuth(data.user, data.token);
       queryClient.setQueryData(authKeys.me, data.user);
-      // Invalidate other queries that depend on auth
-      queryClient.invalidateQueries({ queryKey: ['enrolments'] });
-      queryClient.invalidateQueries({ queryKey: ['sessions'] });
+      closeModal('login'); // Close login modal if open
+      setLoading(false);
+      
+      // Show success notification (you can integrate toast here)
+      console.log('Login successful!');
+    },
+    onError: (error) => {
+      const message = error.response?.data?.message || 'Login failed';
+      setError(message);
+      setLoading(false);
+      
+      // Return error for component handling
+      return { error: message };
     },
   });
 };
 
-// Hook for signup
+// ===== HOOK: Signup =====
 export const useSignup = () => {
   const queryClient = useQueryClient();
+  const { setLoading, setError } = useAuthStore();
+  const { closeModal } = useUIModalStore();
   
   return useMutation({
     mutationFn: (userData) => authAPI.signup(userData),
+    onMutate: () => {
+      setLoading(true);
+      setError(null);
+    },
     onSuccess: (data) => {
+      setLoading(false);
+      closeModal('signup');
       // Optionally auto-login after signup
-      queryClient.invalidateQueries({ queryKey: authKeys.me });
+      // Or redirect to login page
+      console.log('Signup successful! Please login.');
+    },
+    onError: (error) => {
+      const message = error.response?.data?.message || 'Signup failed';
+      setError(message);
+      setLoading(false);
     },
   });
 };
 
-// Hook for logout
+// ===== HOOK: Logout =====
 export const useLogout = () => {
   const queryClient = useQueryClient();
-  const { clearAuth } = useAuthStore();
+  const { clearAuth, setLoading } = useAuthStore();
   
   return useMutation({
     mutationFn: () => authAPI.logout(),
+    onMutate: () => {
+      setLoading(true);
+    },
     onSuccess: () => {
       clearAuth();
-      // Clear all cached queries
+      queryClient.clear(); // Clear all React Query cache
+      setLoading(false);
+      
+      // Redirect to home
+      window.location.href = '/';
+    },
+    onError: (error) => {
+      console.error('Logout error:', error);
+      // Still clear local auth even if API fails
+      clearAuth();
       queryClient.clear();
+      setLoading(false);
     },
   });
 };
 
-// Hook for password change
-export const useChangePassword = () => {
-  return useMutation({
-    mutationFn: ({ currentPassword, newPassword, confirmPassword }) => 
-      authAPI.changePassword(currentPassword, newPassword, confirmPassword),
-  });
-};
-
-// Hook for forgot password
+// ===== HOOK: Forgot Password =====
 export const useForgotPassword = () => {
+  const { setLoading, setError } = useAuthStore();
+  
   return useMutation({
     mutationFn: (email) => authAPI.forgotPassword(email),
+    onMutate: () => {
+      setLoading(true);
+      setError(null);
+    },
+    onSuccess: () => {
+      setLoading(false);
+      console.log('Password reset email sent!');
+    },
+    onError: (error) => {
+      const message = error.response?.data?.message || 'Request failed';
+      setError(message);
+      setLoading(false);
+    },
   });
 };
 
-// Hook for reset password
+// ===== HOOK: Reset Password =====
 export const useResetPassword = () => {
+  const { setLoading, setError } = useAuthStore();
+  
   return useMutation({
     mutationFn: ({ token, newPassword, confirmPassword }) => 
       authAPI.resetPassword(token, newPassword, confirmPassword),
+    onMutate: () => {
+      setLoading(true);
+      setError(null);
+    },
+    onSuccess: () => {
+      setLoading(false);
+      console.log('Password reset successful!');
+    },
+    onError: (error) => {
+      const message = error.response?.data?.message || 'Password reset failed';
+      setError(message);
+      setLoading(false);
+    },
+  });
+};
+
+// ===== HOOK: Change Password (Authenticated) =====
+export const useChangePassword = () => {
+  const { setLoading, setError } = useAuthStore();
+  
+  return useMutation({
+    mutationFn: ({ currentPassword, newPassword, confirmPassword }) =>
+      authAPI.changePassword(currentPassword, newPassword, confirmPassword),
+    onMutate: () => {
+      setLoading(true);
+      setError(null);
+    },
+    onSuccess: () => {
+      setLoading(false);
+      console.log('Password changed successfully!');
+    },
+    onError: (error) => {
+      const message = error.response?.data?.message || 'Password change failed';
+      setError(message);
+      setLoading(false);
+    },
+  });
+};
+
+// ===== HOOK: Update Profile =====
+export const useUpdateProfile = () => {
+  const queryClient = useQueryClient();
+  const { updateUser, setLoading, setError } = useAuthStore();
+  
+  return useMutation({
+    mutationFn: (profileData) => authAPI.updateProfile(profileData),
+    onMutate: () => {
+      setLoading(true);
+      setError(null);
+    },
+    onSuccess: (updatedUser) => {
+      updateUser(updatedUser);
+      queryClient.setQueryData(authKeys.me, updatedUser);
+      setLoading(false);
+      console.log('Profile updated successfully!');
+    },
+    onError: (error) => {
+      const message = error.response?.data?.message || 'Profile update failed';
+      setError(message);
+      setLoading(false);
+    },
   });
 };

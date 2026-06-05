@@ -4,23 +4,53 @@ import { persist } from 'zustand/middleware';
 const useAuthStore = create(
   persist(
     (set, get) => ({
-      // Client State Only (not server state)
+      // ===== STATE =====
       user: null,
       token: null,
       isAuthenticated: false,
+      isLoading: false,
+      error: null,
       
-      // Actions
+      // ===== BASIC ACTIONS (No API calls) =====
       setAuth: (user, token) => {
-        set({ user, token, isAuthenticated: true });
+        set({ 
+          user, 
+          token, 
+          isAuthenticated: true, 
+          isLoading: false, 
+          error: null 
+        });
       },
       
       clearAuth: () => {
-        set({ user: null, token: null, isAuthenticated: false });
+        set({ 
+          user: null, 
+          token: null, 
+          isAuthenticated: false, 
+          isLoading: false,
+          error: null 
+        });
       },
       
-      updateUser: (updatedUser) => {
-        set({ user: updatedUser });
+      setLoading: (isLoading) => set({ isLoading }),
+      
+      setError: (error) => set({ error }),
+      
+      updateUser: (updatedUser) => set({ user: updatedUser }),
+      
+      // ===== COMPUTED VALUES =====
+      getUserRole: () => get().user?.role || null,
+      
+      hasRole: (roles) => {
+        const userRole = get().user?.role;
+        return roles.includes(userRole);
       },
+      
+      isAdmin: () => get().user?.role === 'ADMIN',
+      
+      isTrainer: () => get().user?.role === 'TRAINER',
+      
+      isLearner: () => get().user?.role === 'LEARNER',
     }),
     {
       name: 'auth-storage',
