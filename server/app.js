@@ -8,7 +8,7 @@ const setupSwagger = require('./config/swagger');
 const devLogger = require('./utils/logger');
 const errorHandler = require('./middleware/errorHandler');
 const { notFoundHandler } = require('./middleware/notFound');
-
+const cors = require('cors');
 
 //routers
 const authRouter = require('./routes/authRoutes');
@@ -18,6 +18,14 @@ const certificatesRouter = require('./routes/certificateRoutes');
 const trainersRouter = require('./routes/trainersRoutes');
 const adminRouter = require('./routes/adminRoutes');
 const app = express();
+
+
+app.use(cors({
+  origin: process.env.FRONT_END_URL||'http://localhost:5173', // frontend URL
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

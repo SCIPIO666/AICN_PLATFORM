@@ -161,6 +161,9 @@ function LoginPage() {
             </button>
           </div>
         </form>
+
+        <p>  admin@aicn.africa,trainer@aicn.africa,learner@aicn.africa</p>
+        <p>Test123!@#</p>
         
       
       </div>
