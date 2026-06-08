@@ -2,6 +2,6 @@ import React from 'react'
 
 export default function Attendance() {
   return (
-    <div>Attendance</div>
+    <div>Attendance--for trainer</div>
   )
 }

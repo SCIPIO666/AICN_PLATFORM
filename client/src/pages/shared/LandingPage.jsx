@@ -7,14 +7,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen">
       {/* heroe */}
-        <div>
-            <div>
-                <h2></h2>
-            </div>
-            <div>
-
-            </div>
-        </div>
+      <h1 className='text-pink-500'>LANDING PAGE</h1>
     
     </div>
   );
