@@ -18,7 +18,7 @@ import Announcements from '../pages/admin/Announcements';
 
 import Profile from '../pages/shared/Profile';
 import Settings from '../pages/shared/Settings';
-
+import Unauthorized from '@/pages/shared/Unauthorized';
 
 export const learnerRoutes = [
   { path: "learner", element: <LearnerDashboard />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
@@ -48,3 +48,7 @@ export const sharedRoutes = [
   { path: "profile", element: <Profile />, roles: [] },
   { path: "settings", element: <Settings />, roles: [] },
 ];
+
+export const unauthorized=[
+  {path: "unauthorized", element:<Unauthorized/> }
+]

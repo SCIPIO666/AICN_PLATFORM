@@ -16,7 +16,7 @@ export default function RoleBasedRoute({ children, allowedRoles = [] }) {
     return <Navigate to="/login" replace />;
   }
   
-  // If no children, this is just a role-based redirect
+  //  role-based redirect
   if (!children) {
     // Redirect based on user role
     switch (user?.role) {
@@ -30,7 +30,7 @@ export default function RoleBasedRoute({ children, allowedRoles = [] }) {
     }
   }
   
-  // Check role permissions
+  // role permissions
   if (allowedRoles.length > 0 && !allowedRoles.includes(user?.role)) {
     return <Navigate to="/unauthorized" replace />;
   }
