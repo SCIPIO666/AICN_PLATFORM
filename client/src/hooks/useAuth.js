@@ -19,18 +19,17 @@ export const useMe = () => {
     queryFn: async () => {
       try {
         const user = await authAPI.getMe();
-        setAuth(user, token); // Preserve existing token
+        setAuth(user, token); 
         return user;
       } catch (error) {
-        // If token is invalid, clear auth
         if (error.response?.status === 401) {
           clearAuth();
         }
         throw error;
       }
     },
-    enabled: !!token, // Only run if we have a token
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    enabled: !!token, 
+    staleTime: 5 * 60 * 1000, 
     retry: false,
   });
 };
@@ -49,6 +48,10 @@ export const useLogin = () => {
     },
     onSuccess: (data) => {
       setAuth(data.user, data.token);
+
+      localStorage.setItem('accessToken',data.token)
+      if(data.refreshToken){localStorage.setItem('refreshToken',data.token)}
+
       queryClient.setQueryData(authKeys.me, data.user);
       closeModal('login'); // Close login modal if open
       setLoading(false);
@@ -106,6 +109,10 @@ export const useLogout = () => {
     },
     onSuccess: () => {
       clearAuth();
+
+      localStorage.removeItem('accessToken')
+      if(localStorage.getItem('refreshToken')){localStorage.removeItem('refreshToken')}
+
       queryClient.clear(); // Clear all React Query cache
       setLoading(false);
       
