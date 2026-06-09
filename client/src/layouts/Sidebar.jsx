@@ -1,116 +1,116 @@
 import { NavLink } from 'react-router-dom'
-import { getNavigationByRole, getGroupedNavigation } from '../config/navigation'
-import useAuthStore from '../stores/useAuthStore'
+import { getNavigationByRole } from '../config/navigation'
+import { useAuth } from '../stores/useAuthStore'
 
 export default function Sidebar() {
-  const { user } = useAuthStore()
+  const { user } = useAuth()
   
   if (!user) return null
   
   const navigationItems = getNavigationByRole(user.role)
-  const groupedNav = getGroupedNavigation(user.role)
   
-  console.log('📂 Sidebar rendering with navigation for role:', user.role)
-  console.log('📋 Navigation items:', navigationItems.map(i => i.label))
-  
-  const renderNavItems = (items) => {
-    if (items.length === 0) return null
-    
-    return (
-      <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-        {items.map((item) => (
-          <li key={item.id} style={{ marginBottom: '8px' }}>
-            <NavLink
-              to={item.path}
-              style={({ isActive }) => ({
-                display: 'flex',
-                alignItems: 'center',
-                padding: '10px 16px',
-                backgroundColor: isActive ? '#e5e7eb' : 'transparent',
-                borderRadius: '8px',
-                textDecoration: 'none',
-                color: '#374151',
-                fontSize: '14px',
-                fontWeight: isActive ? '600' : '400',
-                transition: 'all 0.2s'
-              })}
-              title={item.label}
-            >
-              <span style={{ marginRight: '12px', fontSize: '20px' }}>
-                {item.icon}
-              </span>
-              <span>{item.label}</span>
-            </NavLink>
-          </li>
-        ))}
-      </ul>
-    )
-  }
-  
-  const renderSection = (title, items) => {
-    if (!items || items.length === 0) return null
-    
-    return (
-      <div style={{ marginBottom: '24px' }}>
-        <div style={{ 
-          padding: '8px 16px', 
-          fontSize: '12px', 
-          fontWeight: '600',
-          color: '#6b7280',
-          textTransform: 'uppercase',
-          letterSpacing: '0.5px'
-        }}>
-          {title}
-        </div>
-        {renderNavItems(items)}
-      </div>
-    )
-  }
+  // Group items for better organization
+  const mainItems = navigationItems.filter(i => 
+    !i.path.includes('/profile') && !i.path.includes('/settings')
+  )
+  const accountItems = navigationItems.filter(i => 
+    i.path.includes('/profile') || i.path.includes('/settings')
+  )
   
   return (
     <aside style={{
-      width: '260px',
+      width: '280px',
       height: '100vh',
       position: 'fixed',
       left: 0,
       top: 0,
-      backgroundColor: '#f9fafb',
-      borderRight: '1px solid #e5e7eb',
+      backgroundColor: '#1e293b',
+      color: '#e2e8f0',
       overflowY: 'auto',
       padding: '20px 0'
     }}>
-      {/* Logo Section */}
-      <div style={{ padding: '0 16px 20px 16px', borderBottom: '1px solid #e5e7eb', marginBottom: '20px' }}>
-        <div style={{ fontWeight: 'bold', fontSize: '20px', color: '#2563eb' }}>
+      {/* Logo */}
+      <div style={{ padding: '0 20px 20px 20px', borderBottom: '1px solid #334155', marginBottom: '20px' }}>
+        <div style={{ fontWeight: 'bold', fontSize: '20px', color: '#60a5fa' }}>
           AICN Training
         </div>
-        <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+        <div style={{ fontSize: '12px', color: '#94a3b8', marginTop: '4px' }}>
           {user.role} Portal
         </div>
       </div>
       
-      {/* Navigation Sections based on role */}
-      {user.role === 'ADMIN' && (
-        <>
-          {renderSection('Overview', groupedNav.main)}
-          {renderSection('Management', groupedNav.management)}
-          {renderSection('Account', groupedNav.settings)}
-        </>
+      {/* Main Navigation */}
+      <div style={{ marginBottom: '30px' }}>
+        <div style={{ padding: '8px 20px', fontSize: '11px', fontWeight: '600', color: '#64748b', textTransform: 'uppercase' }}>
+          MAIN
+        </div>
+        {mainItems.map((item) => (
+          <NavLink
+            key={item.id}
+            to={item.path}
+            style={({ isActive }) => ({
+              display: 'flex',
+              alignItems: 'center',
+              padding: '10px 20px',
+              margin: '2px 8px',
+              backgroundColor: isActive ? '#3b82f6' : 'transparent',
+              borderRadius: '8px',
+              textDecoration: 'none',
+              color: isActive ? 'white' : '#cbd5e1',
+              fontSize: '14px',
+              transition: 'all 0.2s'
+            })}
+          >
+            <span style={{ marginRight: '12px', fontSize: '18px' }}>{item.icon}</span>
+            <span>{item.label}</span>
+          </NavLink>
+        ))}
+      </div>
+      
+      {/* Account Navigation */}
+      {accountItems.length > 0 && (
+        <div>
+          <div style={{ padding: '8px 20px', fontSize: '11px', fontWeight: '600', color: '#64748b', textTransform: 'uppercase' }}>
+            ACCOUNT
+          </div>
+          {accountItems.map((item) => (
+            <NavLink
+              key={item.id}
+              to={item.path}
+              style={({ isActive }) => ({
+                display: 'flex',
+                alignItems: 'center',
+                padding: '10px 20px',
+                margin: '2px 8px',
+                backgroundColor: isActive ? '#3b82f6' : 'transparent',
+                borderRadius: '8px',
+                textDecoration: 'none',
+                color: isActive ? 'white' : '#cbd5e1',
+                fontSize: '14px',
+                transition: 'all 0.2s'
+              })}
+            >
+              <span style={{ marginRight: '12px', fontSize: '18px' }}>{item.icon}</span>
+              <span>{item.label}</span>
+            </NavLink>
+          ))}
+        </div>
       )}
       
-      {user.role === 'TRAINER' && (
-        <>
-          {renderSection('Teaching', groupedNav.main)}
-          {renderSection('Account', groupedNav.settings)}
-        </>
-      )}
-      
-      {user.role === 'LEARNER' && (
-        <>
-          {renderSection('Learning', groupedNav.main)}
-          {renderSection('Account', groupedNav.settings)}
-        </>
-      )}
+      {/* User Info */}
+      <div style={{
+        position: 'absolute',
+        bottom: '20px',
+        left: '20px',
+        right: '20px',
+        padding: '12px',
+        backgroundColor: '#0f172a',
+        borderRadius: '8px',
+        fontSize: '12px'
+      }}>
+        <div style={{ fontWeight: '500', color: '#e2e8f0' }}>{user?.name}</div>
+        <div style={{ fontSize: '11px', color: '#64748b' }}>{user?.email}</div>
+      </div>
     </aside>
   )
 }
