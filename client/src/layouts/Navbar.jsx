@@ -1,35 +1,34 @@
-import { useNavigate } from 'react-router-dom'
-import useAuthStore from '../stores/auth.store'
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Navbar() {
-  const navigate = useNavigate()
-  const { user, logout } = useAuthStore()
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
   
-  const handleLogout = () => {
-    logout()
-    navigate('/login')
-  }
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
+  };
   
-  if (!user) return null
+  if (!user) return null;
   
-  // Get role badge color
   const getRoleBadgeStyle = () => {
     switch(user.role) {
       case 'ADMIN':
-        return { backgroundColor: '#dc2626', color: 'white' }
+        return { backgroundColor: '#dc2626', color: 'white' };
       case 'TRAINER':
-        return { backgroundColor: '#059669', color: 'white' }
+        return { backgroundColor: '#059669', color: 'white' };
       default:
-        return { backgroundColor: '#2563eb', color: 'white' }
+        return { backgroundColor: '#2563eb', color: 'white' };
     }
-  }
+  };
   
   return (
     <nav style={{
       position: 'fixed',
       top: 0,
-      left: '260px',
       right: 0,
+      left: '280px',
       height: '60px',
       backgroundColor: 'white',
       borderBottom: '1px solid #e5e7eb',
@@ -39,16 +38,13 @@ export default function Navbar() {
       padding: '0 24px',
       zIndex: 10
     }}>
-      {/* Page Title - will be dynamic based on route */}
       <div>
         <h1 style={{ fontSize: '20px', fontWeight: '600', color: '#111827' }}>
           Welcome back, {user.name}
         </h1>
       </div>
       
-      {/* User Menu */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-        {/* Role Badge */}
         <div style={{
           padding: '4px 12px',
           borderRadius: '20px',
@@ -59,7 +55,6 @@ export default function Navbar() {
           {user.role}
         </div>
         
-        {/* User Avatar Placeholder */}
         <div style={{
           width: '40px',
           height: '40px',
@@ -71,10 +66,9 @@ export default function Navbar() {
           fontWeight: 'bold',
           color: '#4b5563'
         }}>
-          {user.name.charAt(0).toUpperCase()}
+          {user.name?.charAt(0).toUpperCase() || 'U'}
         </div>
         
-        {/* Logout Button */}
         <button
           onClick={handleLogout}
           style={{
@@ -87,17 +81,17 @@ export default function Navbar() {
             transition: 'all 0.2s'
           }}
           onMouseEnter={(e) => {
-            e.target.style.backgroundColor = '#fee2e2'
-            e.target.style.borderColor = '#fecaca'
+            e.target.style.backgroundColor = '#fee2e2';
+            e.target.style.borderColor = '#fecaca';
           }}
           onMouseLeave={(e) => {
-            e.target.style.backgroundColor = '#f3f4f6'
-            e.target.style.borderColor = '#e5e7eb'
+            e.target.style.backgroundColor = '#f3f4f6';
+            e.target.style.borderColor = '#e5e7eb';
           }}
         >
           Logout
         </button>
       </div>
     </nav>
-  )
+  );
 }

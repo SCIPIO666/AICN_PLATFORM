@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'; // Add Outlet here
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 import AppLayout from '../layouts/AppLayout';
 import ProtectedRoute from './ProtectedRoute';
 import PublicRoute from './PublicRoute';
@@ -14,67 +14,93 @@ import ResetPassword from '../pages/auth/ResetPassword';
 import Unauthorized from '../pages/shared/Unauthorized';
 import LandingPage from '../pages/shared/LandingPage';
 import VerifyCertificate from '../pages/shared/VerifyCertificate';
+import NotFound from '@/pages/shared/NotFound.jsx';
 
-// routes
+// Routes configuration
 import { learnerRoutes, trainerRoutes, adminRoutes, sharedRoutes } from './index';
 
 export const router = createBrowserRouter([
+  // Public routes - NO LAYOUT
   {
     path: '/',
-    element: <AppLayout />,
+    element: <LandingPage />,
+  },
+  {
+    path: '/verify-certificate',
+    element: <VerifyCertificate />,
+  },
+  {
+    path: '/login',
+    element: <PublicRoute><Login /></PublicRoute>,
+  },
+  {
+    path: '/signup',
+    element: <PublicRoute><Signup /></PublicRoute>,
+  },
+  {
+    path: '/forgot-password',
+    element: <PublicRoute><ForgotPassword /></PublicRoute>,
+  },
+  {
+    path: '/reset-password',
+    element: <PublicRoute><ResetPassword /></PublicRoute>,
+  },
+  {
+    path: '/unauthorized',
+    element: <Unauthorized />,
+  },
+  
+  // Protected routes - WITH LAYOUT
+  {
+    path: '/dashboard',
+    element: <ProtectedRoute><AppLayout /></ProtectedRoute>,
     children: [
-      // Public routes
-      { index: true, element: <LandingPage /> },
-      { path: 'verify-certificate', element: <VerifyCertificate /> },
-      { path: 'login', element: <PublicRoute><Login /></PublicRoute> },
-      { path: 'signup', element: <PublicRoute><Signup /></PublicRoute> },
-      { path: 'forgot-password', element: <PublicRoute><ForgotPassword /></PublicRoute> },
-      { path: 'reset-password', element: <PublicRoute><ResetPassword /></PublicRoute> },
-      { path: 'unauthorized', element: <Unauthorized /> },
-      
-      // Protected routes
       {
-        path: 'dashboard',
-        element: <ProtectedRoute><div><Outlet /></div></ProtectedRoute>,
-        children: [
-          { index: true, element: <RoleBasedRoute /> },
-          
-          // Dynamically add routes
-          ...learnerRoutes.map(route => ({
-            path: route.path,
-            element: (
-              <RoleBasedRoute allowedRoles={route.roles}>
-                {route.element}
-              </RoleBasedRoute>
-            ),
-          })),
-          
-          ...trainerRoutes.map(route => ({
-            path: route.path,
-            element: (
-              <RoleBasedRoute allowedRoles={route.roles}>
-                {route.element}
-              </RoleBasedRoute>
-            ),
-          })),
-          
-          ...adminRoutes.map(route => ({
-            path: route.path,
-            element: (
-              <RoleBasedRoute allowedRoles={route.roles}>
-                {route.element}
-              </RoleBasedRoute>
-            ),
-          })),
-          
-          ...sharedRoutes.map(route => ({
-            path: route.path,
-            element: <ProtectedRoute>{route.element}</ProtectedRoute>,
-          })),
-        ],
+        index: true,
+        element: <RoleBasedRoute />,
       },
       
-      { path: '*', element: <Navigate to="/" replace /> },
+      // Learner Routes
+      ...learnerRoutes.map(route => ({
+        path: route.path.replace('dashboard/', ''),
+        element: (
+          <RoleBasedRoute allowedRoles={route.roles}>
+            {route.element}
+          </RoleBasedRoute>
+        ),
+      })),
+      
+      // Trainer Routes
+      ...trainerRoutes.map(route => ({
+        path: route.path.replace('dashboard/', ''),
+        element: (
+          <RoleBasedRoute allowedRoles={route.roles}>
+            {route.element}
+          </RoleBasedRoute>
+        ),
+      })),
+      
+      // Admin Routes
+      ...adminRoutes.map(route => ({
+        path: route.path.replace('dashboard/', ''),
+        element: (
+          <RoleBasedRoute allowedRoles={route.roles}>
+            {route.element}
+          </RoleBasedRoute>
+        ),
+      })),
+      
+      // Shared Routes
+      ...sharedRoutes.map(route => ({
+        path: route.path.replace('dashboard/', ''),
+        element: <ProtectedRoute>{route.element}</ProtectedRoute>,
+      })),
     ],
+  },
+  
+  // 404 Catch all
+  {
+    path: '*',
+    element: <NotFound />,
   },
 ]);

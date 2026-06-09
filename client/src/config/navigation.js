@@ -3,7 +3,7 @@ export const navigation = [
   {
     id: 'learner-dashboard',
     label: 'Dashboard',
-    path: '/dashboard/learner',
+    path: '/dashboard/learner',  // Full path including /dashboard
     icon: '📊',
     roles: ['LEARNER', 'TRAINER', 'ADMIN'],
     order: 1
@@ -133,7 +133,7 @@ export const navigation = [
     order: 6
   },
 
-  // SHARED ROUTES (visible to all)
+  // SHARED ROUTES
   {
     id: 'profile',
     label: 'My Profile',

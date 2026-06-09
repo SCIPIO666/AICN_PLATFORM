@@ -9,7 +9,6 @@ export default function Sidebar() {
   
   const navigationItems = getNavigationByRole(user.role)
   
-  // Group items for better organization
   const mainItems = navigationItems.filter(i => 
     !i.path.includes('/profile') && !i.path.includes('/settings')
   )
