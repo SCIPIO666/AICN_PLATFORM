@@ -1,7 +1,8 @@
-import React from 'react'
-
 export default function MyCertificates() {
   return (
-    <div>MyCertificates</div>
+    <div>
+      <h1>My Certificates</h1>
+      <p>Your certificates will appear here.</p>
+    </div>
   )
 }

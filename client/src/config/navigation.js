@@ -41,7 +41,7 @@ export const navigation = [
     order: 5
   },
   {
-    id: 'learner-apply-trainer',
+    id: 'learner-apply',
     label: 'Become a Trainer',
     path: '/dashboard/learner/apply-trainer',
     icon: '✍️',
@@ -52,7 +52,7 @@ export const navigation = [
   // TRAINER ROUTES
   {
     id: 'trainer-dashboard',
-    label: 'Trainer Dashboard',
+    label: 'Dashboard',
     path: '/dashboard/trainer',
     icon: '📊',
     roles: ['TRAINER', 'ADMIN'],
@@ -76,7 +76,7 @@ export const navigation = [
   },
   {
     id: 'trainer-profile',
-    label: 'Trainer Profile',
+    label: 'Profile',
     path: '/dashboard/trainer/profile',
     icon: '👤',
     roles: ['TRAINER', 'ADMIN'],
@@ -86,7 +86,7 @@ export const navigation = [
   // ADMIN ROUTES
   {
     id: 'admin-dashboard',
-    label: 'Admin Dashboard',
+    label: 'Dashboard',
     path: '/dashboard/admin',
     icon: '📊',
     roles: ['ADMIN'],
@@ -124,15 +124,23 @@ export const navigation = [
     roles: ['ADMIN'],
     order: 5
   },
+  {
+    id: 'admin-certificates',
+    label: 'Certificates',
+    path: '/dashboard/admin/certificates',
+    icon: '🎓',
+    roles: ['ADMIN'],
+    order: 6
+  },
 
-  // SHARED ROUTES
+  // SHARED ROUTES (visible to all)
   {
     id: 'profile',
     label: 'My Profile',
     path: '/dashboard/profile',
     icon: '👤',
     roles: ['LEARNER', 'TRAINER', 'ADMIN'],
-    order: 99
+    order: 98
   },
   {
     id: 'settings',
@@ -140,7 +148,7 @@ export const navigation = [
     path: '/dashboard/settings',
     icon: '⚙️',
     roles: ['LEARNER', 'TRAINER', 'ADMIN'],
-    order: 100
+    order: 99
   }
 ]
 
@@ -148,28 +156,4 @@ export const getNavigationByRole = (role) => {
   return navigation
     .filter(item => item.roles.includes(role))
     .sort((a, b) => a.order - b.order)
-}
-
-export const getGroupedNavigation = (role) => {
-  const items = getNavigationByRole(role)
-  
-  const groups = {
-    main: items.filter(i => 
-      i.path.includes('/dashboard/learner') || 
-      i.path.includes('/dashboard/trainer') ||
-      i.path === '/dashboard/admin'
-    ),
-    management: items.filter(i => 
-      i.path.includes('/admin/users') ||
-      i.path.includes('/admin/sessions') ||
-      i.path.includes('/admin/applications') ||
-      i.path.includes('/admin/announcements')
-    ),
-    settings: items.filter(i => 
-      i.path.includes('/profile') ||
-      i.path.includes('/settings')
-    )
-  }
-  
-  return groups
 }

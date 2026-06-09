@@ -1,7 +1,8 @@
-import React from 'react'
-
-export default function Sessions() {
+export default function LearnerSessions() {
   return (
-    <div>Sessions</div>
+    <div>
+      <h1>Browse Sessions</h1>
+      <p>List of available sessions will appear here.</p>
+    </div>
   )
 }

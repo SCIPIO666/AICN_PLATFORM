@@ -1,7 +1,14 @@
-import React from 'react'
+import { useAuth } from '../../contexts/AuthContext'
 
-export default function Dashboard() {
+export default function LearnerDashboard() {
+  const { user } = useAuth()
+  
   return (
-    <div>Learner Dashboard</div>
+    <div>
+      <h1>Learner Dashboard</h1>
+      <p>Welcome, {user?.name}!</p>
+      <p>Role: {user?.role}</p>
+      <p>This is your learner dashboard shell.</p>
+    </div>
   )
 }

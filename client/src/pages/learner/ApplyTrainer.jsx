@@ -1,7 +1,8 @@
-import React from 'react'
-
 export default function ApplyTrainer() {
   return (
-    <div>ApplyTrainer</div>
+    <div>
+      <h1>Become a Trainer</h1>
+      <p>Application form will appear here.</p>
+    </div>
   )
 }

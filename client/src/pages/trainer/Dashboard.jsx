@@ -1,7 +1,14 @@
-import React from 'react'
+import { useAuth } from '../../contexts/AuthContext'
 
-export default function Dashboard() {
+export default function TrainerDashboard() {
+  const { user } = useAuth()
+  
   return (
-    <div>Trainer Dashboard</div>
+    <div>
+      <h1>Trainer Dashboard</h1>
+      <p>Welcome, {user?.name}!</p>
+      <p>Role: {user?.role}</p>
+      <p>This is your trainer dashboard shell.</p>
+    </div>
   )
 }
