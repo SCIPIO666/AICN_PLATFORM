@@ -7,7 +7,7 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   // Get state from Zustand
   const { user, token, isAuthenticated, isLoading: storeLoading } = useAuthStore();
-  
+if(user){alert(user.role)}
   // Get mutations from TanStack Query
   const loginMutation = useLogin();
   const signupMutation = useSignup();

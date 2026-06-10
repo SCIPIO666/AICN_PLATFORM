@@ -75,7 +75,7 @@ export const navigation = [
     order: 3
   },
     {
-    id: 'trainer-attendance',
+    id: 'issue-certs',
     label: 'Issue Certificates',
     path: '/dashboard/trainer/certificates',
     icon: '📝',
