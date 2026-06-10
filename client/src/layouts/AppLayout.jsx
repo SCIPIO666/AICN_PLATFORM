@@ -4,18 +4,13 @@ import Navbar from './Navbar';
 
 export default function AppLayout() {
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
+    <div className="flex min-h-screen">
       <Sidebar />
       
-      <div style={{ flex: 1, marginLeft: '280px' }}>
+      <div className="flex-1 ml-[280px]">
         <Navbar />
         
-        <main style={{ 
-          marginTop: '60px',
-          padding: '24px',
-          backgroundColor: '#f3f4f6',
-          minHeight: 'calc(100vh - 60px)'
-        }}>
+        <main className="mt-[60px] p-6 min-h-[calc(100vh-60px)] bg-bg-page">
           <Outlet />
         </main>
       </div>

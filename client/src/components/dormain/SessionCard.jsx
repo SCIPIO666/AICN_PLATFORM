@@ -1,5 +1,5 @@
 import Card from '../ui/Card';
-import Button from '../ui/Button';
+import { Button } from '../ui/Button';
 import Badge from '../ui/Badge';
 
 export default function SessionCard({ session, onEnrol, isEnrolling }) {

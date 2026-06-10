@@ -1,5 +1,5 @@
 import Card from '../ui/Card';
-import Button from '../ui/Button';
+import { Button } from '../ui/Button';
 import Input from '../ui/Input';
 
 const SKILL_AREAS = ['All', 'Programming', 'Frontend', 'Data Science', 'AI/ML', 'Design', 'Cloud'];

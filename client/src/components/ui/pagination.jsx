@@ -1,5 +1,4 @@
-import Button from './Button';
-
+import { Button } from "./Button";
 export default function Pagination({ currentPage, totalPages, onPageChange }) {
   const getPages = () => {
     const pages = [];
