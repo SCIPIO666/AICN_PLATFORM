@@ -1,15 +1,13 @@
+/**
+ * Spinner — ClickHouse design language
+ * Neon-volt (#faff69) tri-arc SVG spin animation
+ * fullScreen: overlays the viewport with blur
+ */
 export default function Spinner({ size = 'md', fullScreen = false }) {
-  const sizes = {
-    sm: 'w-5 h-5',
-    md: 'w-8 h-8',
-    lg: 'w-12 h-12',
-  };
+  const sizes = { sm: 'w-5 h-5', md: 'w-8 h-8', lg: 'w-12 h-12' };
+  const strokes = { sm: 2, md: 2.5, lg: 3 };
 
-  const strokeWidths = {
-    sm: 2,
-    md: 2.5,
-    lg: 3,
-  };
+  const sw = strokes[size];
 
   const spinner = (
     <div className={`inline-block ${sizes[size]}`}>
@@ -18,39 +16,33 @@ export default function Spinner({ size = 'md', fullScreen = false }) {
         viewBox="0 0 24 24"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
+        aria-label="Loading"
+        role="status"
       >
-        {/* Intertwining arc 1 */}
+        {/* Arc 1 — dim outer ring */}
         <circle
-          cx="12"
-          cy="12"
-          r="10"
+          cx="12" cy="12" r="10"
           stroke="#faff69"
-          strokeWidth={strokeWidths[size]}
+          strokeWidth={sw}
           strokeLinecap="round"
           strokeDasharray="30 40"
-          className="opacity-30"
+          opacity="0.3"
         />
-        
-        {/* Intertwining arc 2 - offset */}
+        {/* Arc 2 — mid-opacity offset */}
         <circle
-          cx="12"
-          cy="12"
-          r="10"
+          cx="12" cy="12" r="10"
           stroke="#faff69"
-          strokeWidth={strokeWidths[size]}
+          strokeWidth={sw}
           strokeLinecap="round"
           strokeDasharray="15 55"
           strokeDashoffset="25"
-          className="opacity-70"
+          opacity="0.7"
         />
-        
-        {/* Intertwining arc 3 - accent */}
+        {/* Arc 3 — bright accent */}
         <circle
-          cx="12"
-          cy="12"
-          r="10"
+          cx="12" cy="12" r="10"
           stroke="#f4f692"
-          strokeWidth={strokeWidths[size] - 0.5}
+          strokeWidth={sw - 0.5}
           strokeLinecap="round"
           strokeDasharray="8 62"
           strokeDashoffset="45"
@@ -61,7 +53,7 @@ export default function Spinner({ size = 'md', fullScreen = false }) {
 
   if (fullScreen) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-bg-page/80 backdrop-blur-sm z-50">
+      <div className="fixed inset-0 flex items-center justify-center bg-[var(--bg-page)]/80 backdrop-blur-sm z-50">
         {spinner}
       </div>
     );

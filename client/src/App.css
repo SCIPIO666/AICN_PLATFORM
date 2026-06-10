@@ -1,63 +1,248 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Inconsolata:wght@400;600&display=swap');
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+
+@import "tailwindcss";
+
+/* ============================================================
+   CLICKHOUSE DESIGN SYSTEM — Tailwind v4 @theme tokens
+   ClickHouse: acid yellow-green on obsidian black
+   Light mode: inverted — clean white canvas, same accent family
+   ============================================================ */
+
+@theme {
+  /* --- Brand colors (invariant across modes) --- */
+  --color-neon-volt:     #faff69;
+  --color-pale-yellow:   #f4f692;
+  --color-forest-green:  #166534;
+  --color-dark-forest:   #14572f;
+  --color-border-olive:  #4f5100;
+  --color-olive-dark:    #161600;
+  --color-pure-black:    #000000;
+  --color-near-black:    #141414;
+  --color-charcoal:      #414141;
+  --color-deep-charcoal: #343434;
+  --color-hover-gray:    #3a3a3a;
+  --color-pure-white:    #ffffff;
+  --color-silver:        #a0a0a0;
+  --color-border-gray:   #e5e7eb;
+
+  /* --- Typography --- */
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'Inconsolata', SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* --- Type scale --- */
+  --text-micro:        0.7rem;    /* 11.2px — tags, tiny labels */
+  --text-small:        0.75rem;   /* 12px */
+  --text-caption:      0.875rem;  /* 14px — metadata, descriptions */
+  --text-body:         1rem;      /* 16px — standard body */
+  --text-body-large:   1.125rem;  /* 18px — intro paragraphs */
+  --text-feature-title:1.25rem;   /* 20px — small feature titles */
+  --text-sub-heading:  1.5rem;    /* 24px — card headings */
+  --text-feature-heading: 2.25rem;/* 36px — feature section anchors */
+  --text-display-hero: 4.5rem;    /* 72px — section hero */
+  --text-display-mega: 6rem;      /* 96px — maximum impact */
+
+  /* --- Border radius --- */
+  --radius-sharp:  4px;    /* buttons, badges, code blocks */
+  --radius-card:   8px;    /* cards, containers */
+  --radius-pill:   9999px; /* toggles, status indicators */
+
+  /* --- Spacing (8px base) --- */
+  --spacing-px: 1px;
+  --spacing-0:  0;
+  --spacing-1:  0.25rem;  /* 4px */
+  --spacing-2:  0.5rem;   /* 8px */
+  --spacing-3:  0.75rem;  /* 12px */
+  --spacing-4:  1rem;     /* 16px */
+  --spacing-5:  1.25rem;  /* 20px */
+  --spacing-6:  1.5rem;   /* 24px */
+  --spacing-7:  1.75rem;  /* 28px */
+  --spacing-8:  2rem;     /* 32px */
+  --spacing-10: 2.5rem;   /* 40px */
+  --spacing-11: 2.75rem;  /* 44px */
+  --spacing-12: 3rem;     /* 48px */
+  --spacing-16: 4rem;     /* 64px */
+
+  /* --- Shadows --- */
+  --shadow-subtle:   0px 1px 3px rgba(0,0,0,0.1), 0px 1px 2px -1px rgba(0,0,0,0.1);
+  --shadow-elevated: 0px 10px 15px -3px rgba(0,0,0,0.1), 0px 4px 6px -4px rgba(0,0,0,0.1);
+  --shadow-inset:    inset 0px 4px 25px rgba(0,0,0,0.14), 0px 4px 4px rgba(0,0,0,0.06);
+}
+
+/* ============================================================
+   CSS CUSTOM PROPERTIES — semantic, mode-aware
+   These are what components reference. @theme tokens are
+   the raw values; these are the roles.
+   ============================================================ */
+
+:root {
+  /* Surfaces */
+  --bg-page:    #ffffff;
+  --bg-card:    #f8f8f8;
+  --bg-nav:     rgba(255, 255, 255, 0.95);
+  --bg-sidebar: #f9fafb;
+
+  /* Text */
+  --text-primary:   #111827;
+  --text-secondary: #4b5563;
+  --text-muted:     #9ca3af;
+
+  /* Borders */
+  --border-color:  #e5e7eb;
+  --border-subtle: #f3f4f6;
+
+  /* Interactive */
+  --card-hover:       #f3f4f6;
+  --section-label:    #166534;
+
+  /* Inputs */
+  --input-bg:   #ffffff;
+  --select-bg:  #ffffff;
+}
+
+.dark {
+  /* Surfaces */
+  --bg-page:    #000000;
+  --bg-card:    #0a0a0a;
+  --bg-nav:     rgba(0, 0, 0, 0.92);
+  --bg-sidebar: #0a0a0a;
+
+  /* Text */
+  --text-primary:   #ffffff;
+  --text-secondary: #a0a0a0;
+  --text-muted:     #6b7280;
+
+  /* Borders */
+  --border-color:  rgba(65, 65, 65, 0.8);
+  --border-subtle: rgba(65, 65, 65, 0.3);
+
+  /* Interactive */
+  --card-hover:    #1a1a1a;
+  --section-label: #faff69;
+
+  /* Inputs */
+  --input-bg:  #141414;
+  --select-bg: #141414;
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
 
 @layer base {
-  /* Light Mode Variables */
-  :root {
-    --bg-page: #ffffff;
-    --bg-card: #f8f8f8;
-    --bg-nav: rgba(255,255,255,0.95);
-    --bg-sidebar: #f9fafb;
-    --text-primary: #111827;
-    --text-secondary: #4b5563;
-    --text-muted: #9ca3af;
-    --border-color: #e5e7eb;
-    --border-subtle: #f3f4f6;
-    --section-label: #166534;
-    --card-hover: #f3f4f6;
-    --input-bg: #ffffff;
-    --select-bg: #ffffff;
-  }
-
-  /* Dark Mode Variables */
-  .dark {
-    --bg-page: #000000;
-    --bg-card: #0a0a0a;
-    --bg-nav: rgba(0,0,0,0.92);
-    --bg-sidebar: #0a0a0a;
-    --text-primary: #ffffff;
-    --text-secondary: #a0a0a0;
-    --text-muted: #6b7280;
-    --border-color: rgba(65,65,65,0.8);
-    --border-subtle: rgba(65,65,65,0.3);
-    --section-label: #faff69;
-    --card-hover: #1a1a1a;
-    --input-bg: #141414;
-    --select-bg: #141414;
-  }
-
   * {
-    @apply border-border;
+    box-sizing: border-box;
+    border-color: var(--border-color);
   }
 
   body {
     background-color: var(--bg-page);
     color: var(--text-primary);
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
+
+  /* Focus ring — neon volt always */
+  *:focus-visible {
+    outline: 2px solid #faff69;
+    outline-offset: 2px;
+  }
+
+  /* Scrollbar — dark mode */
+  .dark ::-webkit-scrollbar { width: 6px; height: 6px; }
+  .dark ::-webkit-scrollbar-track { background: #0a0a0a; }
+  .dark ::-webkit-scrollbar-thumb { background: #414141; border-radius: 3px; }
+  .dark ::-webkit-scrollbar-thumb:hover { background: #faff69; }
 }
 
+/* ============================================================
+   COMPONENT UTILITIES — reusable @layer utilities
+   ============================================================ */
+
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  /* Typography helpers */
+  .text-balance { text-wrap: balance; }
+
+  .label-uppercase {
+    font-size: var(--text-caption);
+    font-weight: 600;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--section-label);
   }
-  
+
   .gradient-text {
     background: linear-gradient(135deg, #166534, #faff69);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
+
+  /* Card base */
+  .card-base {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-card);
+  }
+
+  .card-neon {
+    background-color: var(--bg-card);
+    border: 1px solid #faff69;
+    border-radius: var(--radius-card);
+  }
+
+  .card-inset {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-inset);
+  }
+
+  /* Select — theme-aware */
+  .select-themed {
+    background-color: var(--select-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sharp);
+    padding: 0.625rem 1rem;
+    width: 100%;
+    transition: border-color 0.2s ease;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  .select-themed:focus {
+    outline: none;
+    border-color: #faff69;
+  }
+
+  /* Sidebar link */
+  .sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 1rem;
+    border-radius: var(--radius-sharp);
+    font-size: var(--text-caption);
+    font-weight: 500;
+    color: var(--text-secondary);
+    transition: all 0.15s ease;
+    cursor: pointer;
+  }
+
+  .sidebar-link:hover {
+    background-color: var(--card-hover);
+    color: var(--text-primary);
+  }
+
+  .sidebar-link.active {
+    background-color: var(--card-hover);
+    color: #faff69;
+    border-left: 2px solid #faff69;
+    padding-left: calc(1rem - 2px);
+  }
+
+  .dark .sidebar-link:hover { color: #faff69; }
 }

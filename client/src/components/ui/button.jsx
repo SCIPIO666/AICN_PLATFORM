@@ -1,42 +1,103 @@
-export  function Button({ 
-  children, 
-  variant = 'dark', 
-  size = 'md', 
+/**
+ * Button — ClickHouse design language
+ *
+ * Variants:
+ *   neon    — #faff69 on near-black, the primary CTA
+ *   dark    — near-black surface, white text
+ *   forest  — forest-green, "Get Started" / conversion CTA
+ *   ghost   — transparent, olive-tinted border (#4f5100)
+ *
+ * Sizes: sm | md | lg
+ */
+export function Button({
+  children,
+  variant = 'dark',
+  size = 'md',
   isLoading = false,
   disabled = false,
   onClick,
   type = 'button',
   className = '',
   fullWidth = false,
-  ...props 
+  ...props
 }) {
+  const base =
+    'inline-flex items-center justify-center font-semibold transition-all duration-200 ' +
+    'rounded-[4px] disabled:opacity-50 disabled:cursor-not-allowed select-none';
+
   const variants = {
-    neon: 'bg-[#faff69] text-[#151515] border border-[#faff69] hover:bg-[#e5e65e] active:bg-[#d4d64e] transition-all',
-    dark: 'bg-[#141414] text-white border border-[#333333] hover:bg-[#2a2a2a] active:bg-[#3a3a3a] transition-all dark:bg-[#1a1a1a] dark:hover:bg-[#2a2a2a]',
-    forest: 'bg-[#166534] text-white border border-[#14572f] hover:bg-[#14572f] active:bg-[#0e4524] transition-all',
-    ghost: 'bg-transparent text-[var(--text-primary)] border border-[var(--border-color)] hover:bg-[var(--card-hover)] active:bg-[var(--card-hover)] transition-all',
+    /* Neon primary — #faff69 bg, dark text. Hover: dark bg. Active: pale-yellow text */
+    neon:
+      'bg-[#faff69] text-[#151515] border border-[#faff69] ' +
+      'hover:bg-[#1d1d1d] hover:text-[#faff69] ' +
+      'active:text-[#f4f692]',
+
+    /* Dark solid — near-black surface */
+    dark:
+      'bg-[#141414] text-white border border-[#333333] ' +
+      'hover:bg-[#3a3a3a] hover:text-white/80 ' +
+      'active:text-[#f4f692]',
+
+    /* Forest green — primary conversion */
+    forest:
+      'bg-[#166534] text-white border border-[#141414] ' +
+      'hover:bg-[#3a3a3a] hover:text-white/80 ' +
+      'active:text-[#f4f692]',
+
+    /* Ghost — transparent, olive border */
+    ghost:
+      'bg-transparent text-[var(--text-primary)] border border-[#4f5100] ' +
+      'hover:bg-[var(--card-hover)] ' +
+      'active:text-[#f4f692] ' +
+      /* Light mode: fallback to standard border so it's visible */
+      'light:border-[var(--border-color)]',
   };
+
+  /* Ghost light-mode fix via a utility class */
+  const ghostLight = variant === 'ghost'
+    ? 'dark:border-[#4f5100] border-[var(--border-color)]'
+    : '';
 
   const sizes = {
-    sm: 'px-3 py-1.5 text-sm h-9',
-    md: 'px-4 py-2 text-base h-11',
-    lg: 'px-6 py-3 text-lg h-12',
+    sm: 'px-3 py-1.5 text-sm  h-9',
+    md: 'px-4 py-3   text-base h-11',
+    lg: 'px-6 py-3   text-lg   h-12',
   };
-
-  const baseStyle = 'inline-flex items-center justify-center font-semibold transition-all duration-200 rounded-[4px] disabled:opacity-50 disabled:cursor-not-allowed';
 
   return (
     <button
       type={type}
       onClick={onClick}
       disabled={disabled || isLoading}
-      className={`${baseStyle} ${variants[variant]} ${sizes[size]} ${fullWidth ? 'w-full' : ''} ${className}`}
+      className={[
+        base,
+        variants[variant],
+        ghostLight,
+        sizes[size],
+        fullWidth ? 'w-full' : '',
+        className,
+      ]
+        .filter(Boolean)
+        .join(' ')}
       {...props}
     >
       {isLoading && (
-        <svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
-          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+        <svg
+          className="animate-spin -ml-1 mr-2 h-4 w-4 shrink-0"
+          fill="none"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <circle
+            className="opacity-25"
+            cx="12" cy="12" r="10"
+            stroke="currentColor" strokeWidth="4"
+          />
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+          />
         </svg>
       )}
       {children}
