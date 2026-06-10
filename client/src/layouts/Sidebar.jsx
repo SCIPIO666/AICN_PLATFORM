@@ -43,6 +43,8 @@ export default function Sidebar() {
         <div style={{ padding: '8px 20px', fontSize: '11px', fontWeight: '600', color: '#64748b', textTransform: 'uppercase' }}>
           MAIN
         </div>
+        <p>{`name:${user.name},Role:${user.role}`}</p>
+
         {mainItems.map((item) => (
           <NavLink
             key={item.id}
@@ -97,7 +99,7 @@ export default function Sidebar() {
       )}
       
       {/* User Info */}
-      <div style={{
+      {/* <div style={{
         position: 'absolute',
         bottom: '20px',
         left: '20px',
@@ -109,7 +111,7 @@ export default function Sidebar() {
       }}>
         <div style={{ fontWeight: '500', color: '#e2e8f0' }}>{user?.name}</div>
         <div style={{ fontSize: '11px', color: '#64748b' }}>{user?.email}</div>
-      </div>
+      </div> */}
     </aside>
   )
 }

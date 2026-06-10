@@ -2,6 +2,6 @@ import React from 'react'
 
 export default function Attendance() {
   return (
-    <div>Attendance--for trainer</div>
+    <div className='bg-blue-500'>Attendance,trainer page</div>
   )
 }

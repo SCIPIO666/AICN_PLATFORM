@@ -12,13 +12,15 @@ import ApplyTrainer from '../pages/learner/ApplyTrainer'
 import ApplicationStatus from '../pages/learner/ApplicationStatus'
 
 // TRAINER PAGES (Shells)
-import TrainerDashboard from '../pages/trainer/Dashboard'
-import TrainerSessions from '../pages/trainer/MySessions'
-import TrainerSessionDetails from '../pages/trainer/SessionDetails'
+import TrainerDashboard from '@/pages/trainer/TrainerDashboard'
+import TrainerSessions from '../pages/trainer/TrainerSessions '
+import TrainerSessionDetails from '../pages/trainer/TrainerSessionDetails'
 import SessionRoster from '../pages/trainer/SessionRoster'
 import Attendance from '../pages/trainer/Attendance'
 import SessionAttendance from '../pages/trainer/SessionAttendance'
-import TrainerProfile from '../pages/trainer/Profile'
+import TrainerProfile from '@/pages/trainer/TrainerProfile'
+import ManageCertificates from '@/pages/trainer/ManageCertificates'
+import IssueCertificates from '@/pages/trainer/IssueCertificates'
 
 // ADMIN PAGES (Shells)
 import AdminDashboard from '../pages/admin/Dashboard'
@@ -34,56 +36,58 @@ import AdminCertificates from '../pages/admin/Certificates'
 import SystemSettings from '../pages/admin/SystemSettings'
 
 // SHARED PAGES (Shells)
-import Profile from '../pages/shared/Profile'
-import Settings from '../pages/shared/Settings'
+import Profile from '@/pages/shared/Profile'
+import Settings from '@/pages/shared/Settings'
 
-// ==================== LEARNER ROUTES (relative paths) ====================
+// ==================== LEARNER ROUTES ====================
 export const learnerRoutes = [
-  { path: "learner", element: <LearnerDashboard />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
-  { path: "learner/sessions", element: <LearnerSessions />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
-  { path: "learner/sessions/:id", element: <SessionDetails />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
-  { path: "learner/my-enrolments", element: <MyEnrolments />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
-  { path: "learner/my-enrolments/:id", element: <EnrolmentDetails />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
-  { path: "learner/my-certificates", element: <MyCertificates />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
-  { path: "learner/my-certificates/:id", element: <CertificateDetails />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
-  { path: "learner/trainers", element: <Trainers />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
-  { path: "learner/trainers/:id", element: <TrainerDetails />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
-  { path: "learner/apply-trainer", element: <ApplyTrainer />, roles: ['LEARNER'] },
-  { path: "learner/apply-trainer/status", element: <ApplicationStatus />, roles: ['LEARNER'] },
+  { path: "dashboard/learner", element: <LearnerDashboard />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
+  { path: "dashboard/learner/sessions", element: <LearnerSessions />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
+  { path: "dashboard/learner/sessions/:id", element: <SessionDetails />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
+  { path: "dashboard/learner/my-enrolments", element: <MyEnrolments />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
+  { path: "dashboard/learner/my-enrolments/:id", element: <EnrolmentDetails />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
+  { path: "dashboard/learner/my-certificates", element: <MyCertificates />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
+  { path: "dashboard/learner/my-certificates/:id", element: <CertificateDetails />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
+  { path: "dashboard/learner/trainers", element: <Trainers />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
+  { path: "dashboard/learner/trainers/:id", element: <TrainerDetails />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
+  { path: "dashboard/learner/apply-trainer", element: <ApplyTrainer />, roles: ['LEARNER'] },
+  { path: "dashboard/learner/apply-trainer/status", element: <ApplicationStatus />, roles: ['LEARNER'] },
 ]
 
-// ==================== TRAINER ROUTES (relative paths) ====================
+// ==================== TRAINER ROUTES ====================
 export const trainerRoutes = [
-  { path: "trainer", element: <TrainerDashboard />, roles: ['TRAINER', 'ADMIN'] },
-  { path: "trainer/sessions", element: <TrainerSessions />, roles: ['TRAINER', 'ADMIN'] },
-  { path: "trainer/sessions/:id", element: <TrainerSessionDetails />, roles: ['TRAINER', 'ADMIN'] },
-  { path: "trainer/sessions/:id/roster", element: <SessionRoster />, roles: ['TRAINER', 'ADMIN'] },
-  { path: "trainer/attendance", element: <Attendance />, roles: ['TRAINER', 'ADMIN'] },
-  { path: "trainer/attendance/:sessionId", element: <SessionAttendance />, roles: ['TRAINER', 'ADMIN'] },
-  { path: "trainer/profile", element: <TrainerProfile />, roles: ['TRAINER', 'ADMIN'] },
+  { path: "dashboard/trainer", element: <TrainerDashboard />, roles: ['TRAINER', 'ADMIN'] },
+  { path: "dashboard/trainer/sessions", element: <TrainerSessions />, roles: ['TRAINER', 'ADMIN'] },
+  { path: "dashboard/trainer/sessions/:id", element: <TrainerSessionDetails />, roles: ['TRAINER', 'ADMIN'] },
+  { path: "dashboard/trainer/sessions/:id/roster", element: <SessionRoster />, roles: ['TRAINER', 'ADMIN'] },
+  { path: "dashboard/trainer/attendance", element: <Attendance />, roles: ['TRAINER', 'ADMIN'] },
+  { path: "dashboard/trainer/attendance/:sessionId", element: <SessionAttendance />, roles: ['TRAINER', 'ADMIN'] },
+  { path: "dashboard/trainer/profile", element: <TrainerProfile />, roles: ['TRAINER', 'ADMIN'] },
+  {path : "dashboard/trainer/certificates", element : <IssueCertificates/>,roles: ['TRAINER', 'ADMIN']},
+
 ]
 
-// ==================== ADMIN ROUTES (relative paths) ====================
+// ==================== ADMIN ROUTES ====================
 export const adminRoutes = [
-  { path: "admin", element: <AdminDashboard />, roles: ['ADMIN'] },
-  { path: "admin/users", element: <Users />, roles: ['ADMIN'] },
-  { path: "admin/users/:id", element: <UserDetails />, roles: ['ADMIN'] },
-  { path: "admin/sessions", element: <AdminSessions />, roles: ['ADMIN'] },
-  { path: "admin/sessions/:id", element: <AdminSessionDetails />, roles: ['ADMIN'] },
-  { path: "admin/applications", element: <TrainerApplications />, roles: ['ADMIN'] },
-  { path: "admin/applications/:id", element: <ApplicationDetails />, roles: ['ADMIN'] },
-  { path: "admin/announcements", element: <Announcements />, roles: ['ADMIN'] },
-  { path: "admin/announcements/create", element: <AnnouncementForm />, roles: ['ADMIN'] },
-  { path: "admin/announcements/:id/edit", element: <AnnouncementForm />, roles: ['ADMIN'] },
-  { path: "admin/certificates", element: <AdminCertificates />, roles: ['ADMIN'] },
-  { path: "admin/settings", element: <SystemSettings />, roles: ['ADMIN'] },
+  { path: "dashboard/admin", element: <AdminDashboard />, roles: ['ADMIN'] },
+  { path: "dashboard/admin/users", element: <Users />, roles: ['ADMIN'] },
+  { path: "dashboard/admin/users/:id", element: <UserDetails />, roles: ['ADMIN'] },
+  { path: "dashboard/admin/sessions", element: <AdminSessions />, roles: ['ADMIN'] },
+  { path: "dashboard/admin/sessions/:id", element: <AdminSessionDetails />, roles: ['ADMIN'] },
+  { path: "dashboard/admin/applications", element: <TrainerApplications />, roles: ['ADMIN'] },
+  { path: "dashboard/admin/applications/:id", element: <ApplicationDetails />, roles: ['ADMIN'] },
+  { path: "dashboard/admin/announcements", element: <Announcements />, roles: ['ADMIN'] },
+  { path: "dashboard/admin/announcements/create", element: <AnnouncementForm />, roles: ['ADMIN'] },
+  { path: "dashboard/admin/announcements/:id/edit", element: <AnnouncementForm />, roles: ['ADMIN'] },
+  { path: "dashboard/admin/certificates", element: <AdminCertificates />, roles: ['ADMIN'] },
+  { path: "dashboard/admin/settings", element: <SystemSettings />, roles: ['ADMIN'] },
 ]
 
-// ==================== SHARED ROUTES (relative paths) ====================
+// ==================== SHARED ROUTES ====================
 export const sharedRoutes = [
-  { path: "profile", element: <Profile />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
-  { path: "settings", element: <Settings />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
+  { path: "dashboard/profile", element: <Profile />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
+  { path: "dashboard/settings", element: <Settings />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
 ]
 
-// Combine all for reference
+// Combine all for routing
 export const allRoutes = [...learnerRoutes, ...trainerRoutes, ...adminRoutes, ...sharedRoutes]

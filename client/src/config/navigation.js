@@ -3,7 +3,7 @@ export const navigation = [
   {
     id: 'learner-dashboard',
     label: 'Dashboard',
-    path: '/dashboard/learner',  // Full path including /dashboard
+    path: '/dashboard/learner',  
     icon: '📊',
     roles: ['LEARNER', 'TRAINER', 'ADMIN'],
     order: 1
@@ -74,13 +74,21 @@ export const navigation = [
     roles: ['TRAINER', 'ADMIN'],
     order: 3
   },
+    {
+    id: 'trainer-attendance',
+    label: 'Issue Certificates',
+    path: '/dashboard/trainer/certificates',
+    icon: '📝',
+    roles: ['TRAINER', 'ADMIN'],
+    order: 4
+  },
   {
     id: 'trainer-profile',
     label: 'Profile',
     path: '/dashboard/trainer/profile',
     icon: '👤',
     roles: ['TRAINER', 'ADMIN'],
-    order: 4
+    order: 5
   },
 
   // ADMIN ROUTES

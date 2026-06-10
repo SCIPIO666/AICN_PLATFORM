@@ -2,6 +2,6 @@ import React from 'react'
 
 export default function SessionAttendance() {
   return (
-    <div>SessionAttendance</div>
+    <div>SessionAttendance.trainer page</div>
   )
 }
