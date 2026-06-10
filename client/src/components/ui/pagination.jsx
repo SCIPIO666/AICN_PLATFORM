@@ -1,121 +1,60 @@
-import * as React from "react"
+import Button from './Button';
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from "lucide-react"
+export default function Pagination({ currentPage, totalPages, onPageChange }) {
+  const getPages = () => {
+    const pages = [];
+    const maxVisible = 5;
+    
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else if (currentPage <= 3) {
+      for (let i = 1; i <= 4; i++) pages.push(i);
+      pages.push('...');
+      pages.push(totalPages);
+    } else if (currentPage >= totalPages - 2) {
+      pages.push(1);
+      pages.push('...');
+      for (let i = totalPages - 3; i <= totalPages; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      pages.push('...');
+      for (let i = currentPage - 1; i <= currentPage + 1; i++) pages.push(i);
+      pages.push('...');
+      pages.push(totalPages);
+    }
+    return pages;
+  };
 
-function Pagination({
-  className,
-  ...props
-}) {
+  if (totalPages <= 1) return null;
+
   return (
-    <nav
-      role="navigation"
-      aria-label="pagination"
-      data-slot="pagination"
-      className={cn("mx-auto flex w-full justify-center", className)}
-      {...props} />
+    <div className="flex items-center gap-2">
+      <Button variant="ghost" size="sm" onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 1}>
+        ← Previous
+      </Button>
+      
+      {getPages().map((page, idx) => (
+        <button
+          key={idx}
+          onClick={() => typeof page === 'number' && onPageChange(page)}
+          className={`
+            px-3 py-1 rounded-sharp transition-all duration-200 text-sm font-medium
+            ${page === currentPage
+              ? 'bg-neon-volt text-pure-black'
+              : page === '...'
+              ? 'cursor-default text-text-muted'
+              : 'hover:bg-hover-gray text-text-primary'
+            }
+          `}
+          disabled={page === '...'}
+        >
+          {page}
+        </button>
+      ))}
+      
+      <Button variant="ghost" size="sm" onClick={() => onPageChange(currentPage + 1)} disabled={currentPage === totalPages}>
+        Next →
+      </Button>
+    </div>
   );
-}
-
-function PaginationContent({
-  className,
-  ...props
-}) {
-  return (
-    <ul
-      data-slot="pagination-content"
-      className={cn("flex items-center gap-0.5", className)}
-      {...props} />
-  );
-}
-
-function PaginationItem({
-  ...props
-}) {
-  return <li data-slot="pagination-item" {...props} />;
-}
-
-function PaginationLink({
-  className,
-  isActive,
-  size = "icon",
-  ...props
-}) {
-  return (
-    <Button
-      asChild
-      variant={isActive ? "outline" : "ghost"}
-      size={size}
-      className={cn(className)}>
-      <a
-        aria-current={isActive ? "page" : undefined}
-        data-slot="pagination-link"
-        data-active={isActive}
-        {...props} />
-    </Button>
-  );
-}
-
-function PaginationPrevious({
-  className,
-  text = "Previous",
-  ...props
-}) {
-  return (
-    <PaginationLink
-      aria-label="Go to previous page"
-      size="default"
-      className={cn("pl-1.5!", className)}
-      {...props}>
-      <ChevronLeftIcon data-icon="inline-start" />
-      <span className="hidden sm:block">{text}</span>
-    </PaginationLink>
-  );
-}
-
-function PaginationNext({
-  className,
-  text = "Next",
-  ...props
-}) {
-  return (
-    <PaginationLink
-      aria-label="Go to next page"
-      size="default"
-      className={cn("pr-1.5!", className)}
-      {...props}>
-      <span className="hidden sm:block">{text}</span>
-      <ChevronRightIcon data-icon="inline-end" />
-    </PaginationLink>
-  );
-}
-
-function PaginationEllipsis({
-  className,
-  ...props
-}) {
-  return (
-    <span
-      aria-hidden
-      data-slot="pagination-ellipsis"
-      className={cn(
-        "flex size-8 items-center justify-center [&_svg:not([class*='size-'])]:size-4",
-        className
-      )}
-      {...props}>
-      <MoreHorizontalIcon />
-      <span className="sr-only">More pages</span>
-    </span>
-  );
-}
-
-export {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
 }

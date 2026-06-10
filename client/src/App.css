@@ -1,50 +1,220 @@
-/* src/index.css */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Inconsolata:wght@400;600&display=swap');
+@import "tailwindcss";
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  
-  body {
-    @apply bg-gray-50 dark:bg-dark-300 text-gray-900 dark:text-gray-100 antialiased;
-  }
-  
-  /* Custom scrollbar */
-  ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-  
-  ::-webkit-scrollbar-track {
-    @apply bg-gray-100 dark:bg-dark-100;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    @apply bg-gray-400 dark:bg-gray-600 rounded-full;
-  }
-  
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-500 dark:bg-gray-500;
-  }
+/* Light Mode Variables */
+:root {
+  --bg-page: #ffffff;
+  --bg-card: #f8f8f8;
+  --bg-nav: rgba(255,255,255,0.95);
+  --text-primary: #000000;
+  --text-secondary: #414141;
+  --text-muted: #a0a0a0;
+  --border-color: #e5e7eb;
+  --border-subtle: #f0f0f0;
+  --section-label: #166534;
 }
 
-@layer components {
-  .glass {
-    @apply bg-white/80 dark:bg-dark-100/80 backdrop-blur-md border border-white/20 dark:border-white/10;
-  }
+/* Dark Mode Variables */
+.dark {
+  --bg-page: #000000;
+  --bg-card: transparent;
+  --bg-nav: rgba(0,0,0,0.92);
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0a0;
+  --text-muted: #585858;
+  --border-color: rgba(65,65,65,0.8);
+  --border-subtle: rgba(65,65,65,0.4);
+  --section-label: #faff69;
+}
+
+/* Define your custom theme values */
+@theme {
+  /* Fonts */
+  --font-inter: Inter, system-ui, -apple-system, sans-serif;
+  --font-inconsolata: Inconsolata, SFMono-Regular, monospace;
   
-  .gradient-text {
-    @apply bg-gradient-to-r from-primary-600 to-secondary-500 bg-clip-text text-transparent;
-  }
+  /* Custom text sizes */
+  --text-caption: 14px;
+  --text-caption--line-height: 1.43;
+  --text-feature-heading: 36px;
+  --text-feature-heading--line-height: 1.3;
+  --text-feature-heading--font-weight: 600;
   
-  .card-hover {
-    @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
-  }
+  /* Custom spacing */
+  --spacing-7: 28px;
+  --spacing-12: 48px;
   
-  .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-dark-200;
-  }
+  /* Custom border radius */
+  --radius-comfortable: 8px;
+  --radius-sharp: 4px;
+  
+  /* Custom tracking */
+  --tracking-wide-uppercase: 1.4px;
+}
+
+body {
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  font-family: var(--font-inter);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--border-subtle);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--text-muted);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* Component Classes using standard CSS (no @apply) */
+.section-label {
+  font-size: var(--text-caption);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide-uppercase);
+  margin-bottom: 12px;
+  color: var(--section-label);
+}
+
+.section-heading {
+  font-size: var(--text-feature-heading);
+  font-weight: bold;
+  margin-bottom: 48px;
+  color: var(--text-primary);
+}
+
+.card-base {
+  border-radius: var(--radius-comfortable);
+  padding: 28px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+}
+
+.card-neon {
+  border-radius: var(--radius-comfortable);
+  padding: 28px;
+  border: 2px solid #faff69;
+  background: var(--bg-card);
+}
+
+.card-inset {
+  border-radius: var(--radius-comfortable);
+  padding: 28px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  box-shadow: inset 0px 4px 25px rgba(0,0,0,0.14), 0px 4px 4px rgba(0,0,0,0.06);
+}
+
+/* Button Variants */
+.btn-neon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+  background: #faff69;
+  color: #151515;
+  border: 1px solid #faff69;
+  border-radius: 4px;
+  padding: 0px 16px;
+  height: 44px;
+  line-height: 44px;
+}
+.btn-neon:hover {
+  background: rgb(29,29,29);
+  color: white;
+}
+.btn-neon:active {
+  color: #f4f692;
+}
+
+.btn-dark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+  background: #141414;
+  color: white;
+  border: 1px solid #141414;
+  border-radius: 4px;
+  padding: 12px 16px;
+}
+.btn-dark:hover {
+  background: #3a3a3a;
+  color: rgba(255,255,255,0.8);
+}
+.btn-dark:active {
+  color: #f4f692;
+}
+
+.btn-forest {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+  background: #166534;
+  color: white;
+  border: 1px solid #141414;
+  border-radius: 4px;
+  padding: 12px 16px;
+}
+.btn-forest:hover {
+  background: #3a3a3a;
+}
+.btn-forest:active {
+  color: #f4f692;
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+  background: transparent;
+  color: white;
+  border: 1px solid #4f5100;
+  border-radius: 4px;
+  padding: 0px 32px;
+  height: 44px;
+  line-height: 44px;
+}
+.btn-ghost:hover {
+  background: rgb(29,29,29);
+}
+.btn-ghost:active {
+  color: #f4f692;
+}
+
+/* Utilities */
+.text-balance {
+  text-wrap: balance;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #166534, #faff69);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }

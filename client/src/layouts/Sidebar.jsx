@@ -1,117 +1,67 @@
-import { NavLink } from 'react-router-dom'
+
 import { getNavigationByRole } from '../config/navigation'
-import { useAuth } from '../contexts/AuthContext'
+
+import { NavLink } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Sidebar() {
-  const { user } = useAuth()
+   const { user } = useAuth()
   
   if (!user) return null
   
-  const navigationItems = getNavigationByRole(user.role)
+  const navItems= getNavigationByRole(user.role)
   
-  const mainItems = navigationItems.filter(i => 
+  const mainItems = navItems.filter(i => 
     !i.path.includes('/profile') && !i.path.includes('/settings')
   )
-  const accountItems = navigationItems.filter(i => 
+  const accountItems = navItems.filter(i => 
     i.path.includes('/profile') || i.path.includes('/settings')
   )
   
   return (
-    <aside style={{
-      width: '280px',
-      height: '100vh',
-      position: 'fixed',
-      left: 0,
-      top: 0,
-      backgroundColor: '#1e293b',
-      color: '#e2e8f0',
-      overflowY: 'auto',
-      padding: '20px 0'
-    }}>
-      {/* Logo */}
-      <div style={{ padding: '0 20px 20px 20px', borderBottom: '1px solid #334155', marginBottom: '20px' }}>
-        <div style={{ fontWeight: 'bold', fontSize: '20px', color: '#60a5fa' }}>
-          AICN Training
-        </div>
-        <div style={{ fontSize: '12px', color: '#94a3b8', marginTop: '4px' }}>
-          {user.role} Portal
-        </div>
-      </div>
-      
-      {/* Main Navigation */}
-      <div style={{ marginBottom: '30px' }}>
-        <div style={{ padding: '8px 20px', fontSize: '11px', fontWeight: '600', color: '#64748b', textTransform: 'uppercase' }}>
-          MAIN
-        </div>
-        <p>{`name:${user.name},Role:${user.role}`}</p>
-
-        {mainItems.map((item) => (
+    <aside className="fixed left-0 top-16 w-64 h-full bg-bg-nav backdrop-blur-sm border-r border-border-color p-6 transition-all duration-300 overflow-y-auto">
+      <nav className="space-y-2">
+        {navItems.map(item => (
           <NavLink
-            key={item.id}
+            key={item.path}
             to={item.path}
-            style={({ isActive }) => ({
-              display: 'flex',
-              alignItems: 'center',
-              padding: '10px 20px',
-              margin: '2px 8px',
-              backgroundColor: isActive ? '#3b82f6' : 'transparent',
-              borderRadius: '8px',
-              textDecoration: 'none',
-              color: isActive ? 'white' : '#cbd5e1',
-              fontSize: '14px',
-              transition: 'all 0.2s'
-            })}
+            className={({ isActive }) => `
+              flex items-center gap-3 px-4 py-2.5 rounded-sharp transition-all duration-200
+              ${isActive 
+                ? 'bg-neon-volt/10 text-neon-volt border border-neon-volt/30 shadow-glow-sm' 
+                : 'text-text-secondary hover:bg-hover-gray hover:text-text-primary'
+              }
+            `}
           >
-            <span style={{ marginRight: '12px', fontSize: '18px' }}>{item.icon}</span>
-            <span>{item.label}</span>
+            <span className="text-xl">{item.icon}</span>
+            <span className="text-sm font-medium">{item.label}</span>
           </NavLink>
         ))}
-      </div>
+      </nav>
       
-      {/* Account Navigation */}
-      {accountItems.length > 0 && (
-        <div>
-          <div style={{ padding: '8px 20px', fontSize: '11px', fontWeight: '600', color: '#64748b', textTransform: 'uppercase' }}>
-            ACCOUNT
+      {/* User info */}
+      <div className="absolute bottom-6 left-6 right-6">
+        <div className="border-t border-border-color pt-4">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-8 h-8 rounded-full bg-neon-volt/20 flex items-center justify-center">
+              <span className="text-sm font-bold text-neon-volt">
+                {user?.name?.charAt(0).toUpperCase() || 'U'}
+              </span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-small font-medium text-text-primary truncate">
+                {user?.name}
+              </p>
+              <p className="text-micro text-text-muted">
+                {user?.role?.toLowerCase()}
+              </p>
+            </div>
           </div>
-          {accountItems.map((item) => (
-            <NavLink
-              key={item.id}
-              to={item.path}
-              style={({ isActive }) => ({
-                display: 'flex',
-                alignItems: 'center',
-                padding: '10px 20px',
-                margin: '2px 8px',
-                backgroundColor: isActive ? '#3b82f6' : 'transparent',
-                borderRadius: '8px',
-                textDecoration: 'none',
-                color: isActive ? 'white' : '#cbd5e1',
-                fontSize: '14px',
-                transition: 'all 0.2s'
-              })}
-            >
-              <span style={{ marginRight: '12px', fontSize: '18px' }}>{item.icon}</span>
-              <span>{item.label}</span>
-            </NavLink>
-          ))}
+          <div className="text-micro text-text-muted text-center">
+            © 2026 AICN
+          </div>
         </div>
-      )}
-      
-      {/* User Info */}
-      {/* <div style={{
-        position: 'absolute',
-        bottom: '20px',
-        left: '20px',
-        right: '20px',
-        padding: '12px',
-        backgroundColor: '#0f172a',
-        borderRadius: '8px',
-        fontSize: '12px'
-      }}>
-        <div style={{ fontWeight: '500', color: '#e2e8f0' }}>{user?.name}</div>
-        <div style={{ fontSize: '11px', color: '#64748b' }}>{user?.email}</div>
-      </div> */}
+      </div>
     </aside>
-  )
+  );
 }
