@@ -89,6 +89,21 @@ export default function PublicNavbar() {
                 Login
               </button>
             </Link>
+            <Link to="/verify-certificate">
+              <button className="btn-outline">
+                Verify Certificate
+              </button>
+            </Link>
+            <Link to="/trainers">
+              <button className="btn-outline">
+                Trainers
+              </button>
+            </Link>
+            <Link to="/sessions">
+              <button className="btn-outline">
+                Sessions
+              </button>
+            </Link>
 
             <Link to="/signup">
               <button className="btn-primary">
