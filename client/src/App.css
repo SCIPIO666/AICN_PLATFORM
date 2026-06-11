@@ -2,14 +2,10 @@
 
 @import "tailwindcss";
 
-/* ============================================================
-   CLICKHOUSE DESIGN SYSTEM — Tailwind v4 @theme tokens
-   ClickHouse: acid yellow-green on obsidian black
-   Light mode: inverted — clean white canvas, same accent family
-   ============================================================ */
+/* Click house inspired design tokens */
 
 @theme {
-  /* --- Brand colors (invariant across modes) --- */
+/* brand colors */
   --color-neon-volt:     #faff69;
   --color-pale-yellow:   #f4f692;
   --color-forest-green:  #166534;
@@ -25,11 +21,11 @@
   --color-silver:        #a0a0a0;
   --color-border-gray:   #e5e7eb;
 
-  /* --- Typography --- */
+  /* Typography */
   --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'Inconsolata', SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* --- Type scale --- */
+  /* Type scale */
   --text-micro:        0.7rem;    /* 11.2px — tags, tiny labels */
   --text-small:        0.75rem;   /* 12px */
   --text-caption:      0.875rem;  /* 14px — metadata, descriptions */
@@ -41,12 +37,12 @@
   --text-display-hero: 4.5rem;    /* 72px — section hero */
   --text-display-mega: 6rem;      /* 96px — maximum impact */
 
-  /* --- Border radius --- */
+  /*  Border radius  */
   --radius-sharp:  4px;    /* buttons, badges, code blocks */
   --radius-card:   8px;    /* cards, containers */
   --radius-pill:   9999px; /* toggles, status indicators */
 
-  /* --- Spacing (8px base) --- */
+  /*  Spacing (8px base) */
   --spacing-px: 1px;
   --spacing-0:  0;
   --spacing-1:  0.25rem;  /* 4px */
@@ -62,17 +58,13 @@
   --spacing-12: 3rem;     /* 48px */
   --spacing-16: 4rem;     /* 64px */
 
-  /* --- Shadows --- */
+  /* Shadows*/
   --shadow-subtle:   0px 1px 3px rgba(0,0,0,0.1), 0px 1px 2px -1px rgba(0,0,0,0.1);
   --shadow-elevated: 0px 10px 15px -3px rgba(0,0,0,0.1), 0px 4px 6px -4px rgba(0,0,0,0.1);
   --shadow-inset:    inset 0px 4px 25px rgba(0,0,0,0.14), 0px 4px 4px rgba(0,0,0,0.06);
 }
 
-/* ============================================================
-   CSS CUSTOM PROPERTIES — semantic, mode-aware
-   These are what components reference. @theme tokens are
-   the raw values; these are the roles.
-   ============================================================ */
+/* custom css */
 
 :root {
   /* Surfaces */
@@ -124,9 +116,7 @@
   --select-bg: #141414;
 }
 
-/* ============================================================
-   BASE
-   ============================================================ */
+/* base */
 
 @layer base {
   * {
@@ -157,9 +147,7 @@
   .dark ::-webkit-scrollbar-thumb:hover { background: #faff69; }
 }
 
-/* ============================================================
-   COMPONENT UTILITIES — reusable @layer utilities
-   ============================================================ */
+/* reusable layer utilities */
 
 @layer utilities {
   /* Typography helpers */
