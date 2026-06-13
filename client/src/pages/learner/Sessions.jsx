@@ -38,11 +38,22 @@ export default function LearnerSessions() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-display-hero font-bold">Browse Sessions</h1>
-        <p className="text-body-large text-text-secondary mt-2">Discover and enrol in training sessions</p>
-      </div>
+        <div className="space-y-2">
+          <span className="label-uppercase">
+            Learning Portal
+          </span>
 
+          <h1 className="text-display-hero font-bold text-balance">
+            Browse Sessions
+          </h1>
+
+            <p
+              className="text-body-large"
+              style={{ color: 'var(--text-secondary)' }}
+            >
+              Discover and enrol in training sessions
+            </p>
+      </div>
       <FilterBar filters={filters} onFilterChange={setFilters} onReset={resetFilters} />
 
       <div className="text-caption text-text-muted">Found {pagination?.total || 0} sessions</div>

@@ -1,6 +1,11 @@
 import { Link } from 'react-router-dom';
+<<<<<<< HEAD
 import { useAuth } from '../contexts/AuthContext';
 import ThemeToggle from '../components/ui/ThemeToggle';
+=======
+import { useAuth } from '@/contexts/AuthContext';
+import ThemeToggle from './ui/ThemeToggle';
+>>>>>>> origin/main
 
 export default function PublicNavbar() {
   const { isAuthenticated } = useAuth();
@@ -89,19 +94,35 @@ export default function PublicNavbar() {
                 Login
               </button>
             </Link>
+<<<<<<< HEAD
 
+=======
+            <Link to="/verify-certificate">
+              <button className="btn-outline">
+                Verify Certificate
+              </button>
+            </Link>
+            <Link to="/trainers">
+              <button className="btn-outline">
+                Trainers
+              </button>
+            </Link>
+>>>>>>> origin/main
             <Link to="/sessions">
               <button className="btn-outline">
                 Sessions
               </button>
             </Link>
 
+<<<<<<< HEAD
             <Link to="/trainers">
               <button className="btn-outline">
                Trainers
               </button>
             </Link>
 
+=======
+>>>>>>> origin/main
             <Link to="/signup">
               <button className="btn-primary">
                 Sign Up

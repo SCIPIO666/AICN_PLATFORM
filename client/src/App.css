@@ -233,6 +233,11 @@
   }
 
   .dark .sidebar-link:hover { color: #faff69; }
+<<<<<<< HEAD
+=======
+
+  /* nav */
+>>>>>>> origin/main
    .nav-surface {
     background-color: var(--bg-nav);
     border-bottom: 1px solid var(--border-color);
