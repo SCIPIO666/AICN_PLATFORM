@@ -10,7 +10,10 @@ export default function LandingPage() {
       <PublicNavbar />
       
       {/* Hero Section */}
-  
+      <div className="rounded card w-3/5 h-full">
+        card
+      </div>
+
     </div>
   );
 }

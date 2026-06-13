@@ -6,7 +6,7 @@ import SessionCard from '../../components/cards/SessionCard';
 import FilterBar from '../../components/dormain/FilterBar';
 import Pagination from '../../components/ui/Pagination';
 import Spinner from '../../components/ui/Spinner';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 
 export default function LearnerSessions() {
   const { filters, setFilters, resetFilters } = useSessionFilters();

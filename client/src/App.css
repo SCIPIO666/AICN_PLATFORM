@@ -233,4 +233,55 @@
   }
 
   .dark .sidebar-link:hover { color: #faff69; }
+   .nav-surface {
+    background-color: var(--bg-nav);
+    border-bottom: 1px solid var(--border-color);
+    backdrop-filter: blur(8px);
+  }
+
+  .text-primary {
+    color: var(--text-primary);
+  }
+
+  .text-secondary {
+    color: var(--text-secondary);
+  }
+
+  .text-muted {
+    color: var(--text-muted);
+  }
+
+  .btn-primary {
+    background-color: var(--color-forest-green);
+    color: white;
+    border-radius: var(--radius-sharp);
+    padding: 0.625rem 1rem;
+    font-weight: 600;
+    transition: all .2s;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color-dark-forest);
+  }
+
+  .btn-outline {
+    border: 1px solid var(--color-forest-green);
+    color: var(--color-forest-green);
+    border-radius: var(--radius-sharp);
+    padding: 0.625rem 1rem;
+    font-weight: 600;
+    transition: all .2s;
+  }
+
+  .btn-outline:hover {
+    background-color: var(--card-hover);
+  }
+
+  .btn-neon {
+    background-color: var(--color-neon-volt);
+    color: black;
+    border-radius: var(--radius-sharp);
+    padding: 0.625rem 1rem;
+    font-weight: 700;
+  }
 }

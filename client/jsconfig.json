@@ -6,6 +6,6 @@
     },
     "jsx": "react-jsx"
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "tailwind.config.js"],
   "exclude": ["node_modules", "dist"]
 }
