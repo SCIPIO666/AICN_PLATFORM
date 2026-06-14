@@ -53,7 +53,7 @@ const enrolMutation = useMutation({
           Learning Portal
         </span>
 
-        <h1 className="text-display-hero font-bold text-balance">
+        <h1 className="text-display-hero font-bold text-balance gradient-text">
           Browse Sessions
         </h1>
 

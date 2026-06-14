@@ -15,8 +15,8 @@ export default function Badge({ children, variant = 'default', className = '' })
       'border border-[var(--border-color)]',
 
     neon:
-      'bg-[var(--neon-volt)]/20 text-[var(--neon-volt-dark)] border border-[var(--neon-volt)]/40 ' +
-      'dark:bg-[var(--neon-volt)]/15 dark:text-[var(--neon-volt)] dark:border-[var(--neon-volt)]/30',
+    'bg-[#faff69]/20 text-[#5a5f00] border border-[#faff69]/50 font-semibold ' +
+    'dark:bg-[#faff69]/15 dark:text-[#faff69] dark:border-[#faff69]/30',
 
     success:
       'bg-[var(--success-bg)] text-[var(--success-text)] border border-[var(--success-border)] ' +
