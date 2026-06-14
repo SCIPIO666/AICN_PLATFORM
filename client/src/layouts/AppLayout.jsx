@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
-
+import ToastContainer from '@/components/ui/ToastContainer';
 import PublicNavbar from '@/components/PublicNavbar';
 export default function AppLayout() {
   return (
@@ -12,6 +12,7 @@ export default function AppLayout() {
         
         <main className="mt-[60px] p-6 min-h-[calc(100vh-60px)] bg-bg-page">
           <Outlet />
+          <ToastContainer />
         </main>
       </div>
     </div>

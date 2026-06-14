@@ -9,6 +9,7 @@ import Pagination from '@/components/ui/Pagination';
 import Spinner from '@/components/ui/Spinner';
 import { Button } from '@/components/ui/button';
 import { Search, Filter, X, AlertCircle } from 'lucide-react';
+import { toast } from '@/stores/toastStore'
 
 export default function LearnerSessions() {
   const { filters, setFilters, resetFilters } = useSessionFilters();
@@ -20,10 +21,16 @@ export default function LearnerSessions() {
     keepPreviousData: true,
   });
 
-  const enrolMutation = useMutation({
-    mutationFn: (sessionId) => enrolInSession(sessionId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['sessions'] }),
-  });
+const enrolMutation = useMutation({
+  mutationFn: (sessionId) => enrolInSession(sessionId),
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ['sessions'] })
+    toast.success('Enrolled successfully!')
+  },
+  onError: (error) => {
+    toast.error(error.response?.data?.message || 'Enrolment failed')
+  },
+});
 
   useEffect(() => { refetch(); }, [filters, refetch]);
 
