@@ -115,6 +115,16 @@
   --bg-nav: rgba(255, 255, 255, 0.9);
   --card-hover: rgba(0, 0, 0, 0.04);
   --border-color: rgba(0, 0, 0, 0.1);
+
+  /*  light mode */
+  --neon-volt-dark: #5a5f00;
+  --neon-volt-hover: #e5e700;
+  
+  /* Toast colors */
+  --info-bg: #dbeafe;
+  --info-text: #1e40af;
+  --info-border: #93c5fd;
+
 }
 
 .dark {
@@ -159,6 +169,11 @@
   /* Neon volt */
   --neon-volt: #faff69;
   --neon-volt-dark: #faff69;
+
+    /* dark mode */
+  --info-bg: #1e3a8a20;
+  --info-text: #60a5fa;
+  --info-border: #1e3a8a60;
 
   --bg-nav: rgba(10, 10, 10, 0.9);
   --card-hover: rgba(255, 255, 255, 0.04);
@@ -336,5 +351,20 @@
     border-radius: var(--radius-sharp);
     padding: 0.625rem 1rem;
     font-weight: 700;
+  }
+
+   @keyframes slide-in {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  .animate-slide-in {
+    animation: slide-in 0.3s ease-out forwards;
   }
 }
