@@ -49,26 +49,21 @@ export default function Features() {
         {features.map((feature) => (
           <div
             key={feature.title}
-            className="card-inset p-6"
+            className="card-base  p-6"
           >
-            <h3
-              className="
-                text-feature-title
-                font-semibold
-              "
-            >
+            <img 
+            src={feature.url} 
+            className="w-full h-48 object-cover" 
+            alt='feature image'
+          />
+          <div className="p-6">
+            <h3 className="text-feature-title font-semibold">
               {feature.title}
             </h3>
-
-            <p
-              className="mt-3"
-              style={{
-                color: 'var(--text-secondary)'
-              }}
-            >
+            <p className="mt-3" style={{ color: 'var(--text-secondary)' }}>
               {feature.desc}
             </p>
-            <img src={feature.url} className='' alt='feature image'/>
+          </div>
 
           </div>
         ))}

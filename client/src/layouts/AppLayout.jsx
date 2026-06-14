@@ -9,7 +9,6 @@ export default function AppLayout() {
       <Sidebar />
       
       <div className="flex-1 ml-[280px]">
-        <Navbar />
         
         <main className="mt-[60px] p-6 min-h-[calc(100vh-60px)] bg-bg-page">
           <Outlet />

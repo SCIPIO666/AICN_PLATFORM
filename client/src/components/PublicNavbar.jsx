@@ -1,10 +1,19 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext';
 import ThemeToggle from '../components/ui/ThemeToggle';
 
 
 export default function PublicNavbar() {
   const { isAuthenticated } = useAuth();
+
+    const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
+  };
+
 
   return (
     <nav className="
@@ -109,11 +118,21 @@ export default function PublicNavbar() {
             </Link>
           </>
         ) : (
+          <>
           <Link to="/dashboard">
             <button className="btn-neon">
               Dashboard
             </button>
           </Link>
+          <button
+          onClick={handleLogout}
+          className="btn-outline"
+          style={{ padding: '8px 16px' }}
+        >
+          Logout
+        </button>
+        
+        </>
         )}
       </div>
     </nav>
