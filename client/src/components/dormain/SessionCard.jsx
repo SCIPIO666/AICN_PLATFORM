@@ -1,6 +1,7 @@
 import Card from '../ui/Card';
 import { Button } from '../ui/Button';
 import Badge from '../ui/Badge';
+import { Monitor, MapPin, Calendar, Clock, Users, User, CheckCircle, XCircle } from 'lucide-react';
 
 export default function SessionCard({ session, onEnrol, isEnrolling }) {
   const formatDate = (date) => new Date(date).toLocaleDateString('en-US', {
@@ -18,7 +19,17 @@ export default function SessionCard({ session, onEnrol, isEnrolling }) {
             {session.title}
           </h3>
           <Badge variant={isOnline ? 'neon' : 'success'}>
-            {isOnline ? '💻 Online' : '📍 Physical'}
+            {isOnline ? (
+              <>
+                <Monitor size={14} className="inline mr-1" />
+                Online
+              </>
+            ) : (
+              <>
+                <MapPin size={14} className="inline mr-1" />
+                Physical
+              </>
+            )}
           </Badge>
         </div>
 
@@ -26,18 +37,20 @@ export default function SessionCard({ session, onEnrol, isEnrolling }) {
 
         <div className="space-y-2 text-caption text-text-muted">
           <div className="flex items-center gap-2">
-            <span>📅</span>
+            <Calendar size={14} />
             <span>{formatDate(session.date)}</span>
             <span>•</span>
-            <span>⏰ {session.durationMins} min</span>
+            <Clock size={14} />
+            <span>{session.durationMins} min</span>
           </div>
           <div className="flex items-center gap-2">
-            <span>👥</span>
+            <Users size={14} />
             <span>{session.enrolledCount}/{session.capacity} enrolled</span>
+            {isFull && <XCircle size={14} className="text-red-500 ml-1" />}
           </div>
           {session.trainer && (
             <div className="flex items-center gap-2">
-              <span>👨‍🏫</span>
+              <User size={14} />
               <span>{session.trainer.name}</span>
             </div>
           )}
@@ -50,7 +63,17 @@ export default function SessionCard({ session, onEnrol, isEnrolling }) {
           isLoading={isEnrolling}
           disabled={isFull}
         >
-          {isFull ? 'Session Full' : 'Enrol Now'}
+          {isFull ? (
+            <>
+              <XCircle size={16} className="mr-2" />
+              Session Full
+            </>
+          ) : (
+            <>
+              <CheckCircle size={16} className="mr-2" />
+              Enrol Now
+            </>
+          )}
         </Button>
       </Card.Body>
     </Card>

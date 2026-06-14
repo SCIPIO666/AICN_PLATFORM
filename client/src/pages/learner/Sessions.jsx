@@ -8,11 +8,8 @@ import FilterBar from '../../components/dormain/FilterBar';
 import Pagination from '@/components/ui/Pagination';
 import Spinner from '@/components/ui/Spinner';
 import { Button } from '@/components/ui/button';
+import { Search, Filter, X, AlertCircle } from 'lucide-react';
 
-
-  // if (filters.page) params.append('page', filters.page)
-  // if (filters.limit) params.append('limit', filters.limit)
-// getSessions  (filters = {}) 
 export default function LearnerSessions() {
   const { filters, setFilters, resetFilters } = useSessionFilters();
   const queryClient = useQueryClient();
@@ -33,6 +30,7 @@ export default function LearnerSessions() {
   if (isLoading) return <Spinner fullScreen />;
   if (error) return (
     <div className="text-center py-12">
+      <AlertCircle size={48} className="mx-auto text-red-500 mb-4" />
       <p className="text-red-500 mb-4">Failed to load sessions</p>
       <Button onClick={() => refetch()}>Try Again</Button>
     </div>
@@ -43,31 +41,39 @@ export default function LearnerSessions() {
 
   return (
     <div className="space-y-6">
-        <div className="space-y-2">
-          <span className="label-uppercase">
-            Learning Portal
-          </span>
+      <div className="space-y-2">
+        <span className="label-uppercase">
+          Learning Portal
+        </span>
 
-          <h1 className="text-display-hero font-bold text-balance">
-            Browse Sessions
-          </h1>
+        <h1 className="text-display-hero font-bold text-balance">
+          Browse Sessions
+        </h1>
 
-            <p
-              className="text-body-large"
-              style={{ color: 'var(--text-secondary)' }}
-            >
-              Discover and enrol in training sessions
-            </p>
+        <p
+          className="text-body-large"
+          style={{ color: 'var(--text-secondary)' }}
+        >
+          Discover and enrol in training sessions
+        </p>
       </div>
+      
       <FilterBar filters={filters} onFilterChange={setFilters} onReset={resetFilters} />
 
-      <div className="text-caption text-text-muted">Found {pagination?.total || 0} sessions</div>
+      <div className="text-caption text-text-muted flex items-center gap-2">
+        <Search size={14} />
+        Found {pagination?.total || 0} sessions
+      </div>
 
       {sessions.length === 0 ? (
         <div className="text-center py-12 card-base">
-          <div className="text-6xl mb-4">📭</div>
+          <Search size={64} className="mx-auto mb-4 opacity-50" />
           <h3 className="text-feature-title font-bold">No sessions found</h3>
           <p className="text-text-muted mt-1">Try adjusting your filters</p>
+          <Button variant="ghost" onClick={resetFilters} className="mt-4">
+            <X size={16} className="mr-2" />
+            Clear Filters
+          </Button>
         </div>
       ) : (
         <>
@@ -83,7 +89,11 @@ export default function LearnerSessions() {
           </div>
           {pagination && pagination.totalPages > 1 && (
             <div className="flex justify-center pt-4">
-              <Pagination currentPage={pagination.page} totalPages={pagination.totalPages} onPageChange={(page) => setFilters({ page })} />
+              <Pagination 
+                currentPage={pagination.page} 
+                totalPages={pagination.totalPages} 
+                onPageChange={(page) => setFilters({ page })} 
+              />
             </div>
           )}
         </>

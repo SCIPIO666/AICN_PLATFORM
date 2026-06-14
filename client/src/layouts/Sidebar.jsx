@@ -1,42 +1,44 @@
-
 import { getNavigationByRole } from '../config/navigation'
-
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import * as Icons from 'lucide-react';
 
 export default function Sidebar() {
-   const { user } = useAuth()
+  const { user } = useAuth()
   
   if (!user) return null
   
-  const navItems= getNavigationByRole(user.role)
+  const navItems = getNavigationByRole(user.role)
   
-  const mainItems = navItems.filter(i => 
-    !i.path.includes('/profile') && !i.path.includes('/settings')
-  )
-  const accountItems = navItems.filter(i => 
-    i.path.includes('/profile') || i.path.includes('/settings')
-  )
+  // Get the Lucide icon component from the icon name string
+  const getIconComponent = (iconName) => {
+    const Icon = Icons[iconName];
+    return Icon || Icons.HelpCircle; // Fallback to HelpCircle if icon not found
+  };
   
   return (
     <aside className="fixed left-0 top-16 w-64 h-full bg-bg-nav backdrop-blur-sm border-r border-border-color p-6 transition-all duration-300 overflow-y-auto">
       <nav className="space-y-2">
-        {navItems.map(item => (
-          <NavLink
-            key={item.path}
-            to={item.path}
-            className={({ isActive }) => `
-              flex items-center gap-3 px-4 py-2.5 rounded-sharp transition-all duration-200
-              ${isActive 
-                ? 'bg-neon-volt/10 text-neon-volt border border-neon-volt/30 shadow-glow-sm' 
-                : 'text-text-secondary hover:bg-hover-gray hover:text-text-primary'
-              }
-            `}
-          >
-            <span className="text-xl">{item.icon}</span>
-            <span className="text-sm font-medium">{item.label}</span>
-          </NavLink>
-        ))}
+        {navItems.map(item => {
+          const IconComponent = getIconComponent(item.icon);
+          
+          return (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) => `
+                flex items-center gap-3 px-4 py-2.5 rounded-sharp transition-all duration-200
+                ${isActive 
+                  ? 'bg-neon-volt/10 text-neon-volt border border-neon-volt/30 shadow-glow-sm' 
+                  : 'text-text-secondary hover:bg-hover-gray hover:text-text-primary'
+                }
+              `}
+            >
+              <IconComponent size={20} strokeWidth={1.5} />
+              <span className="text-sm font-medium">{item.label}</span>
+            </NavLink>
+          );
+        })}
       </nav>
       
       {/* User info */}

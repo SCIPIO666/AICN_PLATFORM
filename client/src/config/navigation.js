@@ -1,10 +1,12 @@
+// navigation.js
+
 export const navigation = [
   // LEARNER ROUTES
   {
     id: 'learner-dashboard',
     label: 'Dashboard',
     path: '/dashboard/learner',  
-    icon: '📊',
+    icon: 'LayoutDashboard',
     roles: ['LEARNER', 'TRAINER', 'ADMIN'],
     order: 1
   },
@@ -12,7 +14,7 @@ export const navigation = [
     id: 'learner-sessions',
     label: 'Browse Sessions',
     path: '/dashboard/learner/sessions',
-    icon: '📚',
+    icon: 'BookOpen',
     roles: ['LEARNER', 'TRAINER', 'ADMIN'],
     order: 2
   },
@@ -20,7 +22,7 @@ export const navigation = [
     id: 'learner-enrolments',
     label: 'My Enrolments',
     path: '/dashboard/learner/my-enrolments',
-    icon: '✅',
+    icon: 'CheckCircle',
     roles: ['LEARNER', 'TRAINER', 'ADMIN'],
     order: 3
   },
@@ -28,7 +30,7 @@ export const navigation = [
     id: 'learner-certificates',
     label: 'My Certificates',
     path: '/dashboard/learner/my-certificates',
-    icon: '🎓',
+    icon: 'GraduationCap',
     roles: ['LEARNER', 'TRAINER', 'ADMIN'],
     order: 4
   },
@@ -36,7 +38,7 @@ export const navigation = [
     id: 'learner-trainers',
     label: 'Find Trainers',
     path: '/dashboard/learner/trainers',
-    icon: '👨‍🏫',
+    icon: 'Users',
     roles: ['LEARNER', 'TRAINER', 'ADMIN'],
     order: 5
   },
@@ -44,7 +46,7 @@ export const navigation = [
     id: 'learner-apply',
     label: 'Become a Trainer',
     path: '/dashboard/learner/apply-trainer',
-    icon: '✍️',
+    icon: 'PenTool',
     roles: ['LEARNER'],
     order: 6
   },
@@ -54,7 +56,7 @@ export const navigation = [
     id: 'trainer-dashboard',
     label: 'Dashboard',
     path: '/dashboard/trainer',
-    icon: '📊',
+    icon: 'LayoutDashboard',
     roles: ['TRAINER', 'ADMIN'],
     order: 1
   },
@@ -62,7 +64,7 @@ export const navigation = [
     id: 'trainer-sessions',
     label: 'My Sessions',
     path: '/dashboard/trainer/sessions',
-    icon: '👨‍🏫',
+    icon: 'Calendar',
     roles: ['TRAINER', 'ADMIN'],
     order: 2
   },
@@ -70,15 +72,15 @@ export const navigation = [
     id: 'trainer-attendance',
     label: 'Mark Attendance',
     path: '/dashboard/trainer/attendance',
-    icon: '📝',
+    icon: 'ClipboardList',
     roles: ['TRAINER', 'ADMIN'],
     order: 3
   },
-    {
+  {
     id: 'issue-certs',
     label: 'Issue Certificates',
     path: '/dashboard/trainer/certificates',
-    icon: '📝',
+    icon: 'Award',
     roles: ['TRAINER', 'ADMIN'],
     order: 4
   },
@@ -86,7 +88,7 @@ export const navigation = [
     id: 'trainer-profile',
     label: 'Profile',
     path: '/dashboard/trainer/profile',
-    icon: '👤',
+    icon: 'User',
     roles: ['TRAINER', 'ADMIN'],
     order: 5
   },
@@ -96,7 +98,7 @@ export const navigation = [
     id: 'admin-dashboard',
     label: 'Dashboard',
     path: '/dashboard/admin',
-    icon: '📊',
+    icon: 'LayoutDashboard',
     roles: ['ADMIN'],
     order: 1
   },
@@ -104,7 +106,7 @@ export const navigation = [
     id: 'admin-users',
     label: 'Manage Users',
     path: '/dashboard/admin/users',
-    icon: '👥',
+    icon: 'UsersRound',
     roles: ['ADMIN'],
     order: 2
   },
@@ -112,7 +114,7 @@ export const navigation = [
     id: 'admin-sessions',
     label: 'Manage Sessions',
     path: '/dashboard/admin/sessions',
-    icon: '📅',
+    icon: 'CalendarDays',
     roles: ['ADMIN'],
     order: 3
   },
@@ -120,7 +122,7 @@ export const navigation = [
     id: 'admin-applications',
     label: 'Trainer Applications',
     path: '/dashboard/admin/applications',
-    icon: '✍️',
+    icon: 'FileCheck',
     roles: ['ADMIN'],
     order: 4
   },
@@ -128,7 +130,7 @@ export const navigation = [
     id: 'admin-announcements',
     label: 'Announcements',
     path: '/dashboard/admin/announcements',
-    icon: '📢',
+    icon: 'Megaphone',
     roles: ['ADMIN'],
     order: 5
   },
@@ -136,7 +138,7 @@ export const navigation = [
     id: 'admin-certificates',
     label: 'Certificates',
     path: '/dashboard/admin/certificates',
-    icon: '🎓',
+    icon: 'Award',
     roles: ['ADMIN'],
     order: 6
   },
@@ -146,7 +148,7 @@ export const navigation = [
     id: 'profile',
     label: 'My Profile',
     path: '/dashboard/profile',
-    icon: '👤',
+    icon: 'UserCircle',
     roles: ['LEARNER', 'TRAINER', 'ADMIN'],
     order: 98
   },
@@ -154,7 +156,7 @@ export const navigation = [
     id: 'settings',
     label: 'Settings',
     path: '/dashboard/settings',
-    icon: '⚙️',
+    icon: 'Settings',
     roles: ['LEARNER', 'TRAINER', 'ADMIN'],
     order: 99
   }
