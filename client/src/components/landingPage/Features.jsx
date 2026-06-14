@@ -1,16 +1,26 @@
+     import image from '../../public/heroe4.jpg'
+     import image2   from  '../../public/heroe3.jpg'
+     import image3   from   '../../public/thought-catalog-505eectW54k-unsplash.jpg'
 export default function Features() {
   const features = [
     {
       title: 'Live Training',
-      desc: 'Attend instructor-led sessions.'
+      desc: 'Attend instructor-led sessions.',
+      url: image2
+
     },
     {
       title: 'Certificates',
-      desc: 'Earn verified certificates.'
+      desc: 'Earn verified certificates.',
+      url: image
+
     },
     {
       title: 'Expert Trainers',
-      desc: 'Learn from professionals.'
+      desc: 'Learn from professionals.',
+      url: image3
+
+
     }
   ];
 
@@ -39,7 +49,7 @@ export default function Features() {
         {features.map((feature) => (
           <div
             key={feature.title}
-            className="card-base p-6"
+            className="card-inset p-6"
           >
             <h3
               className="
@@ -58,6 +68,7 @@ export default function Features() {
             >
               {feature.desc}
             </p>
+            <img src={feature.url} className='' alt='feature image'/>
 
           </div>
         ))}
