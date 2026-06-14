@@ -1,25 +1,30 @@
 import { useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { mockAPI} from '../../mocks/sessions'
+import { getSessions } from '@/api/sessions';
+import { enrolInSession } from '@/api/enrolments';
 import useSessionFilters from '../../stores/sessionFilters';
-import SessionCard from '../../components/cards/SessionCard';
+import SessionCard from '../../components/dormain/SessionCard';
 import FilterBar from '../../components/dormain/FilterBar';
-import Pagination from '../../components/ui/Pagination';
-import Spinner from '../../components/ui/Spinner';
+import Pagination from '@/components/ui/Pagination';
+import Spinner from '@/components/ui/Spinner';
 import { Button } from '@/components/ui/button';
 
+
+  // if (filters.page) params.append('page', filters.page)
+  // if (filters.limit) params.append('limit', filters.limit)
+// getSessions  (filters = {}) 
 export default function LearnerSessions() {
   const { filters, setFilters, resetFilters } = useSessionFilters();
   const queryClient = useQueryClient();
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['sessions', filters],
-    queryFn: () => mockAPI.getSessions(filters),
+    queryFn: () => getSessions(filters),
     keepPreviousData: true,
   });
 
   const enrolMutation = useMutation({
-    mutationFn: (sessionId) => mockAPI.enrolInSession(sessionId),
+    mutationFn: (sessionId) => enrolInSession(sessionId),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['sessions'] }),
   });
 
