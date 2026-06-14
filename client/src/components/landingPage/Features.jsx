@@ -1,7 +1,69 @@
-import React from 'react'
-
 export default function Features() {
+  const features = [
+    {
+      title: 'Live Training',
+      desc: 'Attend instructor-led sessions.'
+    },
+    {
+      title: 'Certificates',
+      desc: 'Earn verified certificates.'
+    },
+    {
+      title: 'Expert Trainers',
+      desc: 'Learn from professionals.'
+    }
+  ];
+
   return (
-    <div>Features</div>
-  )
+    <section className="space-y-8">
+
+      <div className="text-center">
+
+        <p className="label-uppercase">
+          Features
+        </p>
+
+        <h2
+          className="
+            text-feature-heading
+            font-bold
+          "
+        >
+          Everything You Need To Learn
+        </h2>
+
+      </div>
+
+      <div className="grid md:grid-cols-3 gap-6">
+
+        {features.map((feature) => (
+          <div
+            key={feature.title}
+            className="card-base p-6"
+          >
+            <h3
+              className="
+                text-feature-title
+                font-semibold
+              "
+            >
+              {feature.title}
+            </h3>
+
+            <p
+              className="mt-3"
+              style={{
+                color: 'var(--text-secondary)'
+              }}
+            >
+              {feature.desc}
+            </p>
+
+          </div>
+        ))}
+
+      </div>
+
+    </section>
+  );
 }
