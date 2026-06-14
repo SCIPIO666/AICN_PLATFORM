@@ -23,17 +23,18 @@ export default function Sidebar() {
           const IconComponent = getIconComponent(item.icon);
           
           return (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              className={({ isActive }) => `
-                flex items-center gap-3 px-4 py-2.5 rounded-sharp transition-all duration-200
-                ${isActive 
-                  ? 'bg-neon-volt/10 text-neon-volt border border-neon-volt/30 shadow-glow-sm' 
-                  : 'text-text-secondary hover:bg-hover-gray hover:text-text-primary'
-                }
-              `}
-            >
+          <NavLink
+            key={item.path}
+            to={item.path}
+            title={item.label} // Adds tooltip on hover
+            className={({ isActive }) => `
+              flex items-center gap-3 px-4 py-2.5 rounded-sharp transition-all duration-200 group
+              ${isActive 
+                ? 'bg-[var(--neon-volt)]/15 text-[var(--neon-volt-dark)] border border-[var(--neon-volt)]/50 shadow-glow-sm font-semibold' 
+                : 'text-[var(--text-secondary)] hover:bg-[var(--card-hover)] hover:text-[var(--text-primary)]'
+              }
+            `}
+          >
               <IconComponent size={20} strokeWidth={1.5} />
               <span className="text-sm font-medium">{item.label}</span>
             </NavLink>

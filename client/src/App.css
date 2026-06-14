@@ -5,7 +5,7 @@
 /* Click house inspired design tokens */
 
 @theme {
-/* brand colors */
+  /* brand colors */
   --color-neon-volt:     #faff69;
   --color-pale-yellow:   #f4f692;
   --color-forest-green:  #166534;
@@ -31,18 +31,18 @@
   --text-caption:      0.875rem;  /* 14px — metadata, descriptions */
   --text-body:         1rem;      /* 16px — standard body */
   --text-body-large:   1.125rem;  /* 18px — intro paragraphs */
-  --text-feature-title:1.25rem;   /* 20px — small feature titles */
+  --text-feature-title: 1.25rem;   /* 20px — small feature titles */
   --text-sub-heading:  1.5rem;    /* 24px — card headings */
   --text-feature-heading: 2.25rem;/* 36px — feature section anchors */
   --text-display-hero: 4.5rem;    /* 72px — section hero */
   --text-display-mega: 6rem;      /* 96px — maximum impact */
 
-  /*  Border radius  */
+  /* Border radius */
   --radius-sharp:  4px;    /* buttons, badges, code blocks */
   --radius-card:   8px;    /* cards, containers */
   --radius-pill:   9999px; /* toggles, status indicators */
 
-  /*  Spacing (8px base) */
+  /* Spacing (8px base) */
   --spacing-px: 1px;
   --spacing-0:  0;
   --spacing-1:  0.25rem;  /* 4px */
@@ -58,7 +58,7 @@
   --spacing-12: 3rem;     /* 48px */
   --spacing-16: 4rem;     /* 64px */
 
-  /* Shadows*/
+  /* Shadows */
   --shadow-subtle:   0px 1px 3px rgba(0,0,0,0.1), 0px 1px 2px -1px rgba(0,0,0,0.1);
   --shadow-elevated: 0px 10px 15px -3px rgba(0,0,0,0.1), 0px 4px 6px -4px rgba(0,0,0,0.1);
   --shadow-inset:    inset 0px 4px 25px rgba(0,0,0,0.14), 0px 4px 4px rgba(0,0,0,0.06);
@@ -89,6 +89,32 @@
   /* Inputs */
   --input-bg:   #ffffff;
   --select-bg:  #ffffff;
+  
+  /* Success colors */
+  --success-bg: #dcfce7;
+  --success-text: #166534;
+  --success-border: #86efac;
+  
+  /* Warning colors */
+  --warning-bg: #fef3c7;
+  --warning-text: #92400e;
+  --warning-border: #fde047;
+  
+  /* Error colors */
+  --error-bg: #fee2e2;
+  --error-text: #991b1b;
+  --error-border: #fca5a5;
+  
+  /* Neon volt dark mode version (for light mode) */
+  --neon-volt-dark: #5a5f00;
+  --neon-volt-hover: #e5e700;
+
+  --neon-volt: #faff69;
+  
+
+  --bg-nav: rgba(255, 255, 255, 0.9);
+  --card-hover: rgba(0, 0, 0, 0.04);
+  --border-color: rgba(0, 0, 0, 0.1);
 }
 
 .dark {
@@ -114,6 +140,29 @@
   /* Inputs */
   --input-bg:  #141414;
   --select-bg: #141414;
+
+  /* Success colors - dark mode */
+  --success-bg: #16653420;
+  --success-text: #4ade80;
+  --success-border: #16653460;
+  
+  /* Warning colors - dark mode */
+  --warning-bg: #92400e20;
+  --warning-text: #fbbf24;
+  --warning-border: #92400e60;
+  
+  /* Error colors - dark mode */
+  --error-bg: #991b1b20;
+  --error-text: #f87171;
+  --error-border: #991b1b60;
+
+  /* Neon volt */
+  --neon-volt: #faff69;
+  --neon-volt-dark: #faff69;
+
+  --bg-nav: rgba(10, 10, 10, 0.9);
+  --card-hover: rgba(255, 255, 255, 0.04);
+  --border-color: rgba(255, 255, 255, 0.1);
 }
 
 /* base */
@@ -232,13 +281,12 @@
     padding-left: calc(1rem - 2px);
   }
 
-  .dark .sidebar-link:hover { color: #faff69; }
-<<<<<<< HEAD
-=======
+  .dark .sidebar-link:hover { 
+    color: #faff69; 
+  }
 
-  /* nav */
->>>>>>> origin/main
-   .nav-surface {
+  /* Nav */
+  .nav-surface {
     background-color: var(--bg-nav);
     border-bottom: 1px solid var(--border-color);
     backdrop-filter: blur(8px);

@@ -7,7 +7,7 @@
 export default function Badge({ children, variant = 'default', className = '' }) {
   const base =
     'inline-flex items-center px-2.5 py-0.5 rounded-[4px] ' +
-    'text-[0.75rem] font-medium leading-[1.43]';
+    'text-[0.75rem] font-medium leading-[1.43] transition-all duration-200';
 
   const variants = {
     default:
@@ -15,23 +15,23 @@ export default function Badge({ children, variant = 'default', className = '' })
       'border border-[var(--border-color)]',
 
     neon:
-      'bg-[#faff69]/10 text-[#faff69] border border-[#faff69]/30 ' +
-      'dark:bg-[#faff69]/10 dark:text-[#faff69]',
+      'bg-[var(--neon-volt)]/20 text-[var(--neon-volt-dark)] border border-[var(--neon-volt)]/40 ' +
+      'dark:bg-[var(--neon-volt)]/15 dark:text-[var(--neon-volt)] dark:border-[var(--neon-volt)]/30',
 
     success:
-      'bg-[#166534]/15 text-[#166534] border border-[#166534]/30 ' +
-      'dark:bg-[#166534]/20 dark:text-[#4ade80]',
+      'bg-[var(--success-bg)] text-[var(--success-text)] border border-[var(--success-border)] ' +
+      'dark:bg-[var(--success-bg-dark)] dark:text-[var(--success-text-dark)] dark:border-[var(--success-border-dark)]',
 
     warning:
-      'bg-yellow-500/10 text-yellow-600 border border-yellow-500/30 ' +
-      'dark:text-yellow-400',
+      'bg-[var(--warning-bg)] text-[var(--warning-text)] border border-[var(--warning-border)] ' +
+      'dark:bg-[var(--warning-bg-dark)] dark:text-[var(--warning-text-dark)] dark:border-[var(--warning-border-dark)]',
 
     error:
-      'bg-red-500/10 text-red-600 border border-red-500/30 ' +
-      'dark:text-red-400',
+      'bg-[var(--error-bg)] text-[var(--error-text)] border border-[var(--error-border)] ' +
+      'dark:bg-[var(--error-bg-dark)] dark:text-[var(--error-text-dark)] dark:border-[var(--error-border-dark)]',
 
     outline:
-      'bg-transparent text-[var(--text-primary)] border border-[var(--border-color)]',
+      'bg-transparent text-[var(--text-primary)] border border-[var(--border-color)] hover:bg-[var(--card-hover)]',
   };
 
   return (
