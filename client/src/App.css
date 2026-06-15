@@ -151,20 +151,6 @@
   --input-bg:  #141414;
   --select-bg: #141414;
 
-  /* Success colors - dark mode */
-  --success-bg: #16653420;
-  --success-text: #4ade80;
-  --success-border: #16653460;
-  
-  /* Warning colors - dark mode */
-  --warning-bg: #92400e20;
-  --warning-text: #fbbf24;
-  --warning-border: #92400e60;
-  
-  /* Error colors - dark mode */
-  --error-bg: #991b1b20;
-  --error-text: #f87171;
-  --error-border: #991b1b60;
 
   /* Neon volt */
   --neon-volt: #faff69;
@@ -178,6 +164,29 @@
   --bg-nav: rgba(10, 10, 10, 0.9);
   --card-hover: rgba(255, 255, 255, 0.04);
   --border-color: rgba(255, 255, 255, 0.1);
+
+
+/* ---toast---- */
+
+  /* Success  */
+  --success-bg:     #14532d;
+  --success-text:   #86efac;
+  --success-border: #166534;
+
+  /* Error */
+  --error-bg:     #450a0a;
+  --error-text:   #fca5a5;
+  --error-border: #991b1b;
+
+  /* Warning  */
+  --warning-bg:     #431407;
+  --warning-text:   #fde68a;
+  --warning-border: #92400e;
+
+  /* Info — was too transparent at #1e3a8a20 */
+  --info-bg:     #0f1f4a;
+  --info-text:   #93c5fd;
+  --info-border: #1e3a8a;
 }
 
 /* base */

@@ -24,7 +24,33 @@ async function getSession(id) {
     throw error;
   }
 }
+// In sessionsModel.js — add userId parameter to getSessions
+async function getSessions(filters = {}, skip = 0, take = 10, userId = null) {
+  const sessions = await prisma.session.findMany({
+    where: buildWhere(filters),
+    skip,
+    take,
+    include: {
+      trainer: { select: { id: true, name: true } },
+      _count: { select: { enrolments: true } },
+      // Include current user's enrolment if userId provided
+      enrolments: userId ? {
+        where: { userId },
+        select: { id: true, status: true }
+      } : false,
+    },
+    orderBy: { date: 'asc' }
+  })
 
+  return sessions.map(session => ({
+    ...session,
+    // Flatten for frontend convenience
+    userEnrolment: session.enrolments?.[0] || null,
+    isEnrolled: session.enrolments?.some(e => e.status === 'ENROLLED') || false,
+  }))
+
+  
+}
 async function getAllSessions(filters = {}) {
   try {
     const { title, skillArea, status, locationType, county, trainerId, fromDate, toDate, page = 1, limit = 10 } = filters;

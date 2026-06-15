@@ -96,9 +96,10 @@ const enrolMutation = useMutation({
               />
             </div>
           )}
-           <CancelEnrolmentModal />
+
         </>
       )}
+    <CancelEnrolmentModal />
     </div>
   );
 }

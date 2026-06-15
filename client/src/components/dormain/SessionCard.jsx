@@ -21,7 +21,72 @@ const isUnavailable = sessionDate < now;
 
 
 //already enrolled
-  const isEnrolled = false; 
+  const isCancelled =null // session.userEnrolment?.status === 'CANCELLED'
+  const isEnrolled =null // session.isEnrolled 
+
+const getActionButton = () => {
+    // Active enrolment exists
+    if (isEnrolled) {
+      return (
+        <button
+          disabled
+          className="w-full py-2 rounded-lg text-sm bg-green-100 
+                     text-green-700 border border-green-300 cursor-not-allowed"
+        >
+          ✓ Already Enrolled
+        </button>
+      )
+    }
+
+    //  Previously cancelled — allow re-enrol
+      if (isCancelled) {
+      return (
+        <div className="space-y-2">
+          <p className="text-xs text-amber-600 text-center">
+            You previously cancelled this session
+          </p>
+          <button
+            onClick={() => onEnrol(session.id)}
+            disabled={isEnrolling || isUnavailable}
+            className="w-full py-2 rounded-lg text-sm bg-amber-500 
+                      text-white hover:bg-amber-600 transition-colors
+                      disabled:opacity-50"
+          >
+            {isEnrolling ? (
+              <span className="flex items-center justify-center gap-2">
+                <Loader2 size={14} className="animate-spin" />
+                Enrolling...
+              </span>
+            ) : (
+              'Re-Enrol'
+            )}
+          </button>
+        </div>
+      )
+    }
+
+    // Never enrolled-default
+    return (
+            <button
+              onClick={() => onEnrol(session.id)}
+              disabled={isEnrolling || isUnavailable}
+              className="w-full py-2 rounded-lg text-sm bg-green-600 
+                        text-white hover:bg-green-700 disabled:opacity-50 
+                        transition-colors"
+            >
+              {isEnrolling ? (
+                <span className="flex items-center justify-center gap-2">
+                  <Loader2 size={14} className="animate-spin" />
+                  Enrolling...
+                </span>
+              ) : (
+                'Enrol Now'
+              )}
+            </button>
+        )
+  }
+
+
   return (
     <Card variant="default" className="hover:shadow-elevated transition-all duration-300">
       <Card.Body className="space-y-4">
@@ -66,31 +131,14 @@ const isUnavailable = sessionDate < now;
             </div>
           )}
         </div>
-
-        <Button
-          variant={isFull ? 'ghost' : 'neon'}
-          fullWidth
-          onClick={() => onEnrol(session.id)}
-          isLoading={isEnrolling}
-          disabled={isFull || isEnrolled || isUnavailable}
-        >
           {isFull ? (
             <>
               <XCircle size={16} className="mr-2" />
               Session Full
             </>
-          ) : isEnrolling ? (
-            <>
-              <Loader2 size={16} className="mr-2 animate-spin" />
-              Enrolling...
-            </>
-          ) : (
-            <>
-              <CheckCircle size={16} className="mr-2" />
-             { isEnrolled? 'Enrolled' : 'Enroll Now'}
-            </>
-          )}
-        </Button>
+          ) : 
+  
+      getActionButton()}
       </Card.Body>
     </Card>
   );
