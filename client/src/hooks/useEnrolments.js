@@ -52,6 +52,7 @@ export const useCancelEnrolment = () => {
     },
   onError: (error) => {
     toast.error(error.response?.data?.message || 'Cancellation failed')
+
   },
     
   });

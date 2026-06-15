@@ -352,7 +352,70 @@
     padding: 0.625rem 1rem;
     font-weight: 700;
   }
+.modal-backdrop {
+    background: rgba(0,0,0,.65);
+    backdrop-filter: blur(6px);
+  }
 
+  .text-primary {
+    color: var(--text-primary);
+  }
+
+  .text-secondary {
+    color: var(--text-secondary);
+  }
+
+  .text-muted {
+    color: var(--text-muted);
+  }
+
+  .divider {
+    border-color: var(--border-subtle);
+  }
+
+  .input-themed {
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sharp);
+    transition: all .2s ease;
+  }
+
+  .input-themed:focus {
+    border-color: var(--color-neon-volt);
+    outline: none;
+  }
+
+  .btn-danger {
+    background: #dc2626;
+    color: white;
+    border-radius: var(--radius-sharp);
+    font-weight: 600;
+    transition: all .2s ease;
+  }
+
+  .btn-danger:hover {
+    background: #b91c1c;
+  }
+
+  .btn-danger:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+  }
+
+  .btn-secondary {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    border-radius: var(--radius-sharp);
+    font-weight: 600;
+    transition: all .2s ease;
+  }
+
+  .btn-secondary:hover {
+    background: var(--card-hover);
+    color: var(--text-primary);
+  }
    @keyframes slide-in {
     from {
       transform: translateX(100%);
