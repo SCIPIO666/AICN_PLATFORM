@@ -1,42 +1,41 @@
 /**
  * Badge — ClickHouse design language
- *
  * Variants: default | neon | success | warning | error | outline
- * All use sharp 4px radius per ClickHouse spec.
  */
 export default function Badge({ children, variant = 'default', className = '' }) {
   const base =
-    'inline-flex items-center px-2.5 py-0.5 rounded-[4px] ' +
-    'text-[0.75rem] font-medium leading-[1.43] transition-all duration-200';
+    'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-[4px] ' +
+    'text-[0.75rem] font-medium leading-[1.43] transition-all duration-200 ' +
+    'whitespace-nowrap'
 
   const variants = {
     default:
       'bg-[var(--card-hover)] text-[var(--text-secondary)] ' +
       'border border-[var(--border-color)]',
-
     neon:
-    'bg-[#faff69]/20 text-[#5a5f00] border border-[#faff69]/50 font-semibold ' +
-    'dark:bg-[#faff69]/15 dark:text-[#faff69] dark:border-[#faff69]/30',
+      'bg-[#faff69]/25 text-[#3a3d00] border border-[#faff69]/60 font-semibold ' +
+      'dark:bg-[#2a2d00] dark:text-[#faff69] dark:border-[#faff69]/40',
 
     success:
-      'bg-[var(--success-bg)] text-[var(--success-text)] border border-[var(--success-border)] ' +
-      'dark:bg-[var(--success-bg-dark)] dark:text-[var(--success-text-dark)] dark:border-[var(--success-border-dark)]',
+      'bg-[var(--success-bg)] text-[var(--success-text)] ' +
+      'border border-[var(--success-border)]',
 
     warning:
-      'bg-[var(--warning-bg)] text-[var(--warning-text)] border border-[var(--warning-border)] ' +
-      'dark:bg-[var(--warning-bg-dark)] dark:text-[var(--warning-text-dark)] dark:border-[var(--warning-border-dark)]',
+      'bg-[var(--warning-bg)] text-[var(--warning-text)] ' +
+      'border border-[var(--warning-border)]',
 
     error:
-      'bg-[var(--error-bg)] text-[var(--error-text)] border border-[var(--error-border)] ' +
-      'dark:bg-[var(--error-bg-dark)] dark:text-[var(--error-text-dark)] dark:border-[var(--error-border-dark)]',
+      'bg-[var(--error-bg)] text-[var(--error-text)] ' +
+      'border border-[var(--error-border)]',
 
     outline:
-      'bg-transparent text-[var(--text-primary)] border border-[var(--border-color)] hover:bg-[var(--card-hover)]',
-  };
+      'bg-transparent text-[var(--text-primary)] ' +
+      'border border-[var(--border-color)] hover:bg-[var(--card-hover)]',
+  }
 
   return (
     <span className={[base, variants[variant], className].filter(Boolean).join(' ')}>
       {children}
     </span>
-  );
+  )
 }
