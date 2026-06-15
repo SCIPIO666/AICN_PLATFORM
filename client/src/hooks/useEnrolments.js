@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as enrolmentAPI from '../api/enrolments';
 import useAuthStore from '../stores/useAuthStore';
+import { toast } from '@/stores/toastStore';
 
 // Query keys
 export const enrolmentKeys = {
@@ -47,7 +48,12 @@ export const useCancelEnrolment = () => {
       enrolmentAPI.cancelEnrolment(enrolmentId, reason),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: enrolmentKeys.myEnrolments() });
+    toast.success('Enrolment cancelled')
     },
+  onError: (error) => {
+    toast.error(error.response?.data?.message || 'Cancellation failed')
+  },
+    
   });
 };
 

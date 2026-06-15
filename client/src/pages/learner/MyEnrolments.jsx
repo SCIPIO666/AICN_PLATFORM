@@ -9,7 +9,7 @@ import Spinner from '@/components/ui/Spinner';
 import { Button } from '@/components/ui/button';
 import { Search, Filter, X, AlertCircle } from 'lucide-react';
 import { toast } from '@/stores/toastStore'
-
+import CancelEnrolmentModal from '@/components/dormain/CancelEnrolmentModal';
 export default function MyEnrolments() {
   const { filters, setFilters, resetFilters } = useSessionFilters();
   const queryClient = useQueryClient();
@@ -77,7 +77,7 @@ const enrolMutation = useMutation({
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {enrolments.map(enrolment => (
               <EnlrolmentCard
                 key={enrolment.id}
@@ -96,6 +96,7 @@ const enrolMutation = useMutation({
               />
             </div>
           )}
+           <CancelEnrolmentModal />
         </>
       )}
     </div>

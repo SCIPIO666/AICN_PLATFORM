@@ -1,49 +1,29 @@
 import Card from '../ui/Card';
 import { Button } from '../ui/Button';
 import Badge from '../ui/Badge';
-import { Monitor, MapPin, Calendar, Clock, Users, User, CheckCircle, XCircle } from 'lucide-react';
+import { Calendar, Clock } from 'lucide-react';
+import { useEnrolmentUI } from '@/stores/enrolmentUIStore';
 
-export default function EnlrolmentCard({ enrolment, onCancel, isCancelling }) {
+export default function EnlrolmentCard({ enrolment}) {
   const formatDate = (date) => new Date(date).toLocaleDateString('en-US', {
     month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
   });
+  const openCancelModal = useEnrolmentUI((s) => s.openCancelModal)
 
-
-//    {
-//       "id": "cmqdf8nbl0005ggv0k4r0m6mu",
-//       "userId": "cmqdbucsz000278v06kxpemmi",
-//       "sessionId": "cmpjofnoo000n9kv02u69j1le",
-//       "status": "ENROLLED",
-//       "createdAt": "2026-06-14T06:46:48.849Z",
-//       "updatedAt": "2026-06-14T06:46:48.849Z",
-//       "user": {
-//         "id": "cmqdbucsz000278v06kxpemmi",
-//         "name": "Learner User",
-//         "email": "learner@aicn.africa"
-//       },
-//       "session": {
-//         "id": "cmpjofnoo000n9kv02u69j1le",
-//         "title": "Video Editing with CapCut & DaVinci — Nairobi",
-//         "date": "2026-06-21T06:00:00.000Z",
-//         "skillArea": "Video Editing",
-//         "status": "SCHEDULED"
-//       }
-//     },
 function getBadgeVariant(status){
     switch(status){
         case "SCHEDULED":
             return 'neon';
-            break;
+
         case "CANCELLED":
             return 'error';
-            break; 
+
             
         case "IN_PROGRESS":
              return 'outline'; 
-             break;
+
         case "COMPLETED" :
             return 'success';  
-            break;
         default:
             return "warning"       
 
@@ -76,8 +56,7 @@ const variant=getBadgeVariant(enrolment.session.status)
         <Button
           variant={'destructive'}
           fullWidth
-          onClick={() => onCancel(session.id)}
-          isLoading={isCancelling}
+          onClick={() => openCancelModal(enrolment)}
         >
             Cancel Enrolment
         </Button>
