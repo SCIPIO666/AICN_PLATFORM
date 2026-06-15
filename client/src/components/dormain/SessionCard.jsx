@@ -1,7 +1,7 @@
 import Card from '../ui/Card';
 import { Button } from '../ui/Button';
 import Badge from '../ui/Badge';
-import { Monitor, MapPin, Calendar, Clock, Users, User, CheckCircle, XCircle } from 'lucide-react';
+import { Monitor, MapPin, Calendar, Clock, Users, User, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 
 export default function SessionCard({ session, onEnrol, isEnrolling }) {
   const formatDate = (date) => new Date(date).toLocaleDateString('en-US', {
@@ -11,6 +11,17 @@ export default function SessionCard({ session, onEnrol, isEnrolling }) {
   const isFull = session.enrolledCount >= session.capacity;
   const isOnline = session.locationType === 'ONLINE';
 
+//   session.id
+// useMyEnrolments
+
+// past sessions
+ const now = new Date();
+const sessionDate = new Date(session.date);
+const isUnavailable = sessionDate < now;
+
+
+//already enrolled
+  const isEnrolled = false; 
   return (
     <Card variant="default" className="hover:shadow-elevated transition-all duration-300">
       <Card.Body className="space-y-4">
@@ -61,17 +72,22 @@ export default function SessionCard({ session, onEnrol, isEnrolling }) {
           fullWidth
           onClick={() => onEnrol(session.id)}
           isLoading={isEnrolling}
-          disabled={isFull}
+          disabled={isFull || isEnrolled || isUnavailable}
         >
           {isFull ? (
             <>
               <XCircle size={16} className="mr-2" />
               Session Full
             </>
+          ) : isEnrolling ? (
+            <>
+              <Loader2 size={16} className="mr-2 animate-spin" />
+              Enrolling...
+            </>
           ) : (
             <>
               <CheckCircle size={16} className="mr-2" />
-              Enrol Now
+             { isEnrolled? 'Enrolled' : 'Enroll Now'}
             </>
           )}
         </Button>

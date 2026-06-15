@@ -4,13 +4,14 @@ const { getSession } = require('../sessions/sessionsModel');
 const logger = require('../../utils/logger');
 const { sendEnrolmentConfirmationEmail } = require('../../utils/email/email services/aicnEmailsService');
 const {prisma }= require('../../config/db');
+const {updateEnrolment}=require('./enrolmentsModel')
 const { NotFoundError, BusinessLogicError, AuthorizationError } = require('../../utils/errors/customErrors');
 
 async function createEnrolment(userId, sessionId) {
   const session = await getSession(sessionId);
   if (!session) throw new NotFoundError('Session');
   if (session.status !== 'SCHEDULED') throw new BusinessLogicError('Session is not available for enrolment');
-  if (session.status === 'CANCELLED') throw new BusinessLogicError('Session has been cancelled');
+  //if (session.status === 'CANCELLED') throw new BusinessLogicError('Session has been cancelled');
   
   const enrolmentCount = session._count?.enrolments || session.enrolments?.length || 0;
   if (enrolmentCount >= session.capacity) {
@@ -19,9 +20,20 @@ async function createEnrolment(userId, sessionId) {
   
   const existingEnrolment = await enrolmentModel.findEnrolmentByUserAndSession(userId, sessionId);
   if (existingEnrolment) {
-    throw new BusinessLogicError('Already enrolled in this session');
+     if (existingEnrolment.status === 'CANCELLED') {
+      const reactivated = await updateEnrolment(
+        existingEnrolment.id, 
+        { status: 'ENROLLED', cancellationReason: null }
+      )
+      logger.info(`User ${userId} re-enrolled in session ${sessionId}`)
+      return reactivated
+    }
+    // Active enrolment → block
+    throw new BusinessLogicError('Already enrolled in this session')
+
   }
   
+  //first time enrollment
   const enrolment = await enrolmentModel.createEnrolment({ userId, sessionId, status: 'ENROLLED' });
   
   const user = await prisma.user.findUnique({ where: { id: userId }, select: { email: true, name: true } });

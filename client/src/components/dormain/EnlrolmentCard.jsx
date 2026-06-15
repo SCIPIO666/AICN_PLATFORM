@@ -53,13 +53,15 @@ const variant=getBadgeVariant(enrolment.session.status)
 
         </div>
 
-        <Button
+         <Button
           variant={'destructive'}
           fullWidth
           onClick={() => openCancelModal(enrolment)}
         >
             Cancel Enrolment
-        </Button>
+        </Button> 
+      
+
       </Card.Body>
     </Card>
   );

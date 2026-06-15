@@ -15,6 +15,7 @@ const getMyEnrolments = asyncHandler(async (req, res) => {
   if (status) filters.status = status;
   if (fromDate) filters.fromDate = fromDate;
   if (toDate) filters.toDate = toDate;
+  filters.status='ENROLLED'
   
   const result = await enrolmentsService.getUserEnrolments(req.user.id, filters, parseInt(page), parseInt(limit));
   
