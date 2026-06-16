@@ -571,10 +571,10 @@ components:
           type: string
         sessionId:
           type: string
-        certificateCode:
-          type: string
-          pattern: '^CERT-[A-F0-9]{16}$'
-          example: CERT-ABC123DEF4567890
+    certificateCode:
+        type: string
+        pattern: '^CERT-[A-F0-9]{16}$'
+        example: 'CERT-ABC123DEF4567890'
         issuedAt:
           type: string
           format: date-time
@@ -1750,6 +1750,7 @@ paths:
                 $ref: '#/components/schemas/PaginatedResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
+
 
   /certificates/verify/{certCode}:
     get:

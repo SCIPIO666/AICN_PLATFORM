@@ -24,8 +24,6 @@ const issueSingleCertificateSchema = z.object({
 const verifyCertificateSchema = z.object({
   certCode: z.string()
     .regex(/^CERT-[A-F0-9]{16}$/, 'Invalid certificate code format. Expected format: CERT-XXXXXXXXXXXXXXX')
-    .min(21, 'Certificate code must be 21 characters')
-    .max(21, 'Certificate code must be 21 characters')
 });
 
 // Batch issue certificates validation

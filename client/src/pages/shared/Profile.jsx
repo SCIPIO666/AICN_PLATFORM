@@ -1,11 +1,3 @@
-// MyProfile.jsx
-// General profile page — shown to all roles.
-// Trainers also see a "Trainer profile →" card linking to /profile/trainer.
-// Data comes from useMe() (auth store / GET /auth/me).
-//
-// User shape:
-// { id, name, email, phone, county, role, emailVerified,
-//   isActive, profilePicture, createdAt, updatedAt }
 
 import { useMe } from '@/hooks'
 import { Link } from 'react-router-dom'
@@ -14,7 +6,7 @@ import {
   BadgeCheck, ChevronRight, AlertCircle, Settings,
 } from 'lucide-react'
 
-// ─── helpers ────────────────────────────────────────────────────────────────
+// helpers
 
 const fmtDate = (iso) =>
   new Date(iso).toLocaleDateString('en-KE', {
@@ -27,7 +19,6 @@ const ROLE_LABEL = {
   ADMIN:   { label: 'Admin',    color: 'var(--warning-text)', bg: 'var(--warning-bg)' },
 }
 
-// ─── sub-components ─────────────────────────────────────────────────────────
 
 function Avatar({ name, picture }) {
   if (picture) {
@@ -70,8 +61,9 @@ function InfoRow({ icon: Icon, label, value }) {
   )
 }
 
-// ─── page ────────────────────────────────────────────────────────────────────
 
+
+// profile
 export default function Profile() {
   const { data: user, isLoading, error } = useMe()
 
@@ -214,7 +206,7 @@ export default function Profile() {
 
         {/* ── settings shortcut ── */}
         <Link
-          to="/settings"
+          to="/dashboard/settings"
           className="card-base p-5 flex items-center justify-between gap-4 transition-colors group"
           style={{ textDecoration: 'none' }}
           onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--card-hover)')}

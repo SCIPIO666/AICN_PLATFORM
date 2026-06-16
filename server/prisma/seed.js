@@ -22,10 +22,9 @@ const past = (daysAgo, hour = 9) => {
 }
 
 // Generate unique certificate code
-const generateCertCode = (userId, sessionId) => {
-  const timestamp = Date.now()
-  const random = Math.random().toString(36).substring(2, 8).toUpperCase()
-  return `CERT-${userId.substring(0, 4)}-${sessionId.substring(0, 4)}-${random}`
+const crypto = require('crypto')
+const generateCertCode = () => {
+  return `CERT-${crypto.randomBytes(8).toString('hex').toUpperCase()}`
 }
 
 // ========== Main seeder function ===================
