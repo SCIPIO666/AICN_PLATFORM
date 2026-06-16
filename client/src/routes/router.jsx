@@ -13,7 +13,7 @@ import ResetPassword from '../pages/auth/ResetPassword';
 // Shared Pages
 import Unauthorized from '../pages/shared/Unauthorized';
 import LandingPage from '../pages/shared/LandingPage';
-import VerifyCertificate from '../pages/shared/VerifyCertificate';
+import VerifyCertificate from '@/pages/shared/VerifyCertificate';
 import NotFound from '@/pages/shared/NotFound.jsx';
 
 // Routes configuration
