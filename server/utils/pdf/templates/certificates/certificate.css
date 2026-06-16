@@ -1,573 +1,540 @@
 /* ================================================================
-   AICN CPD CERTIFICATE — v2
-   Design: Diagonal dark-panel split + gold wave sweep + warm ivory body
-   Brand palette: --brand-primary #b45309 / #d97706 amber-orange
-   Optimised for Puppeteer PDF @ A4 landscape 1122 × 794px
+   AICN CPD CERTIFICATE — v3
+   Design: Trifold dark-left panel + rich ivory body + full bleed
+   gold header band. Optimised for Puppeteer PDF @ A4 landscape
+   1122 × 794 px at 96 dpi.
    ================================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Jost:wght@300;400;500;600&display=swap');
 
-/* ── Reset ───────────────────────────────────────────────────────── */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+/* ── Reset ───────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ── CSS Variables (brand palette) ──────────────────────────────── */
+/* ── Brand tokens ────────────────────────────────────────────── */
 :root {
-  /* brand */
-  --amber:         #d97706;
-  --amber-light:   #f5c842;
-  --amber-pale:    #fde68a;
-  --amber-deep:    #92400e;
-  --amber-deeper:  #78350f;
+  --gold:          #d97706;
+  --gold-light:    #f5c842;
+  --gold-pale:     #fde68a;
+  --gold-deep:     #92400e;
+  --gold-deeper:   #78350f;
 
-  /* dark panel */
-  --panel-dark:    #121211;
-  --panel-mid:     #1a1a18;
-  --panel-edge:    #23211e;
+  --panel-bg:      #0e0d0b;
+  --panel-mid:     #161410;
+  --panel-edge:    #1e1c18;
 
-  /* body */
-  --ivory:         #faf7f2;
-  --ivory-warm:    #f1ece3;
-  --cream:         #e7e2d8;
+  --ivory:         #faf8f3;
+  --ivory-warm:    #f2ede3;
+  --cream:         #e8e2d6;
+  --cream-mid:     #d5cfc3;
 
-  /* text */
-  --ink:           #1c1917;
-  --ink-soft:      #292524;
-  --muted:         #57534e;
-  --faint:         #a8a29e;
+  --ink:           #1a1614;
+  --ink-soft:      #2d2926;
+  --muted:         #6b6560;
+  --faint:         #a09890;
 
-  /* accent */
-  --green-accent:  #15803d;
+  --green:         #14532d;
+  --green-mid:     #15803d;
 
-  /* fonts */
-  --f-display:     'Cinzel', serif;
-  --f-body:        'Cormorant Garamond', serif;
-  --f-sans:        'Jost', sans-serif;
+  --f-display:     'Cinzel', 'Georgia', serif;
+  --f-serif:       'Cormorant Garamond', 'Georgia', serif;
+  --f-sans:        'Jost', 'Helvetica Neue', sans-serif;
 }
 
-/* ── Page ────────────────────────────────────────────────────────── */
+/* ── Root page ───────────────────────────────────────────────── */
 html, body {
-  width:      1122px;
-  height:     794px;
-  overflow:   hidden;
-  background: #1a1a18;
+  width: 1122px; height: 794px;
+  overflow: hidden;
+  background: #0e0d0b;
 }
 
-/* ── Root container ──────────────────────────────────────────────── */
+/* ── Certificate shell ───────────────────────────────────────── */
 .cert {
-  position:   relative;
-  width:      1122px;
-  height:     794px;
+  position: relative;
+  width: 1122px; height: 794px;
   background: var(--ivory);
-  overflow:   hidden;
+  overflow: hidden;
   font-family: var(--f-sans);
 }
 
 /* ================================================================
-   LEFT DARK PANEL — diagonal clip
+   FULL-WIDTH GOLD HEADER BAND
+   Sits above everything — tight stripe at very top
    ================================================================ */
-
-.panel {
-  position:   absolute;
-  top:        0;
-  left:       0;
-  width:      370px;
-  height:     100%;
-  background: var(--panel-dark);
-  /* diagonal right edge — sweeps right at bottom */
-  clip-path:  polygon(0 0, 100% 0, 80% 100%, 0 100%);
-  z-index:    2;
-}
-
-/* Subtle vertical texture on panel */
-.panel::before {
-  content:    '';
-  position:   absolute;
-  inset:      0;
-  background: repeating-linear-gradient(
-    180deg,
-    transparent 0px,
-    transparent 3px,
-    rgba(255,255,255,0.012) 3px,
-    rgba(255,255,255,0.012) 4px
-  );
-  pointer-events: none;
-}
-
-/* Gold vertical accent stripe on panel */
-.panel::after {
-  content:    '';
-  position:   absolute;
-  top:        0;
-  right:      0;
-  width:      3px;
-  height:     100%;
+.header-band {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 6px;
   background: linear-gradient(
-    180deg,
-    transparent 0%,
-    var(--amber) 20%,
-    var(--amber-light) 50%,
-    var(--amber) 80%,
-    transparent 100%
+    90deg,
+    var(--panel-bg) 0%,
+    var(--panel-bg) 28%,
+    var(--gold-deep) 30%,
+    var(--gold) 40%,
+    var(--gold-light) 55%,
+    var(--gold) 70%,
+    var(--gold-deep) 80%,
+    var(--ivory) 100%
   );
-  clip-path: none;
+  z-index: 20;
+}
+
+.footer-band {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--panel-bg) 0%,
+    var(--panel-bg) 28%,
+    var(--gold-deep) 30%,
+    var(--gold) 50%,
+    var(--gold-deep) 70%,
+    var(--ivory) 100%
+  );
+  z-index: 20;
 }
 
 /* ================================================================
-   GOLD WAVE SWEEP — the hero decorative element
+   LEFT DARK PANEL
    ================================================================ */
+.panel {
+  position: absolute;
+  top: 0; left: 0;
+  width: 340px; height: 100%;
+  background: var(--panel-bg);
+  clip-path: polygon(0 0, 100% 0, 84% 100%, 0 100%);
+  z-index: 2;
+}
 
-.wave-sweep {
-  position:   absolute;
-  top:        0;
-  left:       0;
-  width:      100%;
-  height:     100%;
-  z-index:    3;
+/* Subtle fabric texture */
+.panel::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(
+      175deg,
+      transparent 0px, transparent 18px,
+      rgba(255,255,255,0.012) 18px, rgba(255,255,255,0.012) 19px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px, transparent 60px,
+      rgba(255,255,255,0.008) 60px, rgba(255,255,255,0.008) 61px
+    );
+  pointer-events: none;
+}
+
+/* Gold edge glow on diagonal */
+.panel::after {
+  content: '';
+  position: absolute;
+  top: 6%; right: -1px;
+  width: 2px; height: 88%;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    var(--gold-deep) 15%,
+    var(--gold) 35%,
+    var(--gold-light) 50%,
+    var(--gold) 65%,
+    var(--gold-deep) 85%,
+    transparent 100%
+  );
+  clip-path: none;
+  z-index: 5;
+}
+
+/* ================================================================
+   TOP-LEFT DECORATIVE ARC (panel area, behind content)
+   ================================================================ */
+.panel-arc {
+  position: absolute;
+  top: -60px; left: -60px;
+  width: 240px; height: 240px;
+  border: 1px solid rgba(217,119,6,0.18);
+  border-radius: 50%;
+  z-index: 3;
+  pointer-events: none;
+}
+.panel-arc-2 {
+  position: absolute;
+  top: -40px; left: -40px;
+  width: 200px; height: 200px;
+  border: 0.5px solid rgba(217,119,6,0.10);
+  border-radius: 50%;
+  z-index: 3;
   pointer-events: none;
 }
 
 /* ================================================================
    OUTER BORDER FRAME
    ================================================================ */
-
 .border-frame {
-  position:   absolute;
-  inset:      14px;
-  border:     1.5px solid rgba(180, 83, 9, 0.35);
-  z-index:    10;
+  position: absolute;
+  inset: 12px;
+  border: 1.5px solid rgba(180,83,9,0.28);
+  z-index: 10;
   pointer-events: none;
 }
-
 .border-frame-inner {
-  position:   absolute;
-  inset:      20px;
-  border:     0.75px solid rgba(180, 83, 9, 0.18);
-  z-index:    10;
+  position: absolute;
+  inset: 18px;
+  border: 0.75px solid rgba(180,83,9,0.14);
+  z-index: 10;
   pointer-events: none;
 }
 
-/* Gold corner marks */
+/* Corner ornaments */
 .corner {
-  position:   absolute;
-  width:      40px;
-  height:     40px;
-  z-index:    11;
+  position: absolute;
+  width: 36px; height: 36px;
+  z-index: 11;
 }
-.corner-tl { top: 10px;    left: 10px;   border-top: 2.5px solid var(--amber); border-left:  2.5px solid var(--amber); }
-.corner-tr { top: 10px;    right: 10px;  border-top: 2.5px solid var(--amber); border-right: 2.5px solid var(--amber); }
-.corner-bl { bottom: 10px; left: 10px;   border-bottom: 2.5px solid var(--amber); border-left:  2.5px solid var(--amber); }
-.corner-br { bottom: 10px; right: 10px;  border-bottom: 2.5px solid var(--amber); border-right: 2.5px solid var(--amber); }
+.corner-tl { top: 8px;    left: 8px;   border-top: 2.5px solid var(--gold); border-left:  2.5px solid var(--gold); }
+.corner-tr { top: 8px;    right: 8px;  border-top: 2.5px solid var(--gold); border-right: 2.5px solid var(--gold); }
+.corner-bl { bottom: 8px; left: 8px;   border-bottom: 2.5px solid var(--gold); border-left:  2.5px solid var(--gold); }
+.corner-br { bottom: 8px; right: 8px;  border-bottom: 2.5px solid var(--gold); border-right: 2.5px solid var(--gold); }
+
+/* Corner dots */
+.corner-dot {
+  position: absolute;
+  width: 5px; height: 5px;
+  background: var(--gold);
+  border-radius: 50%;
+  z-index: 12;
+}
+.corner-dot-tl { top: 22px;    left: 22px;   }
+.corner-dot-tr { top: 22px;    right: 22px;  }
+.corner-dot-bl { bottom: 22px; left: 22px;   }
+.corner-dot-br { bottom: 22px; right: 22px;  }
 
 /* ================================================================
-   PANEL CONTENT (left dark side)
+   PANEL CONTENT
    ================================================================ */
-
 .panel-content {
-  position:       absolute;
-  top:            0;
-  left:           0;
-  width:          296px; /* narrower than panel clip to stay clear of diagonal */
-  height:         100%;
-  z-index:        5;
-  display:        flex;
+  position: absolute;
+  top: 6px; left: 0;
+  width: 282px; height: calc(100% - 10px);
+  z-index: 6;
+  display: flex;
   flex-direction: column;
-  align-items:    center;
+  align-items: center;
   justify-content: center;
-  padding:        50px 28px 50px 36px;
-  gap:            20px;
+  padding: 40px 20px 36px 32px;
+  gap: 18px;
 }
 
+/* Logo ring */
 .panel-logo-ring {
-  width:        80px;
-  height:       80px;
-  border:       2.5px solid var(--amber);
+  width: 86px; height: 86px;
+  border: 2px solid var(--gold);
   border-radius: 50%;
-  display:      flex;
-  align-items:  center;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  position:     relative;
+  position: relative;
+  flex-shrink: 0;
 }
-
 .panel-logo-ring::before {
-  content:      '';
-  position:     absolute;
-  inset:        6px;
-  border:       1px solid rgba(217, 119, 6, 0.4);
+  content: '';
+  position: absolute; inset: 7px;
+  border: 1px solid rgba(217,119,6,0.35);
   border-radius: 50%;
 }
-
+.panel-logo-ring::after {
+  content: '';
+  position: absolute; inset: 14px;
+  border: 0.5px solid rgba(217,119,6,0.15);
+  border-radius: 50%;
+}
 .panel-logo-text {
-  font-family:    var(--f-display);
-  font-size:      22px;
-  font-weight:    700;
-  color:          var(--amber-light);
-  letter-spacing: 2px;
-  position:       relative;
-  z-index:        1;
+  font-family: var(--f-display);
+  font-size: 20px; font-weight: 700;
+  color: var(--gold-light);
+  letter-spacing: 3px;
+  position: relative; z-index: 1;
 }
 
+/* Org name */
 .panel-org {
-  font-family:    var(--f-display);
-  font-size:      8.5px;
-  font-weight:    600;
+  font-family: var(--f-display);
+  font-size: 7.5px; font-weight: 600;
   letter-spacing: 3.5px;
   text-transform: uppercase;
-  color:          var(--amber);
-  text-align:     center;
-  line-height:    1.7;
+  color: var(--gold);
+  text-align: center;
+  line-height: 2;
 }
 
+/* Rules */
 .panel-rule {
-  width:      100%;
-  height:     1px;
-  background: linear-gradient(90deg, transparent, var(--amber), transparent);
+  width: 90%; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  flex-shrink: 0;
 }
-
-.panel-tagline {
-  font-family: var(--f-body);
-  font-size:   13px;
-  font-style:  italic;
-  color:       rgba(253, 230, 138, 0.55);
-  text-align:  center;
-  line-height: 1.7;
-}
-
-/* Seal badge on panel */
-.panel-seal {
-  margin-top:  8px;
-}
-
-.panel-seal img, .panel-seal svg {
-  width:  80px;
-  height: 80px;
-}
-
-/* Year circle on panel bottom */
-.panel-year {
-  width:        56px;
-  height:       56px;
-  border:       2px solid rgba(217, 119, 6, 0.5);
-  border-radius: 50%;
-  display:      flex;
-  align-items:  center;
-  justify-content: center;
-  margin-top:   auto;
-}
-
-.panel-year-text {
-  font-family:    var(--f-display);
-  font-size:      13px;
-  font-weight:    700;
-  color:          var(--amber);
-  letter-spacing: 1px;
-}
-
-/* ================================================================
-   MAIN BODY (right area)
-   ================================================================ */
-
-.cert-body {
-  position:       absolute;
-  top:            0;
-  left:           310px;   /* clears the diagonal panel */
-  right:          0;
-  height:         100%;
-  z-index:        6;
-  display:        flex;
-  flex-direction: column;
-  padding:        42px 52px 36px 60px;
-}
-
-/* ── Title block ─────────────────────────────────────────────────── */
-.cert-title-block {
-  margin-bottom: 6px;
-}
-
-.cert-pre-title {
-  font-family:    var(--f-sans);
-  font-size:      9.5px;
-  font-weight:    500;
-  letter-spacing: 5px;
-  text-transform: uppercase;
-  color:          var(--amber-deep);
-  margin-bottom:  4px;
-}
-
-.cert-main-title {
-  font-family:    var(--f-display);
-  font-size:      36px;
-  font-weight:    900;
-  color:          var(--ink);
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  line-height:    1;
-}
-
-.cert-main-title span {
-  color:          var(--amber);
-}
-
-/* Gold rule under title */
-.title-rule {
-  display:    flex;
-  align-items: center;
-  gap:        10px;
-  margin:     10px 0 14px;
-}
-
-.title-rule-line {
-  height:     1.5px;
-  background: linear-gradient(90deg, var(--amber), transparent);
-}
-
-.title-rule-line.long  { flex: 2; }
-.title-rule-line.short { flex: 1; }
-
-.title-rule-diamond {
-  width:     7px;
-  height:    7px;
-  background: var(--amber);
-  transform:  rotate(45deg);
+.panel-rule-thin {
+  width: 60%; height: 0.5px;
+  background: linear-gradient(90deg, transparent, rgba(217,119,6,0.5), transparent);
   flex-shrink: 0;
 }
 
-/* ── Presented to ────────────────────────────────────────────────── */
+/* Tagline */
+.panel-tagline {
+  font-family: var(--f-serif);
+  font-size: 11.5px; font-style: italic;
+  color: rgba(245,200,66,0.45);
+  text-align: center;
+  line-height: 1.8;
+}
+
+/* Panel seal */
+.panel-seal { flex-shrink: 0; }
+.panel-seal img, .panel-seal svg { width: 84px; height: 84px; }
+
+/* Year disc */
+.panel-year {
+  width: 52px; height: 52px;
+  border: 2px solid rgba(217,119,6,0.45);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin-top: auto;
+  flex-shrink: 0;
+  position: relative;
+}
+.panel-year::before {
+  content: '';
+  position: absolute; inset: 5px;
+  border: 0.5px solid rgba(217,119,6,0.2);
+  border-radius: 50%;
+}
+.panel-year-text {
+  font-family: var(--f-display);
+  font-size: 12px; font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 1px;
+  position: relative; z-index: 1;
+}
+
+/* ================================================================
+   MAIN BODY
+   ================================================================ */
+.cert-body {
+  position: absolute;
+  top: 6px; left: 290px;
+  right: 0; height: calc(100% - 10px);
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  padding: 36px 46px 30px 56px;
+}
+
+/* ── Top area: org line + title ── */
+.cert-org-line {
+  font-family: var(--f-sans);
+  font-size: 8.5px; font-weight: 500;
+  letter-spacing: 4.5px;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  margin-bottom: 6px;
+}
+
+.cert-main-title {
+  font-family: var(--f-display);
+  font-size: 33px; font-weight: 900;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--ink);
+  line-height: 1;
+  margin-bottom: 0;
+}
+.cert-main-title .accent { color: var(--gold); }
+
+/* Title rule with ornament */
+.title-rule {
+  display: flex; align-items: center; gap: 8px;
+  margin: 10px 0 16px;
+}
+.title-rule-line {
+  height: 1.5px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+}
+.title-rule-line.long  { flex: 2.5; }
+.title-rule-line.short { flex: 1; }
+.title-rule-diamond {
+  width: 8px; height: 8px;
+  background: var(--gold);
+  transform: rotate(45deg);
+  flex-shrink: 0;
+}
+.title-rule-dot {
+  width: 4px; height: 4px;
+  background: var(--gold-deep);
+  transform: rotate(45deg);
+  flex-shrink: 0;
+}
+
+/* ── Presented to ── */
 .cert-presented {
-  font-family:    var(--f-sans);
-  font-size:      10px;
-  font-weight:    400;
-  letter-spacing: 3px;
+  font-family: var(--f-sans);
+  font-size: 9px; font-weight: 400;
+  letter-spacing: 4px;
   text-transform: uppercase;
-  color:          var(--muted);
-  margin-bottom:  4px;
+  color: var(--muted);
+  margin-bottom: 5px;
 }
 
-/* ── Recipient name ──────────────────────────────────────────────── */
+/* ── Recipient name ── */
 .cert-name {
-  font-family:    var(--f-body);
-  font-size:      52px;
-  font-weight:    600;
-  font-style:     italic;
-  color:          var(--ink);
-  line-height:    1.05;
+  font-family: var(--f-serif);
+  font-size: 56px; font-weight: 600; font-style: italic;
+  color: var(--ink);
+  line-height: 1;
   letter-spacing: 0.5px;
-  position:       relative;
-  display:        inline-block;
-  margin-bottom:  2px;
+  margin-bottom: 3px;
 }
 
-/* Underline flourish */
 .name-underline {
-  height:     1.5px;
-  width:      100%;
-  max-width:  520px;
-  background: linear-gradient(90deg, var(--amber), var(--amber-light) 50%, transparent);
-  margin-bottom: 16px;
-}
-
-/* ── Course line ─────────────────────────────────────────────────── */
-.cert-course-label {
-  font-family:    var(--f-sans);
-  font-size:      9px;
-  letter-spacing: 3.5px;
-  text-transform: uppercase;
-  color:          var(--muted);
-  margin-bottom:  4px;
-}
-
-.cert-course-name {
-  font-family:    var(--f-display);
-  font-size:      17px;
-  font-weight:    600;
-  color:          var(--amber-deep);
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  margin-bottom:  14px;
-}
-
-/* ── Meta row ────────────────────────────────────────────────────── */
-.cert-meta {
-  display:   flex;
-  gap:       28px;
-  flex-wrap: wrap;
+  height: 1.5px;
+  width: 100%; max-width: 480px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light) 45%, transparent);
   margin-bottom: 14px;
 }
 
-.meta-block {
-  display:        flex;
-  flex-direction: column;
-  gap:            2px;
-}
-
-.meta-label {
-  font-family:    var(--f-sans);
-  font-size:      8px;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  color:          var(--faint);
-}
-
-.meta-value {
-  font-family: var(--f-body);
-  font-size:   13px;
-  font-weight: 600;
-  color:       var(--ink-soft);
-}
-
-/* CPD badge inline */
-.cpd-pill {
-  display:        inline-flex;
-  align-items:    center;
-  gap:            5px;
-  background:     rgba(180, 83, 9, 0.08);
-  border:         1px solid rgba(180, 83, 9, 0.25);
-  padding:        3px 10px;
-  border-radius:  20px;
-  margin-bottom:  12px;
-}
-
-.cpd-pill-dot {
-  width:        6px;
-  height:       6px;
-  background:   var(--amber);
-  border-radius: 50%;
-  flex-shrink:  0;
-}
-
-.cpd-pill-text {
-  font-family:    var(--f-sans);
-  font-size:      8.5px;
-  font-weight:    500;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color:          var(--amber-deep);
-}
-
-/* ── Footer ──────────────────────────────────────────────────────── */
-.cert-footer {
-  margin-top:    auto;
-  padding-top:   14px;
-  border-top:    1px solid var(--cream);
-  display:       flex;
-  align-items:   flex-end;
-  justify-content: space-between;
-  gap:           16px;
-}
-
-/* Signature blocks */
-.sig-block {
-  display:        flex;
-  flex-direction: column;
-  align-items:    center;
-  gap:            3px;
-  min-width:      150px;
-}
-
-.sig-image {
-  height:      36px;
-  margin-bottom: 2px;
-}
-
-.sig-line {
-  width:      150px;
-  height:     1px;
-  background: var(--amber-deep);
-  opacity:    0.5;
-}
-
-.sig-name {
-  font-family:    var(--f-body);
-  font-size:      12px;
-  font-weight:    600;
-  font-style:     italic;
-  color:          var(--ink);
-}
-
-.sig-title {
-  font-family:    var(--f-sans);
-  font-size:      7.5px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color:          var(--faint);
-}
-
-/* QR block */
-.qr-block {
-  display:        flex;
-  flex-direction: column;
-  align-items:    center;
-  gap:            5px;
-}
-
-.qr-frame {
-  padding:        5px;
-  border:         1.5px solid var(--amber);
-  border-radius:  4px;
-  background:     white;
-}
-
-.qr-frame img {
-  width:        72px;
-  height:       72px;
-  display:      block;
-}
-
-.qr-label {
-  font-family:    var(--f-sans);
-  font-size:      7px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color:          var(--faint);
-}
-
-/* Cert code block */
-.code-block {
-  display:        flex;
-  flex-direction: column;
-  align-items:    center;
-  gap:            3px;
-}
-
-.code-label {
-  font-family:    var(--f-sans);
-  font-size:      7px;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  color:          var(--faint);
-}
-
-.code-value {
-  font-family:    'Courier New', monospace;
-  font-size:      10px;
-  font-weight:    700;
-  letter-spacing: 2.5px;
-  color:          var(--ink-soft);
-  background:     var(--ivory-warm);
-  border:         1px solid var(--cream);
-  padding:        3px 10px;
-}
-
-.code-verify {
+/* ── Course ── */
+.cert-course-label {
   font-family: var(--f-sans);
-  font-size:   7px;
-  color:       var(--faint);
-  letter-spacing: 0.5px;
+  font-size: 8px; letter-spacing: 3.5px;
+  text-transform: uppercase; color: var(--muted);
+  margin-bottom: 3px;
+}
+.cert-course-name {
+  font-family: var(--f-display);
+  font-size: 15px; font-weight: 600;
+  color: var(--gold-deep);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
 }
 
-/* Excellence badge area */
-.badge-area {
-  display:        flex;
-  flex-direction: column;
-  align-items:    center;
-  gap:            3px;
+/* ── Meta row ── */
+.cert-meta {
+  display: flex; gap: 0;
+  margin-bottom: 0;
+}
+.meta-block {
+  display: flex; flex-direction: column; gap: 2px;
+  padding-right: 24px;
+  border-right: 1px solid var(--cream);
+  margin-right: 24px;
+}
+.meta-block:last-child { border-right: none; margin-right: 0; }
+.meta-label {
+  font-family: var(--f-sans);
+  font-size: 7.5px; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--faint);
+}
+.meta-value {
+  font-family: var(--f-serif);
+  font-size: 13px; font-weight: 600;
+  color: var(--ink-soft);
 }
 
-.badge-area img,
-.badge-area svg {
-  width:  70px;
-  height: 70px;
+/* CPD pill */
+.cpd-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(180,83,9,0.07);
+  border: 1px solid rgba(180,83,9,0.22);
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin: 12px 0 0;
+  width: fit-content;
 }
+.cpd-dot {
+  width: 5px; height: 5px;
+  background: var(--gold); border-radius: 50%; flex-shrink: 0;
+}
+.cpd-text {
+  font-family: var(--f-sans);
+  font-size: 8px; font-weight: 500;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+}
+
+/* ================================================================
+   FOOTER
+   ================================================================ */
+.cert-footer {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--cream-mid);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* Signature block */
+.sig-block {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 3px;
+  min-width: 140px;
+}
+.sig-line {
+  width: 140px; height: 1px;
+  background: var(--gold-deep); opacity: 0.45;
+}
+.sig-name {
+  font-family: var(--f-serif);
+  font-size: 12px; font-weight: 600; font-style: italic;
+  color: var(--ink);
+}
+.sig-title {
+  font-family: var(--f-sans);
+  font-size: 7px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--faint);
+}
+
+/* QR + code cluster */
+.verify-cluster {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 5px;
+}
+.qr-frame {
+  padding: 5px;
+  border: 1.5px solid var(--gold);
+  border-radius: 4px;
+  background: #fff;
+}
+.qr-frame img { width: 68px; height: 68px; display: block; }
+.qr-label {
+  font-family: var(--f-sans);
+  font-size: 7px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--faint);
+}
+.code-box {
+  font-family: 'Courier New', monospace;
+  font-size: 9.5px; font-weight: 700;
+  letter-spacing: 2.5px;
+  color: var(--ink-soft);
+  background: var(--ivory-warm);
+  border: 1px solid var(--cream-mid);
+  padding: 3px 10px;
+  text-align: center;
+}
+.verify-url {
+  font-family: var(--f-sans);
+  font-size: 6.5px; letter-spacing: 0.5px;
+  color: var(--faint);
+}
+
+/* Badge cluster */
+.badge-cluster {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 6px;
+}
+.badge-row {
+  display: flex; align-items: center; gap: 8px;
+}
+.badge-row img, .badge-row svg { width: 58px; height: 58px; }
+.badge-cpd img, .badge-cpd svg { width: 46px; height: 56px; }

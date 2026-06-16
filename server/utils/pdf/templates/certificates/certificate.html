@@ -1,89 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=1122" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=1122"/>
   <title>AICN Certificate — {{userName}}</title>
-  <link rel="stylesheet" href="certificate.css" />
+  <link rel="stylesheet" href="certificate.css"/>
 </head>
 <body>
 <div class="cert">
 
+  <!-- ══ Top + bottom gold bands ═══════════════════════════════ -->
+  <div class="header-band"></div>
+  <div class="footer-band"></div>
+
   <!-- ══ Left dark panel ═══════════════════════════════════════ -->
-  <div class="panel"></div>
+  <div class="panel">
+    <div class="panel-arc"></div>
+    <div class="panel-arc-2"></div>
+  </div>
 
-  <!-- ══ Gold wave sweep SVG ═══════════════════════════════════ -->
-  <svg class="wave-sweep" viewBox="0 0 1122 794" preserveAspectRatio="none"
-       xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <linearGradient id="wave-gold" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%"   stop-color="#f5c842" stop-opacity="0.95"/>
-        <stop offset="45%"  stop-color="#d97706" stop-opacity="0.85"/>
-        <stop offset="100%" stop-color="#92400e" stop-opacity="0.6"/>
-      </linearGradient>
-      <linearGradient id="wave-gold-thin" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%"   stop-color="#fde68a" stop-opacity="0.7"/>
-        <stop offset="100%" stop-color="#d97706" stop-opacity="0.3"/>
-      </linearGradient>
-      <clipPath id="left-panel-clip">
-        <polygon points="0,0 370,0 296,794 0,794"/>
-      </clipPath>
-    </defs>
-
-    <path d="
-      M 0 0
-      L 420 0
-      Q 560 0, 680 55
-      Q 780 100, 850 80
-      Q 950 55, 1122 90
-      L 1122 0
-      Z
-    " fill="url(#wave-gold)" opacity="0.9"/>
-
-    <path d="
-      M 0 0
-      L 380 0
-      Q 500 0, 620 40
-      Q 740 78, 860 62
-      Q 990 44, 1122 72
-      L 1122 55
-      Q 990 26, 860 44
-      Q 740 60, 620 22
-      Q 500 -16, 380 -8
-      L 0 0
-    " fill="url(#wave-gold-thin)" opacity="0.6"/>
-
-    <path d="
-      M 300 98
-      Q 520 130, 720 105
-      Q 900 82, 1122 118
-      L 1122 112
-      Q 900 76, 720 99
-      Q 520 124, 300 92
-      Z
-    " fill="#d97706" opacity="0.35"/>
-
-    <path d="
-      M 0 794
-      L 0 740
-      Q 40 720, 80 730
-      Q 120 740, 150 760
-      Q 180 780, 200 794
-      Z
-    " fill="url(#wave-gold)" opacity="0.25"/>
-
-    <line x1="60"  y1="0"   x2="60"  y2="794" stroke="#d97706" stroke-width="0.4" opacity="0.08"/>
-    <line x1="120" y1="0"   x2="120" y2="794" stroke="#d97706" stroke-width="0.4" opacity="0.06"/>
-    <line x1="180" y1="0"   x2="180" y2="794" stroke="#d97706" stroke-width="0.4" opacity="0.05"/>
-  </svg>
-
-  <!-- ══ Border frame ═══════════════════════════════════════════ -->
+  <!-- ══ Border frame + corners ════════════════════════════════ -->
   <div class="border-frame"></div>
   <div class="border-frame-inner"></div>
   <div class="corner corner-tl"></div>
   <div class="corner corner-tr"></div>
   <div class="corner corner-bl"></div>
   <div class="corner corner-br"></div>
+  <div class="corner-dot corner-dot-tl"></div>
+  <div class="corner-dot corner-dot-tr"></div>
+  <div class="corner-dot corner-dot-bl"></div>
+  <div class="corner-dot corner-dot-br"></div>
 
   <!-- ══ Panel content ═════════════════════════════════════════ -->
   <div class="panel-content">
@@ -97,13 +43,15 @@
     </div>
 
     <div class="panel-rule"></div>
+    <div class="panel-rule-thin"></div>
 
     <div class="panel-tagline">
-      Empowering Africa<br/>Digitally, Transforming Lives
+      Empowering Africa<br/>through Digital Skills
     </div>
 
+    <!-- Seal badge -->
     <div class="panel-seal">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="80" height="80">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="84" height="84">
         <defs>
           <radialGradient id="so" cx="50%" cy="35%" r="65%">
             <stop offset="0%"   stop-color="#f5c842"/>
@@ -115,53 +63,68 @@
             <stop offset="50%"  stop-color="#d97706"/>
             <stop offset="100%" stop-color="#92400e"/>
           </radialGradient>
+          <filter id="ss">
+            <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#00000040"/>
+          </filter>
         </defs>
-        <polygon fill="url(#so)" points="60,4 64.5,12 73,8 74,17 83,16 81,25 90,27 85,35 93,40 86,46 92,53 84,57 87,66 78,67 78,76 69,75 66,84 57,80 51,88 45,82 36,85 35,76 26,74 28,65 19,61 23,52 14,46 21,40 14,33 22,28 18,19 27,17 26,8 35,10 38,2 47,6"/>
-        <polygon fill="url(#si)" points="60,14 63.5,20 70,17 70.5,24 77,22 75.5,29 82,30 79,36 85,39 81,44 86,49 81,52 83,58 78,59 78,65 72,64 70,70 64,67 60,72 56,67 50,70 48,64 42,65 42,59 37,58 39,52 34,49 39,44 35,39 41,36 38,30 45,29 43.5,22 50,24 49.5,17 56,20"/>
-        <circle cx="60" cy="60" r="28" fill="url(#so)"/>
-        <circle cx="60" cy="60" r="24" fill="#1a0f02"/>
+        <g filter="url(#ss)">
+          <polygon fill="url(#so)" points="60,4 64.5,12 73,8 74,17 83,16 81,25 90,27 85,35 93,40 86,46 92,53 84,57 87,66 78,67 78,76 69,75 66,84 57,80 51,88 45,82 36,85 35,76 26,74 28,65 19,61 23,52 14,46 21,40 14,33 22,28 18,19 27,17 26,8 35,10 38,2 47,6"/>
+          <polygon fill="url(#si)" points="60,14 63.5,20 70,17 70.5,24 77,22 75.5,29 82,30 79,36 85,39 81,44 86,49 81,52 83,58 78,59 78,65 72,64 70,70 64,67 60,72 56,67 50,70 48,64 42,65 42,59 37,58 39,52 34,49 39,44 35,39 41,36 38,30 45,29 43.5,22 50,24 49.5,17 56,20"/>
+        </g>
+        <circle cx="60" cy="60" r="28" fill="url(#so)" filter="url(#ss)"/>
+        <circle cx="60" cy="60" r="24" fill="#100d06"/>
         <circle cx="60" cy="60" r="21" fill="none" stroke="#d97706" stroke-width="1"/>
+        <circle cx="60" cy="60" r="17" fill="none" stroke="rgba(217,119,6,0.3)" stroke-width="0.5"/>
         <text x="60" y="55" text-anchor="middle" font-family="Georgia,serif" font-size="11" font-weight="700" fill="#f5c842" letter-spacing="2">AICN</text>
         <text x="60" y="66" text-anchor="middle" font-family="Georgia,serif" font-size="6" fill="#d97706" letter-spacing="1.5">CERTIFIED</text>
         <text x="60" y="77" text-anchor="middle" font-size="7" fill="#d97706">★  ★  ★</text>
       </svg>
     </div>
 
+    <div class="panel-rule-thin"></div>
+
     <div class="panel-year">
       <span class="panel-year-text">{{completionYear}}</span>
     </div>
 
-  </div>
+  </div><!-- /panel-content -->
 
-  <!-- ══ Main body ══════════════════════════════════════════════ -->
+  <!-- ══ Main certificate body ══════════════════════════════════ -->
   <div class="cert-body">
 
-    <div class="cert-title-block">
-      <div class="cert-pre-title">Africa ICT &amp; CS Network · CPD Programme</div>
-      <div class="cert-main-title">Certificate <span>of Completion</span></div>
+    <!-- Organisation line + title -->
+    <div class="cert-org-line">Africa ICT &amp; CS Network · CPD Programme</div>
+
+    <div class="cert-main-title">
+      Certificate <span class="accent">of Completion</span>
     </div>
 
+    <!-- Decorative rule -->
     <div class="title-rule">
       <div class="title-rule-line long"></div>
+      <div class="title-rule-dot"></div>
       <div class="title-rule-diamond"></div>
+      <div class="title-rule-dot"></div>
       <div class="title-rule-line short"></div>
     </div>
 
-    <div class="cert-presented">This certificate is proudly awarded to</div>
-
+    <!-- Recipient -->
+    <div class="cert-presented">This certificate is proudly presented to</div>
     <div class="cert-name">{{userName}}</div>
     <div class="name-underline"></div>
 
+    <!-- Course -->
     <div class="cert-course-label">For successfully completing</div>
     <div class="cert-course-name">{{sessionTitle}}</div>
 
+    <!-- Meta -->
     <div class="cert-meta">
       <div class="meta-block">
         <span class="meta-label">Skill Area</span>
         <span class="meta-value">{{skillArea}}</span>
       </div>
       <div class="meta-block">
-        <span class="meta-label">Date</span>
+        <span class="meta-label">Date Completed</span>
         <span class="meta-value">{{completionDate}}</span>
       </div>
       <div class="meta-block">
@@ -170,13 +133,20 @@
       </div>
     </div>
 
-    <!-- ── Footer ─────────────────────────────────────────────── -->
+    <!-- CPD pill -->
+    <div class="cpd-pill">
+      <div class="cpd-dot"></div>
+      <span class="cpd-text">Continuing Professional Development · Verified</span>
+    </div>
+
+    <!-- ── Footer ─────────────────────────────────────────── -->
     <div class="cert-footer">
 
+      <!-- Trainer signature -->
       <div class="sig-block">
-        <div class="sig-image">
+        <div style="height:32px; margin-bottom:4px;">
           {{#if trainerSigDataUrl}}
-          <img src="{{trainerSigDataUrl}}" alt="Trainer signature" style="height:36px;">
+          <img src="{{trainerSigDataUrl}}" alt="Trainer signature" style="height:32px;">
           {{/if}}
         </div>
         <div class="sig-line"></div>
@@ -184,58 +154,91 @@
         <div class="sig-title">Lead Trainer</div>
       </div>
 
-      <div class="qr-block">
+      <!-- QR + cert code -->
+      <div class="verify-cluster">
         <div class="qr-frame">
-          <img src="{{qrCodeDataUrl}}" alt="Scan to verify" width="72" height="72"/>
+          <img src="{{qrCodeDataUrl}}" alt="Scan to verify"/>
         </div>
         <div class="qr-label">Scan to verify</div>
-        <div class="code-block" style="margin-top:4px;">
-          <span class="code-label">Cert No.</span>
-          <span class="code-value">{{certCode}}</span>
-        </div>
-        <div class="code-block">
-          <span class="code-value code-verify">{{verifyUrl}}</span>
-        </div>
+        <div class="code-box">{{certCode}}</div>
+        <div class="verify-url">{{verifyUrl}}</div>
       </div>
 
-      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="64" height="64">
-          <g fill="#15803d" opacity="0.82">
-            <ellipse cx="18" cy="50" rx="7" ry="12" transform="rotate(-30 18 50)"/>
-            <ellipse cx="14" cy="40" rx="6" ry="11" transform="rotate(-15 14 40)"/>
-            <ellipse cx="16" cy="30" rx="5.5" ry="10" transform="rotate(5 16 30)"/>
-            <ellipse cx="22" cy="22" rx="5" ry="9" transform="rotate(20 22 22)"/>
-            <ellipse cx="30" cy="17" rx="4.5" ry="8" transform="rotate(38 30 17)"/>
-            <ellipse cx="22" cy="60" rx="6" ry="10" transform="rotate(-45 22 60)"/>
-            <ellipse cx="20" cy="70" rx="5.5" ry="9" transform="rotate(-60 20 70)"/>
-            <ellipse cx="82" cy="50" rx="7" ry="12" transform="rotate(30 82 50)"/>
-            <ellipse cx="86" cy="40" rx="6" ry="11" transform="rotate(15 86 40)"/>
-            <ellipse cx="84" cy="30" rx="5.5" ry="10" transform="rotate(-5 84 30)"/>
-            <ellipse cx="78" cy="22" rx="5" ry="9" transform="rotate(-20 78 22)"/>
-            <ellipse cx="70" cy="17" rx="4.5" ry="8" transform="rotate(-38 70 17)"/>
-            <ellipse cx="78" cy="60" rx="6" ry="10" transform="rotate(45 78 60)"/>
-            <ellipse cx="80" cy="70" rx="5.5" ry="9" transform="rotate(60 80 70)"/>
-          </g>
-          <path d="M26 85 Q50 90 74 85" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round"/>
-          <path d="M22 14 Q50 8 78 14" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round"/>
-          <defs>
-            <radialGradient id="wc" cx="50%" cy="40%" r="65%">
-              <stop offset="0%"   stop-color="#fde68a"/>
-              <stop offset="50%"  stop-color="#d97706"/>
-              <stop offset="100%" stop-color="#78350f"/>
-            </radialGradient>
-          </defs>
-          <circle cx="50" cy="50" r="28" fill="url(#wc)"/>
-          <circle cx="50" cy="50" r="24" fill="#1c1917"/>
-          <circle cx="50" cy="50" r="21" fill="none" stroke="#d97706" stroke-width="1"/>
-          <polygon fill="#f5c842" points="50,32 53.5,43 65,43 55.5,50 59,61 50,54 41,61 44.5,50 35,43 46.5,43"/>
-          <text x="50" y="71" text-anchor="middle" font-family="Georgia,serif" font-size="5.5" fill="#d97706" letter-spacing="1.8">EXCELLENCE</text>
-        </svg>
+      <!-- Excellence badge + founder sig -->
+      <div class="badge-cluster">
+        <div class="badge-row">
+          <!-- Excellence wreath badge -->
+          <div class="badge-row">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="58" height="58">
+              <defs>
+                <radialGradient id="wc2" cx="50%" cy="40%" r="65%">
+                  <stop offset="0%" stop-color="#fde68a"/>
+                  <stop offset="50%" stop-color="#d97706"/>
+                  <stop offset="100%" stop-color="#78350f"/>
+                </radialGradient>
+                <filter id="ws"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#00000030"/></filter>
+              </defs>
+              <g fill="#15803d" opacity="0.85">
+                <ellipse cx="18" cy="50" rx="7" ry="12" transform="rotate(-30 18 50)"/>
+                <ellipse cx="14" cy="40" rx="6" ry="11" transform="rotate(-15 14 40)"/>
+                <ellipse cx="16" cy="30" rx="5.5" ry="10" transform="rotate(5 16 30)"/>
+                <ellipse cx="22" cy="22" rx="5" ry="9" transform="rotate(20 22 22)"/>
+                <ellipse cx="30" cy="17" rx="4.5" ry="8" transform="rotate(38 30 17)"/>
+                <ellipse cx="22" cy="60" rx="6" ry="10" transform="rotate(-45 22 60)"/>
+                <ellipse cx="20" cy="70" rx="5.5" ry="9" transform="rotate(-60 20 70)"/>
+                <ellipse cx="24" cy="78" rx="5" ry="8" transform="rotate(-75 24 78)"/>
+                <ellipse cx="82" cy="50" rx="7" ry="12" transform="rotate(30 82 50)"/>
+                <ellipse cx="86" cy="40" rx="6" ry="11" transform="rotate(15 86 40)"/>
+                <ellipse cx="84" cy="30" rx="5.5" ry="10" transform="rotate(-5 84 30)"/>
+                <ellipse cx="78" cy="22" rx="5" ry="9" transform="rotate(-20 78 22)"/>
+                <ellipse cx="70" cy="17" rx="4.5" ry="8" transform="rotate(-38 70 17)"/>
+                <ellipse cx="78" cy="60" rx="6" ry="10" transform="rotate(45 78 60)"/>
+                <ellipse cx="80" cy="70" rx="5.5" ry="9" transform="rotate(60 80 70)"/>
+                <ellipse cx="76" cy="78" rx="5" ry="8" transform="rotate(75 76 78)"/>
+              </g>
+              <path d="M26 85 Q50 90 74 85" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round"/>
+              <path d="M22 14 Q50 8 78 14" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="50" cy="50" r="28" fill="url(#wc2)" filter="url(#ws)"/>
+              <circle cx="50" cy="50" r="24" fill="#1c1917"/>
+              <circle cx="50" cy="50" r="21" fill="none" stroke="#d97706" stroke-width="1"/>
+              <polygon fill="#f5c842" points="50,32 53.5,43 65,43 55.5,50 59,61 50,54 41,61 44.5,50 35,43 46.5,43"/>
+              <text x="50" y="71" text-anchor="middle" font-family="Georgia,serif" font-size="5.5" fill="#d97706" letter-spacing="1.8">EXCELLENCE</text>
+            </svg>
+            <!-- CPD medal badge -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 110" width="42" height="52">
+              <defs>
+                <radialGradient id="mt" cx="50%" cy="30%" r="70%">
+                  <stop offset="0%" stop-color="#fde68a"/>
+                  <stop offset="60%" stop-color="#d97706"/>
+                  <stop offset="100%" stop-color="#78350f"/>
+                </radialGradient>
+                <radialGradient id="mr" cx="40%" cy="35%" r="70%">
+                  <stop offset="0%" stop-color="#f5c842"/>
+                  <stop offset="100%" stop-color="#92400e"/>
+                </radialGradient>
+                <filter id="ms"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#00000035"/></filter>
+              </defs>
+              <polygon fill="#1c1917" points="27,0 45,0 45,68 30,58 15,68 15,0"/>
+              <polygon fill="#292524" points="30,0 45,0 45,68 37,62 30,56 30,0"/>
+              <polygon fill="#1c1917" points="45,0 63,0 75,68 60,58 45,68 45,0"/>
+              <polygon fill="#292524" points="45,0 60,0 60,56 53,62 45,68 45,0"/>
+              <line x1="30" y1="0" x2="30" y2="56" stroke="#d97706" stroke-width="1.5"/>
+              <line x1="60" y1="0" x2="60" y2="56" stroke="#d97706" stroke-width="1.5"/>
+              <circle cx="45" cy="75" r="30" fill="url(#mr)" filter="url(#ms)"/>
+              <circle cx="45" cy="75" r="26" fill="#1c1917"/>
+              <circle cx="45" cy="75" r="23" fill="none" stroke="#d97706" stroke-width="1.2"/>
+              <circle cx="45" cy="75" r="19" fill="url(#mt)" opacity="0.15"/>
+              <path d="M34 75 L41 82 L57 67" fill="none" stroke="#f5c842" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              <text x="45" y="102" text-anchor="middle" font-family="Georgia,serif" font-size="7" fill="#d97706" letter-spacing="2">CPD</text>
+            </svg>
+          </div>
+        </div>
 
-        <div class="sig-block" style="margin-top:0;">
+        <!-- Founder signature -->
+        <div class="sig-block" style="margin-top:4px;">
           <div class="sig-line"></div>
           <div class="sig-name">Calvince Wise</div>
-          <div class="sig-title">Founder, AICN</div>
+          <div class="sig-title">Founder &amp; Director, AICN</div>
         </div>
       </div>
 
