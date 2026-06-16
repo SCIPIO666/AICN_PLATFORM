@@ -6,7 +6,7 @@ export const getMyCertificates = (filters = {}) => {
   if (filters.limit) params.append('limit', filters.limit)
   
   return api.get(`certificates/me?${params.toString()}`)
-    .then(res => res.data)
+    .then(res => res.data.data)
 }
 
 export const verifyCertificate = (certificateCode) => {
