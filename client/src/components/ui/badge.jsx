@@ -1,7 +1,4 @@
-/**
- * Badge — ClickHouse design language
- * Variants: default | neon | success | warning | error | outline
- */
+
 export default function Badge({ children, variant = 'default', className = '' }) {
   const base =
     'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-[4px] ' +

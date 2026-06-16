@@ -1,10 +1,8 @@
-
 // Run: node prisma/seed.js
 
-const { PrismaClient } = require('@prisma/client')
 const bcrypt = require('bcryptjs')
-const { prisma }= require('../config/db')
-const logger= require("../utils/logger")
+const { prisma } = require('../config/db')
+const logger = require('../utils/logger')
 
 // ========== Helpers ==================
 const hash = (pw) => bcrypt.hash(pw, 12)
@@ -27,35 +25,44 @@ const past = (daysAgo, hour = 9) => {
 const generateCertCode = (userId, sessionId) => {
   const timestamp = Date.now()
   const random = Math.random().toString(36).substring(2, 8).toUpperCase()
-  return `CERT-${userId.substring(0,4)}-${sessionId.substring(0,4)}-${random}`
+  return `CERT-${userId.substring(0, 4)}-${sessionId.substring(0, 4)}-${random}`
 }
 
 // ========== Main seeder function ===================
 
 async function main() {
-  console.log('🌱 Seeding AICN database...\n')
+  logger.info('🌱 Seeding AICN database...\n')
 
-// Clear existing data 
+  // Clear existing data
   await prisma.announcement.deleteMany()
   await prisma.certificate.deleteMany()
   await prisma.enrolment.deleteMany()
   await prisma.trainerProfile.deleteMany()
   await prisma.session.deleteMany()
   await prisma.user.deleteMany()
-  logger.info(' Cleared existing data')
+  logger.info('🗑  Cleared existing data')
 
-  // ============ Users ===================================
+  // ============ Password hashes ===================================
 
   const [
-    adminPw, trainerPw, learnerPw,pendingTrainerPW
+    adminPw,
+    trainerPw,
+    learnerPw,
+    pendingPw,
+    superLearnerPw,
+    superTrainerPw,
   ] = await Promise.all([
     hash('admin123'),
     hash('trainer123'),
     hash('learner123'),
-    hash("pending123")
-  ]) //default passwords for mock data
+    hash('pending123'),
+    hash('Test123!@#'),   // super dev learner
+    hash('Test123!@#'),   // super dev trainer
+  ])
 
-  // Admin
+  // ============ Users ===================================
+
+  // --- Admin ---
   const admin = await prisma.user.create({
     data: {
       name:     'Calvince Wise',
@@ -67,7 +74,19 @@ async function main() {
     }
   })
 
-  // Trainers
+  // --- Super Dev Trainer (full-featured, use this to test trainer UI) ---
+  const superTrainer = await prisma.user.create({
+    data: {
+      name:     'Trainer User',
+      email:    'trainer@aicn.africa',
+      password: superTrainerPw,
+      phone:    '+254722222222',
+      county:   'Mombasa',
+      role:     'TRAINER',
+    }
+  })
+
+  // --- Regular mock trainers ---
   const trainer1 = await prisma.user.create({
     data: {
       name:     'Amara Osei',
@@ -101,7 +120,19 @@ async function main() {
     }
   })
 
-  // Learners
+  // --- Super Dev Learner (full-featured, use this to test learner UI) ---
+  const superLearner = await prisma.user.create({
+    data: {
+      name:     'Learner User',
+      email:    'learner@aicn.africa',
+      password: superLearnerPw,
+      phone:    '+254733333333',
+      county:   'Nairobi',
+      role:     'LEARNER',
+    }
+  })
+
+  // --- Regular mock learners ---
   const learner1 = await prisma.user.create({
     data: {
       name:     'Dev Scipio',
@@ -168,21 +199,33 @@ async function main() {
     }
   })
 
-  // Pending applicant (no role upgrade yet)
+  // Pending applicant (stays LEARNER until approved)
   const pendingTrainer = await prisma.user.create({
     data: {
       name:     'Moses Kamau',
       email:    'moses.kamau@example.com',
-      password: await hash('pending123'),
+      password: pendingPw,
       phone:    '+254711111111',
       county:   'Nairobi',
-      role:     'LEARNER', // stays LEARNER until approved
+      role:     'LEARNER',
     }
   })
 
-  logger.info(' Created 11 users (1 admin, 3 trainers, 6 learners, 1 pending applicant)')
+  logger.info('✅ Created 13 users (1 admin, 2 dev super users, 3 mock trainers, 6 mock learners, 1 pending applicant)')
 
-  //============Trainer Profiles=======================
+  // ============ Trainer Profiles =======================
+
+  // Super dev trainer — approved, rich profile
+  await prisma.trainerProfile.create({
+    data: {
+      userId:       superTrainer.id,
+      bio:          'All-rounder trainer used for development and QA. Covers multiple skill areas and has both online and physical sessions.',
+      skills:       ['Digital Marketing', 'Data Analysis', 'Soft Skills', 'Cyber Hygiene'],
+      availability: 'weekdays',
+      motivation:   'Dev account — testing all trainer flows end-to-end.',
+      status:       'APPROVED',
+    }
+  })
 
   await prisma.trainerProfile.create({
     data: {
@@ -229,9 +272,9 @@ async function main() {
     }
   })
 
-  logger.info(' Created 4 trainer profiles (3 approved, 1 pending)')
+  logger.info('✅ Created 5 trainer profiles (4 approved, 1 pending)')
 
-  // ======== Sessions=================
+  // ======== Sessions =================
 
   // COMPLETED sessions (past)
   const session1 = await prisma.session.create({
@@ -279,6 +322,23 @@ async function main() {
       capacity:     50,
       status:       'COMPLETED',
       trainerId:    trainer2.id,
+    }
+  })
+
+  // Completed session led by super dev trainer (so they show up in history)
+  const session0 = await prisma.session.create({
+    data: {
+      title:        'Digital Skills Orientation — Nairobi',
+      skillArea:    'Soft Skills',
+      description:  'Introductory orientation session covering the AICN programme, what to expect, and how to make the most of the training calendar.',
+      date:         past(30, 10),
+      durationMins: 90,
+      locationType: 'PHYSICAL',
+      venue:        'iHub Nairobi, Ngong Road',
+      county:       'Nairobi',
+      capacity:     40,
+      status:       'COMPLETED',
+      trainerId:    superTrainer.id,
     }
   })
 
@@ -379,6 +439,23 @@ async function main() {
     }
   })
 
+  // Upcoming session led by super dev trainer
+  const session11 = await prisma.session.create({
+    data: {
+      title:        'Data Analysis Masterclass — Online',
+      skillArea:    'Data Analysis',
+      description:  'Advanced data storytelling, dashboard design, and presenting insights to non-technical stakeholders.',
+      date:         future(5, 11),
+      durationMins: 150,
+      locationType: 'ONLINE',
+      venue:        'https://meet.google.com/aicn-dev-001',
+      county:       null,
+      capacity:     50,
+      status:       'SCHEDULED',
+      trainerId:    superTrainer.id,
+    }
+  })
+
   // CANCELLED session
   const session10 = await prisma.session.create({
     data: {
@@ -396,9 +473,18 @@ async function main() {
     }
   })
 
-  logger.info('Created 10 sessions (3 completed, 6 scheduled, 1 cancelled)')
+  logger.info('✅ Created 12 sessions (4 completed, 7 scheduled, 1 cancelled)')
 
-  // =============Enrolments================================
+  // ============= Enrolments ================================
+
+  // Super learner — rich history: attended past sessions, enrolled in upcoming ones
+  await prisma.enrolment.create({ data: { userId: superLearner.id, sessionId: session0.id,  status: 'ATTENDED' } })
+  await prisma.enrolment.create({ data: { userId: superLearner.id, sessionId: session1.id,  status: 'ATTENDED' } })
+  await prisma.enrolment.create({ data: { userId: superLearner.id, sessionId: session2.id,  status: 'ATTENDED' } })
+  await prisma.enrolment.create({ data: { userId: superLearner.id, sessionId: session3.id,  status: 'ATTENDED' } })
+  await prisma.enrolment.create({ data: { userId: superLearner.id, sessionId: session4.id,  status: 'ENROLLED' } })
+  await prisma.enrolment.create({ data: { userId: superLearner.id, sessionId: session6.id,  status: 'ENROLLED' } })
+  await prisma.enrolment.create({ data: { userId: superLearner.id, sessionId: session11.id, status: 'ENROLLED' } })
 
   // Completed session 1 — Cyber Hygiene Nairobi
   await prisma.enrolment.create({ data: { userId: learner1.id, sessionId: session1.id, status: 'ATTENDED' } })
@@ -415,6 +501,11 @@ async function main() {
   await prisma.enrolment.create({ data: { userId: learner3.id, sessionId: session3.id, status: 'ATTENDED' } })
   await prisma.enrolment.create({ data: { userId: learner5.id, sessionId: session3.id, status: 'ABSENT'   } })
 
+  // Completed session 0 — Orientation (mock learners)
+  await prisma.enrolment.create({ data: { userId: learner1.id, sessionId: session0.id, status: 'ATTENDED' } })
+  await prisma.enrolment.create({ data: { userId: learner3.id, sessionId: session0.id, status: 'ATTENDED' } })
+  await prisma.enrolment.create({ data: { userId: learner6.id, sessionId: session0.id, status: 'ABSENT'   } })
+
   // Upcoming session 4 — Digital Marketing Nairobi
   await prisma.enrolment.create({ data: { userId: learner1.id, sessionId: session4.id, status: 'ENROLLED' } })
   await prisma.enrolment.create({ data: { userId: learner3.id, sessionId: session4.id, status: 'ENROLLED' } })
@@ -429,69 +520,37 @@ async function main() {
   await prisma.enrolment.create({ data: { userId: learner2.id, sessionId: session7.id, status: 'ENROLLED' } })
   await prisma.enrolment.create({ data: { userId: learner6.id, sessionId: session7.id, status: 'ENROLLED' } })
 
- logger.info(' Created 17 enrolments across sessions')
+  logger.info('✅ Created 26 enrolments across sessions')
 
-  // ========Certificates====================================
-  // Only issued to ATTENDED enrolments on COMPLETED sessions
+  // ======== Certificates ====================================
+  // Only for ATTENDED enrolments on COMPLETED sessions
+
+  // Super learner — earns certs for all attended completed sessions
+  await prisma.certificate.create({ data: { userId: superLearner.id, sessionId: session0.id, certCode: generateCertCode(superLearner.id, session0.id) } })
+  await prisma.certificate.create({ data: { userId: superLearner.id, sessionId: session1.id, certCode: generateCertCode(superLearner.id, session1.id) } })
+  await prisma.certificate.create({ data: { userId: superLearner.id, sessionId: session2.id, certCode: generateCertCode(superLearner.id, session2.id) } })
+  await prisma.certificate.create({ data: { userId: superLearner.id, sessionId: session3.id, certCode: generateCertCode(superLearner.id, session3.id) } })
 
   // Session 1 — Cyber Hygiene
-  await prisma.certificate.create({ 
-    data: { 
-      userId: learner1.id, 
-      sessionId: session1.id,
-      certCode: generateCertCode(learner1.id, session1.id)
-    } 
-  })
-  await prisma.certificate.create({ 
-    data: { 
-      userId: learner4.id, 
-      sessionId: session1.id,
-      certCode: generateCertCode(learner4.id, session1.id)
-    } 
-  })
+  await prisma.certificate.create({ data: { userId: learner1.id, sessionId: session1.id, certCode: generateCertCode(learner1.id, session1.id) } })
+  await prisma.certificate.create({ data: { userId: learner4.id, sessionId: session1.id, certCode: generateCertCode(learner4.id, session1.id) } })
 
   // Session 2 — Data Analysis Kisumu
-  await prisma.certificate.create({ 
-    data: { 
-      userId: learner2.id, 
-      sessionId: session2.id,
-      certCode: generateCertCode(learner2.id, session2.id)
-    } 
-  })
-  await prisma.certificate.create({ 
-    data: { 
-      userId: learner6.id, 
-      sessionId: session2.id,
-      certCode: generateCertCode(learner6.id, session2.id)
-    } 
-  })
+  await prisma.certificate.create({ data: { userId: learner2.id, sessionId: session2.id, certCode: generateCertCode(learner2.id, session2.id) } })
+  await prisma.certificate.create({ data: { userId: learner6.id, sessionId: session2.id, certCode: generateCertCode(learner6.id, session2.id) } })
 
   // Session 3 — Content Creation Online
-  await prisma.certificate.create({ 
-    data: { 
-      userId: learner1.id, 
-      sessionId: session3.id,
-      certCode: generateCertCode(learner1.id, session3.id)
-    } 
-  })
-  await prisma.certificate.create({ 
-    data: { 
-      userId: learner2.id, 
-      sessionId: session3.id,
-      certCode: generateCertCode(learner2.id, session3.id)
-    } 
-  })
-  await prisma.certificate.create({ 
-    data: { 
-      userId: learner3.id, 
-      sessionId: session3.id,
-      certCode: generateCertCode(learner3.id, session3.id)
-    } 
-  })
+  await prisma.certificate.create({ data: { userId: learner1.id, sessionId: session3.id, certCode: generateCertCode(learner1.id, session3.id) } })
+  await prisma.certificate.create({ data: { userId: learner2.id, sessionId: session3.id, certCode: generateCertCode(learner2.id, session3.id) } })
+  await prisma.certificate.create({ data: { userId: learner3.id, sessionId: session3.id, certCode: generateCertCode(learner3.id, session3.id) } })
 
-  logger.info(' Issued 7 certificates')
+  // Session 0 — Orientation
+  await prisma.certificate.create({ data: { userId: learner1.id, sessionId: session0.id, certCode: generateCertCode(learner1.id, session0.id) } })
+  await prisma.certificate.create({ data: { userId: learner3.id, sessionId: session0.id, certCode: generateCertCode(learner3.id, session0.id) } })
 
-  // ======Announcements =================================
+  logger.info('✅ Issued 13 certificates')
+
+  // ====== Announcements =================================
 
   await prisma.announcement.createMany({
     data: [
@@ -513,33 +572,36 @@ async function main() {
     ]
   })
 
-  logger.info(' Created 3 announcements')
+  logger.info('✅ Created 3 announcements')
 
-  // ==========sumarry=================
+  // ========== Summary =================
 
- logger.info('\n===========seeding complete ,start of seeding logs============')
-  logger.info('\n📋 Test accounts (all passwords as shown):')
-  logger.info('  ADMIN:    calvince@africaictcsnetwork.org  /  admin123')
-  logger.info('  TRAINER:  amara.osei@aicn.org              /  trainer123')
-  logger.info('  TRAINER:  fatuma.njeri@aicn.org            /  trainer123')
-  logger.info('  TRAINER:  brian.otieno@aicn.org            /  trainer123')
-  logger.info('  LEARNER:  dev@example.com                  /  learner123  ← use this one')
-  logger.info('  LEARNER:  akinyi@example.com               /  learner123')
-  logger.info('  LEARNER:  juma@example.com                 /  learner123')
-  logger.info('  LEARNER:  wanjiku@example.com              /  learner123')
-  logger.info('  LEARNER:  emmanuel@example.com             /  learner123')
-  logger.info('  LEARNER:  zawadi@example.com               /  learner123')
-  logger.info('  PENDING:  moses.kamau@example.com          /  pending123')
+  logger.info('\n======= SEEDING COMPLETE =============================')
+  logger.info('\n🔑 DEV SUPER USER ACCOUNTS (use these for testing UIs):')
+  logger.info('  ★ ADMIN:    calvince@africaictcsnetwork.org  /  admin123')
+  logger.info('  ★ TRAINER:  trainer@aicn.africa              /  Test123!@#  ← super trainer (approved profile, past + upcoming sessions)')
+  logger.info('  ★ LEARNER:  learner@aicn.africa              /  Test123!@#  ← super learner (4 certs, past + upcoming enrolments)')
+  logger.info('\n📋 Mock accounts (additional data only):')
+  logger.info('  TRAINER:  amara.osei@aicn.org               /  trainer123')
+  logger.info('  TRAINER:  fatuma.njeri@aicn.org             /  trainer123')
+  logger.info('  TRAINER:  brian.otieno@aicn.org             /  trainer123')
+  logger.info('  LEARNER:  dev@example.com                   /  learner123')
+  logger.info('  LEARNER:  akinyi@example.com                /  learner123')
+  logger.info('  LEARNER:  juma@example.com                  /  learner123')
+  logger.info('  LEARNER:  wanjiku@example.com               /  learner123')
+  logger.info('  LEARNER:  emmanuel@example.com              /  learner123')
+  logger.info('  LEARNER:  zawadi@example.com                /  learner123')
+  logger.info('  PENDING:  moses.kamau@example.com           /  pending123')
   logger.info('\n📊 Data summary:')
-  logger.info('  Users:          11')
-  logger.info('  Sessions:       10  (3 completed · 6 scheduled · 1 cancelled)')
-  logger.info('  Enrolments:     17')
-  logger.info('  Certificates:    7')
+  logger.info('  Users:          13  (1 admin · 4 trainers · 7 learners · 1 pending)')
+  logger.info('  Sessions:       12  (4 completed · 7 scheduled · 1 cancelled)')
+  logger.info('  Enrolments:     26')
+  logger.info('  Certificates:   13')
   logger.info('  Announcements:   3')
-  logger.info('  Trainer apps:    4  (3 approved · 1 pending)')
-  logger.info('======end of seeding logs=============================\n')
+  logger.info('  Trainer apps:    5  (4 approved · 1 pending)')
+  logger.info('======================================================\n')
 }
 
 main()
-  .catch(e => { logger.error(' Seed failed:', e); process.exit(1) })
+  .catch(e => { logger.error('❌ Seed failed:', e); process.exit(1) })
   .finally(async () => { await prisma.$disconnect() })

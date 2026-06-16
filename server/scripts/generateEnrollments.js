@@ -1,4 +1,4 @@
-const sessionId='cmptj5y8g0001lky8gsrdpeas'//real id
+
 
 const {prisma }= require('../config/db');
 const logger=require('../utils/logger')
