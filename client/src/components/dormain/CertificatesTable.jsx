@@ -150,7 +150,7 @@ export default function CertificatesTable() {
         </span>
       </div>
 
-      {/* ── desktop table ── */}
+    {/* desktop */}
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-sm border-collapse">
           <thead>
@@ -227,7 +227,7 @@ export default function CertificatesTable() {
         </table>
       </div>
 
-      {/* ── mobile card list ── */}
+      {/*mobile*/}
       <div className="md:hidden divide-y" style={{ borderColor: 'var(--border-subtle)' }}>
         {certs.map((cert) => (
           <div key={cert.id} className="px-4 py-4 flex flex-col gap-2">
