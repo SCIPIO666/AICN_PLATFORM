@@ -8,7 +8,7 @@ export const getTrainers = (filters = {}) => {
   if (filters.limit) params.append('limit', filters.limit)
   
   return api.get(`trainers?${params.toString()}`)
-    .then(res => res.data)
+    .then(res => res.data.data)
 }
 
 export const applyForTrainer = (applicationData) => {
