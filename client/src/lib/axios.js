@@ -2,10 +2,14 @@ import axios from 'axios'
 
 // instance
 const api = axios.create({
-    baseURL: import.meta.env.VITE_BASE_URL || "http://localhost:3000/api/v1",
+
+    // baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1',
+        baseURL: '/api/v1',//debug
+
     headers: {
         "Content-Type": "application/json"
-    }
+    },
+     withCredentials: true 
 })
 
 // interceptors - request

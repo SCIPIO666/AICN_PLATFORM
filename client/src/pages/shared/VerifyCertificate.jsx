@@ -27,7 +27,6 @@ const VerifyCertificate = () => {
     }
   });
 
-  // Use the existing hook
   const { 
     data: certData, 
     isLoading, 
@@ -40,7 +39,6 @@ const VerifyCertificate = () => {
   const onSubmit = (data) => {
     setCertCode(data.certCode);
     setShouldVerify(true);
-    // Trigger the query
     refetch();
   };
 
@@ -50,7 +48,6 @@ const VerifyCertificate = () => {
     setShouldVerify(false);
   };
 
-  // Format date
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -71,7 +68,6 @@ const VerifyCertificate = () => {
     });
   };
 
-  // Get error message
   const getErrorMessage = () => {
     if (!queryError) return null;
     if (queryError.response?.status === 404) {
@@ -122,7 +118,7 @@ const VerifyCertificate = () => {
                   autoComplete="off"
                   spellCheck="false"
                   onChange={(e) => {
-                    // Auto-uppercase the input
+                    // Auto-uppercase 
                     e.target.value = e.target.value.toUpperCase();
                   }}
                 />

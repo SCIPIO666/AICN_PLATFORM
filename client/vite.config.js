@@ -13,4 +13,15 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,//debug
+        secure: false,//debug
+        // rewrite: (path) => path.replace(/^\/api/, '/api/v1') // Optional
+        // secure: false, // Only needed if backend uses self-signed HTTPS
+      }
+    }
+  }
 })

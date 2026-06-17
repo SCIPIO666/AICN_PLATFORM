@@ -10,7 +10,7 @@ const {
   verifyCertificateSchema,
   batchIssueCertificatesSchema,
   getCertificatesQuerySchema
-} = require('../../shared/validators/certificateValidation');
+} = require('../../shared/validators/certificateValidation.cjs');
 
 // ============ PUBLIC ROUTES ============
 // GET /verify/:certCode - Public certificate verification

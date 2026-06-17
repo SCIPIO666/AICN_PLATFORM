@@ -72,7 +72,7 @@ authRouter.post(
 // POST /refresh-token - Refresh access token
 authRouter.post(
   '/refresh-token', 
-  verifyToken,
+  // verifyToken,
   validate(refreshTokenSchema, 'body'),  
   authController.refreshToken
 );
