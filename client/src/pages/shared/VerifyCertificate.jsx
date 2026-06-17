@@ -1,18 +1,13 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { useState } from 'react';
 import { CheckCircle, XCircle, Loader2, FileCheck, Calendar, User, MapPin, Clock } from 'lucide-react';
 import { useVerifyCertificate } from '@/hooks';
-
+import { verifyCertificateSchema } from '@/validators/learner';
 const VerifyCertificate = () => {
   const [certCode, setCertCode] = useState('');
   const [shouldVerify, setShouldVerify] = useState(false);
 
-  const verifyCertificateSchema = z.object({
-    certCode: z.string()
-      .regex(/^CERT-[A-F0-9]{16}$/, 'Invalid certificate code format. Expected format: CERT-XXXXXXXXXXXXXXX')
-  });
 
   const {
     register,

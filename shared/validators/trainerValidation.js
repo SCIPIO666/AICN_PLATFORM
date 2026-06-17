@@ -1,7 +1,7 @@
 const { z } = require('zod');
 const { TrainerStatusValues,TrainerApprovalStatusValues } = require('../constants/enums');
 
-// ID param validation (ADD THIS)
+// ID param validation
 const idParamSchema = z.object({
   id: z.string()
     .cuid('Invalid trainer application ID format - must be a valid CUID')

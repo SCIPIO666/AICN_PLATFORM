@@ -11,7 +11,6 @@ export default function SessionCard({ session, onEnrol, isEnrolling }) {
   const isFull = session.enrolledCount >= session.capacity;
   const isOnline = session.locationType === 'ONLINE';
 
-//   session.id
 // useMyEnrolments
 
 // past sessions

@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as trainerAPI from '../api/trainers';
 import useAuthStore from '../stores/useAuthStore';
-
+import { toast } from '@/stores/toastStore';
 // Query keys
 export const trainerKeys = {
   all: ['trainers'],
@@ -46,7 +46,11 @@ export const useApplyAsTrainer = () => {
     mutationFn: (applicationData) => trainerAPI.applyForTrainer(applicationData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: trainerKeys.myProfile() });
+      toast.info('application sent successfully')
     },
+    onError : (error)=>{
+      toast.error(error?.message || 'Application failed, please try again');
+    }
   });
 };
 
