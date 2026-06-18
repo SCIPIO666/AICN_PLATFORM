@@ -240,7 +240,13 @@
     background-clip: text;
     color: transparent;
   }
-
+  /* landing */
+.dark {
+  background-image:
+    linear-gradient(rgba(250, 255, 105, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(250, 255, 105, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
   /* Card base */
   .card-base {
     background-color: var(--bg-card);
