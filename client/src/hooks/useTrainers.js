@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as trainerAPI from '../api/trainers';
+import { getMe } from '@/api/auth';
 import useAuthStore from '../stores/useAuthStore';
 import { toast } from '@/stores/toastStore';
 // Query keys
@@ -15,7 +16,7 @@ export const trainerKeys = {
   applicationDetail: (id) => [...trainerKeys.applications(), id],
 };
 
-// Hook for getting public trainers
+
 export const useTrainers = (filters = {}) => {
   return useQuery({
     queryKey: trainerKeys.publicTrainersList(filters),
@@ -25,7 +26,6 @@ export const useTrainers = (filters = {}) => {
   });
 };
 
-// Hook for getting my trainer profile
 export const useMyTrainerProfile = () => {
   const { user, isAuthenticated } = useAuthStore();
   const isTrainer = user?.role === 'TRAINER' || user?.role === 'ADMIN';
@@ -33,12 +33,12 @@ export const useMyTrainerProfile = () => {
   return useQuery({
     queryKey: trainerKeys.myProfile(),
     queryFn: () => trainerAPI.getMyTrainerProfile(),
-    enabled: isAuthenticated && isTrainer,
+    enabled: isAuthenticated, //&& isTrainer
     staleTime: 5 * 60 * 1000,
   });
 };
 
-// Hook for applying as trainer
+
 export const useApplyAsTrainer = () => {
   const queryClient = useQueryClient();
   
@@ -54,7 +54,7 @@ export const useApplyAsTrainer = () => {
   });
 };
 
-// Hook for updating trainer profile
+
 export const useUpdateTrainerProfile = () => {
   const queryClient = useQueryClient();
   
@@ -66,7 +66,7 @@ export const useUpdateTrainerProfile = () => {
   });
 };
 
-// Hook for getting my trainer sessions
+
 export const useMyTrainerSessions = (filters = {}) => {
   const { user, isAuthenticated } = useAuthStore();
   const isTrainer = user?.role === 'TRAINER' || user?.role === 'ADMIN';
@@ -80,7 +80,7 @@ export const useMyTrainerSessions = (filters = {}) => {
   });
 };
 
-// Admin hooks
+
 export const useTrainerApplications = (filters = {}) => {
   const { user, isAuthenticated } = useAuthStore();
   const isAdmin = user?.role === 'ADMIN';
@@ -120,25 +120,3 @@ export const useRejectTrainer = () => {
 };
 
 
-export const useTrainerStatus = () => {
-
-  return useQuery({
-    queryKey: trainerKeys.myProfile(),
-    queryFn: async () => {
-      try {
-        const response = await trainerAPI.getMyTrainerProfile();
-        return response.data;
-      } catch (error) {
-        if (error?.response?.status === 404) {
-          return null;
-        }
-        throw error;
-      }
-    },
-    retry: (failureCount, error) => {
-      if (error?.response?.status === 404) return false;
-      return failureCount < 3;
-    },
-    initialData: null,
-  });
-};
