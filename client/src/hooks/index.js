@@ -11,7 +11,7 @@ export { useMyEnrolments, useEnrolInSession, useCancelEnrolment, useMarkAttendan
 export { useMyCertificates, useVerifyCertificate, useIssueCertificate, useBatchIssueCertificates } from './useCertificates';
 
 // Trainer hooks
-export { useTrainers, useMyTrainerProfile, useApplyAsTrainer, useUpdateTrainerProfile, useMyTrainerSessions, useTrainerApplications, useApproveTrainer, useRejectTrainer } from './useTrainers';
+export { useTrainers, useMyTrainerProfile, useApplyAsTrainer, useUpdateTrainerProfile,useTrainerStatus, useMyTrainerSessions, useTrainerApplications, useApproveTrainer, useRejectTrainer } from './useTrainers';
 
 // Admin hooks
 export { useAdminStats, useUsers, useUpdateUserRole, useAnnouncements, useCreateAnnouncement, useUpdateAnnouncement, useDeleteAnnouncement } from './useAdmin';

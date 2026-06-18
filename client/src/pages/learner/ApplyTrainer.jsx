@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useApplyAsTrainer } from "@/hooks";
 
 export default function ApplyTrainer() {
+
   const { mutate, isPending, isError, error } = useApplyAsTrainer();
 
   const {
@@ -41,8 +42,8 @@ export default function ApplyTrainer() {
     
   };
 
-
   return (
+
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8"
          style={{ backgroundColor: 'var(--bg-page)' }}>
       <div className="max-w-2xl mx-auto">

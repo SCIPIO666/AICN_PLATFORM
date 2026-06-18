@@ -118,3 +118,27 @@ export const useRejectTrainer = () => {
     },
   });
 };
+
+
+export const useTrainerStatus = () => {
+
+  return useQuery({
+    queryKey: trainerKeys.myProfile(),
+    queryFn: async () => {
+      try {
+        const response = await trainerAPI.getMyTrainerProfile();
+        return response.data;
+      } catch (error) {
+        if (error?.response?.status === 404) {
+          return null;
+        }
+        throw error;
+      }
+    },
+    retry: (failureCount, error) => {
+      if (error?.response?.status === 404) return false;
+      return failureCount < 3;
+    },
+    initialData: null,
+  });
+};
