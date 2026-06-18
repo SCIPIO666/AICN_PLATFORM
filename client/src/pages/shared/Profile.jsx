@@ -1,10 +1,10 @@
 import { useMe } from '@/hooks'
 import { Link } from 'react-router-dom'
 import {
-  User, Mail, Phone, MapPin, ShieldCheck, CalendarDays,
+   Mail, Phone, MapPin,  CalendarDays,
   BadgeCheck, ChevronRight, AlertCircle, Settings,
   BookOpen, Users, Award, Clock, CheckCircle, TrendingUp,
-  Activity, FileText, Star, Briefcase, Pencil, LogOut
+  Activity, Briefcase,  LogOut
 } from 'lucide-react'
 
 // helpers
@@ -19,7 +19,7 @@ const ROLE_LABEL = {
   ADMIN:   { label: 'Admin',    color: 'var(--warning-text)', bg: 'var(--warning-bg)' },
 }
 
-// ─── Avatar ────────────────────────────────────────────────
+//  Avatar 
 function Avatar({ name, picture, size = 72 }) {
   if (picture) {
     return (
@@ -52,7 +52,7 @@ function Avatar({ name, picture, size = 72 }) {
   )
 }
 
-// ─── Section Header ────────────────────────────────────────
+//Section Header 
 function SectionHeader({ label, title }) {
   return (
     <div className="mb-6">
@@ -70,7 +70,7 @@ function SectionHeader({ label, title }) {
   )
 }
 
-// ─── Stat Card ─────────────────────────────────────────────
+// Stat Card 
 function StatCard({ icon: Icon, value, label }) {
   return (
     <div className="card-base p-4 text-center">
@@ -87,7 +87,7 @@ function StatCard({ icon: Icon, value, label }) {
   )
 }
 
-// ─── Info Field ─────────────────────────────────────────────
+//Info Field 
 function InfoField({ icon: Icon, label, value }) {
   return (
     <div className="card-base p-4">
@@ -104,7 +104,7 @@ function InfoField({ icon: Icon, label, value }) {
   )
 }
 
-// ─── Quick Action Card ──────────────────────────────────────
+//Quick Action Card 
 function QuickAction({ to, icon: Icon, title, description }) {
   return (
     <Link
@@ -137,21 +137,8 @@ function QuickAction({ to, icon: Icon, title, description }) {
   )
 }
 
-// ─── Activity Item ──────────────────────────────────────────
-function ActivityItem({ icon: Icon, text, time }) {
-  return (
-    <div className="flex items-start gap-3 py-3 border-b last:border-0" style={{ borderColor: 'var(--border-subtle)' }}>
-      <div className="w-2 h-2 rounded-full mt-2 flex-shrink-0" style={{ background: 'var(--color-neon-volt)' }} />
-      <Icon size={14} className="mt-1 flex-shrink-0" style={{ color: 'var(--text-muted)' }} />
-      <div className="flex-1 min-w-0">
-        <p className="text-sm" style={{ color: 'var(--text-primary)' }}>{text}</p>
-        <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>{time}</p>
-      </div>
-    </div>
-  )
-}
 
-// ─── Main Component ─────────────────────────────────────────
+// Main 
 export default function Profile() {
   const { data: user, isLoading, error } = useMe()
 
@@ -182,7 +169,7 @@ export default function Profile() {
   const role = ROLE_LABEL[user.role] ?? ROLE_LABEL.LEARNER
   const isTrainer = user.role === 'TRAINER'
   const isAdmin = user.role === 'ADMIN'
-  const profileCompletion = 85 // Placeholder
+
 
   // Stats based on role
   const stats = isAdmin
@@ -203,13 +190,6 @@ export default function Profile() {
         { icon: Award, value: '7', label: 'Certs' },
       ]
 
-  // Activity placeholders
-  const activities = [
-    { icon: Pencil, text: 'Profile updated', time: '2 hours ago' },
-    { icon: BookOpen, text: 'Enrolled in Leadership Training', time: 'Yesterday' },
-    { icon: Award, text: 'Certificate issued: JavaScript Mastery', time: '3 days ago' },
-    { icon: CheckCircle, text: 'Trainer application approved', time: '1 week ago' },
-  ]
 
   return (
     <div
@@ -218,7 +198,7 @@ export default function Profile() {
     >
       <div className="max-w-5xl mx-auto flex flex-col gap-6">
 
-        {/* ── HERO CARD ──────────────────────────────────── */}
+        {/* HERO CARD */}
         <div className="card-neon p-6 md:p-8 relative overflow-hidden">
           <div
             className="absolute top-0 right-0 w-48 h-48 opacity-10 rounded-full"
@@ -229,7 +209,7 @@ export default function Profile() {
           />
           <div className="relative">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-              {/* Left: Avatar + Identity */}
+              {/* Left: Avatar + Id */}
               <div className="flex items-center gap-5">
                 <Avatar name={user.name} picture={user.profilePicture} size={80} />
                 <div>
@@ -246,7 +226,7 @@ export default function Profile() {
                     >
                       {role.label}
                     </span>
-                    {user.emailVerified ? (
+    
                       <span
                         className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold"
                         style={{ background: 'var(--success-bg)', color: 'var(--success-text)' }}
@@ -254,49 +234,27 @@ export default function Profile() {
                         <BadgeCheck size={12} />
                         Verified
                       </span>
-                    ) : (
-                      <span
-                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold"
-                        style={{ background: 'var(--warning-bg)', color: 'var(--warning-text)' }}
-                      >
-                        <AlertCircle size={12} />
-                        Unverified
-                      </span>
-                    )}
+                
                   </div>
                   <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>
                     Joined {fmtDate(user.createdAt)}
                   </p>
                 </div>
               </div>
-
-              {/* Right: Actions */}
-              <div className="flex items-center gap-2">
-                <button
-                  className="px-4 py-2 text-sm font-semibold rounded transition-all btn-primary"
-                >
-                  Edit Profile
-                </button>
-                <button
-                  className="px-4 py-2 text-sm font-semibold rounded transition-all btn-secondary"
-                >
-                  <Settings size={16} />
-                </button>
-              </div>
             </div>
           </div>
         </div>
 
-        {/* ── STATS ROW ──────────────────────────────────── */}
+        {/*STATS ROW */}
         <div className="grid grid-cols-3 gap-4">
           {stats.map((stat, idx) => (
             <StatCard key={idx} {...stat} />
           ))}
         </div>
 
-        {/* ── TWO-COLUMN LAYOUT ────────────────────────── */}
+        {/* TWO-COLUMN LAYOUT  */}
         <div className="grid md:grid-cols-2 gap-6">
-          {/* ── PROFILE INFORMATION ────────────────────── */}
+          {/* PROFILE INFORMATION */}
           <div>
             <SectionHeader label="PROFILE DETAILS" title="Personal Information" />
             <div className="space-y-3">
@@ -307,7 +265,7 @@ export default function Profile() {
             </div>
           </div>
 
-          {/* ── ACCOUNT STATUS ────────────────────────── */}
+          {/* ACCOUNT STATUS */}
           <div>
             <SectionHeader label="ACCOUNT STATUS" title="Security & Compliance" />
             <div className="card-base p-5 space-y-4">
@@ -326,38 +284,13 @@ export default function Profile() {
                   {role.label}
                 </span>
               </div>
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>Profile Completion</span>
-                  <span className="text-sm font-bold" style={{ color: 'var(--color-neon-volt)' }}>{profileCompletion}%</span>
-                </div>
-                <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--border-color)' }}>
-                  <div
-                    className="h-full rounded-full transition-all duration-500"
-                    style={{
-                      width: `${profileCompletion}%`,
-                      background: 'var(--color-neon-volt)',
-                    }}
-                  />
-                </div>
-              </div>
+  
             </div>
           </div>
         </div>
 
-        {/* ── ACTIVITY TIMELINE ────────────────────────── */}
-        <div>
-          <SectionHeader label="RECENT ACTIVITY" title="What's New" />
-          <div className="card-base p-5">
-            <div className="divide-y" style={{ borderColor: 'var(--border-subtle)' }}>
-              {activities.map((activity, idx) => (
-                <ActivityItem key={idx} {...activity} />
-              ))}
-            </div>
-          </div>
-        </div>
 
-        {/* ── QUICK ACTIONS ────────────────────────────── */}
+        {/*QUICK ACTIONS*/}
         <div>
           <SectionHeader label="QUICK ACTIONS" title="Manage Your Account" />
           <div className="grid md:grid-cols-2 gap-4">
