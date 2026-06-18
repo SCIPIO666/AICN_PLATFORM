@@ -1,13 +1,13 @@
-
 import { useMe } from '@/hooks'
 import { Link } from 'react-router-dom'
 import {
   User, Mail, Phone, MapPin, ShieldCheck, CalendarDays,
   BadgeCheck, ChevronRight, AlertCircle, Settings,
+  BookOpen, Users, Award, Clock, CheckCircle, TrendingUp,
+  Activity, FileText, Star, Briefcase, Pencil, LogOut
 } from 'lucide-react'
 
 // helpers
-
 const fmtDate = (iso) =>
   new Date(iso).toLocaleDateString('en-KE', {
     day: 'numeric', month: 'long', year: 'numeric',
@@ -19,15 +19,19 @@ const ROLE_LABEL = {
   ADMIN:   { label: 'Admin',    color: 'var(--warning-text)', bg: 'var(--warning-bg)' },
 }
 
-
-function Avatar({ name, picture }) {
+// ─── Avatar ────────────────────────────────────────────────
+function Avatar({ name, picture, size = 72 }) {
   if (picture) {
     return (
       <img
         src={picture}
         alt={name}
-        className="rounded-full object-cover flex-shrink-0"
-        style={{ width: 72, height: 72 }}
+        className="rounded-full object-cover flex-shrink-0 border-2"
+        style={{ 
+          width: size, 
+          height: size,
+          borderColor: 'var(--color-neon-volt)'
+        }}
       />
     )
   }
@@ -35,11 +39,12 @@ function Avatar({ name, picture }) {
     ?.split(' ').slice(0, 2).map((w) => w[0]).join('').toUpperCase() ?? '?'
   return (
     <div
-      className="rounded-full flex items-center justify-center flex-shrink-0 text-xl font-bold"
+      className="rounded-full flex items-center justify-center flex-shrink-0 text-2xl font-bold border-2"
       style={{
-        width: 72, height: 72,
+        width: size, height: size,
         background: 'var(--color-forest-green)',
         color: 'var(--color-neon-volt)',
+        borderColor: 'var(--color-neon-volt)',
       }}
     >
       {initials}
@@ -47,23 +52,106 @@ function Avatar({ name, picture }) {
   )
 }
 
-function InfoRow({ icon: Icon, label, value }) {
+// ─── Section Header ────────────────────────────────────────
+function SectionHeader({ label, title }) {
   return (
-    <div className="flex items-start gap-3 py-3.5" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
-      <Icon size={15} className="mt-0.5 flex-shrink-0" style={{ color: 'var(--text-muted)' }} />
+    <div className="mb-6">
+      <span className="label-uppercase flex items-center gap-2">
+        {label}
+      </span>
+      <h2 className="text-2xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
+        {title}
+      </h2>
+      <div
+        className="mt-3 h-px w-12"
+        style={{ background: 'var(--color-neon-volt)' }}
+      />
+    </div>
+  )
+}
+
+// ─── Stat Card ─────────────────────────────────────────────
+function StatCard({ icon: Icon, value, label }) {
+  return (
+    <div className="card-base p-4 text-center">
+      <div className="flex items-center justify-center gap-2 mb-1">
+        <Icon size={16} style={{ color: 'var(--color-neon-volt)' }} />
+        <span className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
+          {value}
+        </span>
+      </div>
+      <p className="text-xs font-medium" style={{ color: 'var(--text-muted)' }}>
+        {label}
+      </p>
+    </div>
+  )
+}
+
+// ─── Info Field ─────────────────────────────────────────────
+function InfoField({ icon: Icon, label, value }) {
+  return (
+    <div className="card-base p-4">
+      <div className="flex items-center gap-2 mb-1.5">
+        <Icon size={14} style={{ color: 'var(--color-neon-volt)' }} />
+        <span className="text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
+          {label}
+        </span>
+      </div>
+      <p className="font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
+        {value ?? <span style={{ color: 'var(--text-muted)' }}>Not set</span>}
+      </p>
+    </div>
+  )
+}
+
+// ─── Quick Action Card ──────────────────────────────────────
+function QuickAction({ to, icon: Icon, title, description }) {
+  return (
+    <Link
+      to={to}
+      className="card-base p-5 flex items-center justify-between gap-4 transition-all group hover:card-neon"
+      style={{ textDecoration: 'none' }}
+    >
+      <div className="flex items-center gap-3">
+        <div
+          className="w-10 h-10 rounded flex items-center justify-center flex-shrink-0 transition-colors group-hover:bg-opacity-20"
+          style={{ background: 'var(--border-subtle)' }}
+        >
+          <Icon size={18} style={{ color: 'var(--text-secondary)' }} />
+        </div>
+        <div>
+          <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
+            {title}
+          </p>
+          <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>
+            {description}
+          </p>
+        </div>
+      </div>
+      <ChevronRight
+        size={16}
+        style={{ color: 'var(--text-muted)' }}
+        className="flex-shrink-0 transition-transform group-hover:translate-x-0.5"
+      />
+    </Link>
+  )
+}
+
+// ─── Activity Item ──────────────────────────────────────────
+function ActivityItem({ icon: Icon, text, time }) {
+  return (
+    <div className="flex items-start gap-3 py-3 border-b last:border-0" style={{ borderColor: 'var(--border-subtle)' }}>
+      <div className="w-2 h-2 rounded-full mt-2 flex-shrink-0" style={{ background: 'var(--color-neon-volt)' }} />
+      <Icon size={14} className="mt-1 flex-shrink-0" style={{ color: 'var(--text-muted)' }} />
       <div className="flex-1 min-w-0">
-        <p className="text-xs mb-0.5" style={{ color: 'var(--text-muted)' }}>{label}</p>
-        <p className="text-sm font-medium truncate" style={{ color: 'var(--text-primary)' }}>
-          {value ?? <span style={{ color: 'var(--text-muted)' }}>Not set</span>}
-        </p>
+        <p className="text-sm" style={{ color: 'var(--text-primary)' }}>{text}</p>
+        <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>{time}</p>
       </div>
     </div>
   )
 }
 
-
-
-// profile
+// ─── Main Component ─────────────────────────────────────────
 export default function Profile() {
   const { data: user, isLoading, error } = useMe()
 
@@ -93,147 +181,215 @@ export default function Profile() {
 
   const role = ROLE_LABEL[user.role] ?? ROLE_LABEL.LEARNER
   const isTrainer = user.role === 'TRAINER'
-  const isAdmin   = user.role === 'ADMIN'
+  const isAdmin = user.role === 'ADMIN'
+  const profileCompletion = 85 // Placeholder
+
+  // Stats based on role
+  const stats = isAdmin
+    ? [
+        { icon: Users, value: '1.2k', label: 'Users Managed' },
+        { icon: Briefcase, value: '47', label: 'Sessions Created' },
+        { icon: CheckCircle, value: '89', label: 'Approvals Processed' },
+      ]
+    : isTrainer
+    ? [
+        { icon: Clock, value: '24', label: 'Sessions Conducted' },
+        { icon: Users, value: '18', label: 'Learners Trained' },
+        { icon: Award, value: '12', label: 'Certificates Issued' },
+      ]
+    : [
+        { icon: BookOpen, value: '12', label: 'Courses' },
+        { icon: TrendingUp, value: '5', label: 'Active' },
+        { icon: Award, value: '7', label: 'Certs' },
+      ]
+
+  // Activity placeholders
+  const activities = [
+    { icon: Pencil, text: 'Profile updated', time: '2 hours ago' },
+    { icon: BookOpen, text: 'Enrolled in Leadership Training', time: 'Yesterday' },
+    { icon: Award, text: 'Certificate issued: JavaScript Mastery', time: '3 days ago' },
+    { icon: CheckCircle, text: 'Trainer application approved', time: '1 week ago' },
+  ]
 
   return (
     <div
-      className="min-h-screen px-4 py-10 md:px-8 lg:px-12"
+      className="min-h-screen px-4 py-8 md:px-8 lg:px-12"
       style={{ backgroundColor: 'var(--bg-page)' }}
     >
-      <div className="max-w-2xl mx-auto flex flex-col gap-6">
+      <div className="max-w-5xl mx-auto flex flex-col gap-6">
 
-        {/* ── page header ── */}
-        <div>
-          <span className="label-uppercase flex items-center gap-2 mb-3">
-            <User size={13} />
-            Account
-          </span>
-          <h1
-            className="text-3xl md:text-4xl font-bold tracking-tight"
-            style={{ color: 'var(--text-primary)' }}
-          >
-            My Profile
-          </h1>
-          <div className="mt-5 h-px w-12" style={{ backgroundColor: 'var(--color-neon-volt)' }} />
+        {/* ── HERO CARD ──────────────────────────────────── */}
+        <div className="card-neon p-6 md:p-8 relative overflow-hidden">
+          <div
+            className="absolute top-0 right-0 w-48 h-48 opacity-10 rounded-full"
+            style={{
+              background: 'var(--color-neon-volt)',
+              filter: 'blur(60px)',
+            }}
+          />
+          <div className="relative">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              {/* Left: Avatar + Identity */}
+              <div className="flex items-center gap-5">
+                <Avatar name={user.name} picture={user.profilePicture} size={80} />
+                <div>
+                  <h1
+                    className="text-2xl md:text-3xl font-bold tracking-tight"
+                    style={{ color: 'var(--text-primary)' }}
+                  >
+                    {user.name}
+                  </h1>
+                  <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                    <span
+                      className="px-3 py-0.5 rounded-full text-xs font-semibold"
+                      style={{ background: role.bg, color: role.color }}
+                    >
+                      {role.label}
+                    </span>
+                    {user.emailVerified ? (
+                      <span
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold"
+                        style={{ background: 'var(--success-bg)', color: 'var(--success-text)' }}
+                      >
+                        <BadgeCheck size={12} />
+                        Verified
+                      </span>
+                    ) : (
+                      <span
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold"
+                        style={{ background: 'var(--warning-bg)', color: 'var(--warning-text)' }}
+                      >
+                        <AlertCircle size={12} />
+                        Unverified
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>
+                    Joined {fmtDate(user.createdAt)}
+                  </p>
+                </div>
+              </div>
+
+              {/* Right: Actions */}
+              <div className="flex items-center gap-2">
+                <button
+                  className="px-4 py-2 text-sm font-semibold rounded transition-all btn-primary"
+                >
+                  Edit Profile
+                </button>
+                <button
+                  className="px-4 py-2 text-sm font-semibold rounded transition-all btn-secondary"
+                >
+                  <Settings size={16} />
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* ── identity card ── */}
-        <div className="card-base p-6">
-          <div className="flex items-center gap-4 mb-6">
-            <Avatar name={user.name} picture={user.profilePicture} />
-            <div className="flex-1 min-w-0">
-              <h2
-                className="text-xl font-bold leading-tight truncate"
-                style={{ color: 'var(--text-primary)' }}
-              >
-                {user.name}
-              </h2>
-              <p className="text-sm mt-0.5 truncate" style={{ color: 'var(--text-muted)' }}>
-                {user.email}
-              </p>
-              <div className="flex items-center gap-2 mt-2 flex-wrap">
-                {/* role badge */}
+        {/* ── STATS ROW ──────────────────────────────────── */}
+        <div className="grid grid-cols-3 gap-4">
+          {stats.map((stat, idx) => (
+            <StatCard key={idx} {...stat} />
+          ))}
+        </div>
+
+        {/* ── TWO-COLUMN LAYOUT ────────────────────────── */}
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* ── PROFILE INFORMATION ────────────────────── */}
+          <div>
+            <SectionHeader label="PROFILE DETAILS" title="Personal Information" />
+            <div className="space-y-3">
+              <InfoField icon={Mail} label="Email" value={user.email} />
+              <InfoField icon={Phone} label="Phone" value={user.phone} />
+              <InfoField icon={MapPin} label="County" value={user.county} />
+              <InfoField icon={CalendarDays} label="Member Since" value={fmtDate(user.createdAt)} />
+            </div>
+          </div>
+
+          {/* ── ACCOUNT STATUS ────────────────────────── */}
+          <div>
+            <SectionHeader label="ACCOUNT STATUS" title="Security & Compliance" />
+            <div className="card-base p-5 space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>Email</span>
+                <span className="text-sm font-semibold flex items-center gap-1" style={{ color: 'var(--success-text)' }}>
+                  <BadgeCheck size={14} /> Verified
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>Role</span>
                 <span
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold"
+                  className="px-3 py-0.5 rounded-full text-xs font-semibold"
                   style={{ background: role.bg, color: role.color }}
                 >
-                  <ShieldCheck size={10} />
                   {role.label}
                 </span>
-                {/* email verified */}
-                {user.emailVerified ? (
-                  <span
-                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold"
-                    style={{ background: 'var(--success-bg)', color: 'var(--success-text)' }}
-                  >
-                    <BadgeCheck size={10} />
-                    Verified
-                  </span>
-                ) : (
-                  <span
-                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold"
-                    style={{ background: 'var(--warning-bg)', color: 'var(--warning-text)' }}
-                  >
-                    <AlertCircle size={10} />
-                    Unverified
-                  </span>
-                )}
+              </div>
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>Profile Completion</span>
+                  <span className="text-sm font-bold" style={{ color: 'var(--color-neon-volt)' }}>{profileCompletion}%</span>
+                </div>
+                <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--border-color)' }}>
+                  <div
+                    className="h-full rounded-full transition-all duration-500"
+                    style={{
+                      width: `${profileCompletion}%`,
+                      background: 'var(--color-neon-volt)',
+                    }}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-
-          {/* detail rows */}
-          <div>
-            <InfoRow icon={Mail}        label="Email address"  value={user.email} />
-            <InfoRow icon={Phone}       label="Phone number"   value={user.phone} />
-            <InfoRow icon={MapPin}      label="County"         value={user.county} />
-            <InfoRow icon={CalendarDays} label="Member since"  value={fmtDate(user.createdAt)} />
           </div>
         </div>
 
-        {/* ── trainer profile card (trainer / admin only) ── */}
-        {(isTrainer || isAdmin) && (
-          <Link
-            to="/profile/trainer"
-            className="card-base p-5 flex items-center justify-between gap-4 transition-colors group"
-            style={{ textDecoration: 'none' }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--card-hover)')}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-card)')}
-          >
-            <div className="flex items-center gap-3">
-              <div
-                className="w-9 h-9 rounded flex items-center justify-center flex-shrink-0"
-                style={{ background: 'var(--success-bg)' }}
-              >
-                <BadgeCheck size={16} style={{ color: 'var(--success-text)' }} />
-              </div>
-              <div>
-                <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
-                  Trainer profile
-                </p>
-                <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>
-                  Bio, skills, availability and session history
-                </p>
-              </div>
-            </div>
-            <ChevronRight
-              size={16}
-              style={{ color: 'var(--text-muted)' }}
-              className="flex-shrink-0 transition-transform group-hover:translate-x-0.5"
-            />
-          </Link>
-        )}
-
-        {/* ── settings shortcut ── */}
-        <Link
-          to="/dashboard/settings"
-          className="card-base p-5 flex items-center justify-between gap-4 transition-colors group"
-          style={{ textDecoration: 'none' }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--card-hover)')}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-card)')}
-        >
-          <div className="flex items-center gap-3">
-            <div
-              className="w-9 h-9 rounded flex items-center justify-center flex-shrink-0"
-              style={{ background: 'var(--border-subtle)' }}
-            >
-              <Settings size={16} style={{ color: 'var(--text-secondary)' }} />
-            </div>
-            <div>
-              <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
-                Account settings
-              </p>
-              <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>
-                Change password and notification preferences
-              </p>
+        {/* ── ACTIVITY TIMELINE ────────────────────────── */}
+        <div>
+          <SectionHeader label="RECENT ACTIVITY" title="What's New" />
+          <div className="card-base p-5">
+            <div className="divide-y" style={{ borderColor: 'var(--border-subtle)' }}>
+              {activities.map((activity, idx) => (
+                <ActivityItem key={idx} {...activity} />
+              ))}
             </div>
           </div>
-          <ChevronRight
-            size={16}
-            style={{ color: 'var(--text-muted)' }}
-            className="flex-shrink-0 transition-transform group-hover:translate-x-0.5"
-          />
-        </Link>
+        </div>
+
+        {/* ── QUICK ACTIONS ────────────────────────────── */}
+        <div>
+          <SectionHeader label="QUICK ACTIONS" title="Manage Your Account" />
+          <div className="grid md:grid-cols-2 gap-4">
+            {/* Trainer Profile - only show for trainers & admins */}
+            {(isTrainer || isAdmin) && (
+              <QuickAction
+                to="/profile/trainer"
+                icon={Briefcase}
+                title="Trainer Profile"
+                description="Manage skills, bio & availability"
+              />
+            )}
+            <QuickAction
+              to="/dashboard/settings"
+              icon={Settings}
+              title="Account Settings"
+              description="Change password & notification preferences"
+            />
+            <QuickAction
+              to="/dashboard"
+              icon={Activity}
+              title="Dashboard"
+              description="View your learning progress"
+            />
+            <QuickAction
+              to="/logout"
+              icon={LogOut}
+              title="Sign Out"
+              description="Secure logout from your account"
+            />
+          </div>
+        </div>
 
       </div>
     </div>
