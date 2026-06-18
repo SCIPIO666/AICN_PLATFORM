@@ -7,10 +7,10 @@ function LoginPage() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    email: 'learner@aicn.africa',
-    password: 'Test123!@#',
+    email: 'akinyi@example.com',
+    password: 'learner123',
   });
-
+// learner123   akinyi@example.com
   const [localError, setLocalError] = useState('');
 
   const loginMutation = useLogin();
@@ -244,6 +244,7 @@ function LoginPage() {
             <div className="mt-2 pt-2 border-t"
                  style={{ borderColor: 'var(--border-subtle)' }}>
               <span className="opacity-75">Password: Test123!@#</span>
+              <p> learner123   akinyi@example.com</p>
             </div>
           </div>
         </div>

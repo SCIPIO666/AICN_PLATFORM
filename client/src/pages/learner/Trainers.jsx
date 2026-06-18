@@ -1,65 +1,60 @@
 import { useTrainers } from '@/hooks'
-import { Users, Wifi, MapPin, CheckCircle2, AlertCircle, Inbox } from 'lucide-react'
+import { Users, Wifi, MapPin, CheckCircle2, AlertCircle, Inbox, Star, Clock } from 'lucide-react'
 
-// ─── helpers ────────────────────────────────────────────────────────────────
+//helpers
 
 const AVAILABILITY_LABEL = {
-  weekdays:    { label: 'Weekdays',    },
-  weekends:    { label: 'Weekends',    },
-  'online-only': { label: 'Online only', },
+  weekdays:    { label: 'Weekdays', icon: Clock },
+  weekends:    { label: 'Weekends', icon: Clock },
+  'online-only': { label: 'Online only', icon: Wifi },
 }
 
 const fmtDate = (iso) =>
   new Date(iso).toLocaleDateString('en-KE', { month: 'long', year: 'numeric' })
 
-// ─── avatar ─────────────────────────────────────────────────────────────────
+//stock tech images 
 
-function Avatar({ name, picture, size = 48 }) {
-  if (picture) {
-    return (
-      <img
-        src={picture}
-        alt={name}
-        width={size}
-        height={size}
-        className="rounded-full object-cover flex-shrink-0"
-        style={{ width: size, height: size }}
-      />
-    )
-  }
-  const initials = name
-    .split(' ')
-    .slice(0, 2)
-    .map((w) => w[0])
-    .join('')
-    .toUpperCase()
+const TECH_IMAGES = [
+  'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&h=600&fit=crop',
+  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop',
+  'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=600&fit=crop',
+  'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=600&fit=crop',
+  'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&h=600&fit=crop',
+  'https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=800&h=600&fit=crop',
+  'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&h=600&fit=crop',
+  'https://images.unsplash.com/photo-1488590528505-98d2b853aba4?w=800&h=600&fit=crop',
+  'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&h=600&fit=crop',
+  'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&h=600&fit=crop',
+  'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=600&fit=crop',
+  'https://images.unsplash.com/photo-1535378917042-10a22c95931a?w=800&h=600&fit=crop',
+  'https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?w=800&h=600&fit=crop',
+  'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop',
+  'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&h=600&fit=crop',
+  'https://images.unsplash.com/photo-1581092335879-44f7a3b0b8d6?w=800&h=600&fit=crop',
+  'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&h=600&fit=crop',
+  'https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?w=800&h=600&fit=crop',
+  'https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=800&h=600&fit=crop',
+  'https://images.unsplash.com/photo-1512758017271-d7b84c2113f1?w=800&h=600&fit=crop',
+]
 
-  return (
-    <div
-      className="rounded-full flex items-center justify-center flex-shrink-0 font-bold text-sm"
-      style={{
-        width: size,
-        height: size,
-        background: 'var(--color-forest-green)',
-        color: 'var(--color-neon-volt)',
-        letterSpacing: '0.05em',
-      }}
-    >
-      {initials}
-    </div>
-  )
+//consistent image for trainer 
+
+const getTrainerImage = (trainerId, name) => {
+  const hash = (trainerId || name).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
+  return TECH_IMAGES[hash % TECH_IMAGES.length]
 }
 
-// ─── skill pill ─────────────────────────────────────────────────────────────
+//skill pill 
 
 function SkillPill({ label }) {
   return (
     <span
-      className="inline-block px-2 py-0.5 rounded text-xs font-medium"
+      className="inline-block px-2.5 py-1 rounded text-xs font-medium border"
       style={{
-        background: 'var(--border-subtle)',
-        color: 'var(--text-secondary)',
-        border: '1px solid var(--border-color)',
+        color: 'var(--color-neon-volt)',
+        borderColor: 'var(--color-neon-volt)',
+        background: 'rgba(250, 255, 105, 0.05)',
+        letterSpacing: '0.02em',
       }}
     >
       {label}
@@ -67,85 +62,137 @@ function SkillPill({ label }) {
   )
 }
 
-// ─── trainer card ────────────────────────────────────────────────────────────
+// card
 
 function TrainerCard({ trainer }) {
-  const avail = AVAILABILITY_LABEL[trainer.availability] ?? { label: trainer.availability }
-  const isOnline = trainer.availability === 'online-only'
+  const avail = AVAILABILITY_LABEL[trainer.availability] ?? { label: trainer.availability, icon: MapPin }
+  const AvailabilityIcon = avail.icon || MapPin
+  const imageUrl = getTrainerImage(trainer.id, trainer.name)
 
   return (
     <article
-      className="card-base p-5 flex flex-col gap-4 transition-colors"
-      style={{ cursor: 'default' }}
-      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--card-hover)')}
-      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-card)')}
+      className="group card-base overflow-hidden transition-all duration-300"
+      style={{ 
+        cursor: 'default',
+        background: 'var(--bg-card)',
+        borderColor: 'var(--border-color)',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = 'translateY(-4px)'
+        e.currentTarget.style.boxShadow = 'var(--shadow-elevated)'
+        e.currentTarget.style.borderColor = 'var(--color-neon-volt)'
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'translateY(0)'
+        e.currentTarget.style.boxShadow = 'none'
+        e.currentTarget.style.borderColor = 'var(--border-color)'
+      }}
     >
-      {/* top row — avatar + name + availability */}
-      <div className="flex items-start gap-3">
-        <Avatar name={trainer.name} picture={trainer.profilePicture} size={44} />
-
-        <div className="flex-1 min-w-0">
-          <p
-            className="font-semibold leading-snug truncate"
-            style={{ color: 'var(--text-primary)' }}
+      {/* Hero Image Section */}
+      <div 
+        className="relative w-full overflow-hidden"
+        style={{ 
+          height: '224px',
+          backgroundImage: `url(${imageUrl})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
+        {/* Gradient overlay for text readability */}
+        <div 
+          className="absolute inset-0"
+          style={{
+            background: 'linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0.8) 100%)',
+          }}
+        />
+        
+        {/* Name overlay on image */}
+        <div className="absolute bottom-4 left-4 right-4">
+          <h3 
+            className="text-xl font-bold leading-tight"
+            style={{ color: 'var(--pure-white)' }}
           >
             {trainer.name}
-          </p>
-          <span
-            className="inline-flex items-center gap-1 mt-0.5 text-xs font-medium"
-            style={{ color: isOnline ? 'var(--info-text)' : 'var(--text-muted)' }}
-          >
-            {isOnline ? <Wifi size={11} /> : <MapPin size={11} />}
-            {avail.label}
-          </span>
+          </h3>
+          
+          <div className="flex items-center gap-2 mt-1">
+            <AvailabilityIcon size={13} className="text-neon-volt" />
+            <span 
+              className="text-xs font-medium"
+              style={{ color: 'rgba(255,255,255,0.85)' }}
+            >
+              {avail.label}
+            </span>
+          </div>
         </div>
 
-        {/* sessions badge */}
-        <div className="flex flex-col items-end flex-shrink-0">
-          <span
-            className="text-xl font-bold leading-none"
-            style={{ color: 'var(--color-neon-volt)', filter: 'brightness(0.85)' }}
+        {/* session badge*/}
+        <div 
+          className="absolute top-3 right-3 flex items-center gap-2 px-3 py-1.5 rounded-full backdrop-blur-sm"
+          style={{
+            background: 'rgba(0, 0, 0, 0.6)',
+            border: '1px solid var(--color-neon-volt)',
+            boxShadow: '0 0 20px rgba(250, 255, 105, 0.1)',
+          }}
+        >
+          <Star size={14} className="text-neon-volt" />
+          <span 
+            className="text-sm font-bold"
+            style={{ color: 'var(--color-neon-volt)' }}
           >
             {trainer.totalCompletedSessions}
           </span>
-          <span className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>
+          <span 
+            className="text-[10px] font-medium"
+            style={{ color: 'rgba(255,255,255,0.6)' }}
+          >
             {trainer.totalCompletedSessions === 1 ? 'session' : 'sessions'}
           </span>
         </div>
       </div>
 
-      {/* bio */}
-      <p
-        className="text-sm leading-relaxed line-clamp-3"
-        style={{ color: 'var(--text-secondary)' }}
-      >
-        {trainer.bio}
-      </p>
+      {/* Content Section */}
+      <div className="p-5 flex flex-col gap-4">
+        {/* Bio */}
+        <p
+          className="text-sm leading-relaxed line-clamp-3"
+          style={{ color: 'var(--text-secondary)' }}
+        >
+          {trainer.bio}
+        </p>
 
-      {/* skills */}
-      {trainer.skills?.length > 0 && (
-        <div className="flex flex-wrap gap-1.5">
-          {trainer.skills.map((s) => (
-            <SkillPill key={s} label={s} />
-          ))}
+        {/* Skills */}
+        {trainer.skills?.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {trainer.skills.map((s) => (
+              <SkillPill key={s} label={s} />
+            ))}
+          </div>
+        )}
+
+        {/* Footer - joined date */}
+        <div
+          className="pt-3 mt-auto border-t text-xs flex items-center justify-between"
+          style={{
+            borderColor: 'var(--border-subtle)',
+            color: 'var(--text-muted)',
+          }}
+        >
+          <span>Trainer since {fmtDate(trainer.joinedAt)}</span>
+          <span 
+            className="flex items-center gap-1 text-[10px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            style={{ color: 'var(--color-neon-volt)' }}
+          >
+            <CheckCircle2 size={12} />
+            Verified
+          </span>
         </div>
-      )}
-
-      {/* footer — joined */}
-      <div
-        className="pt-3 mt-auto border-t text-xs"
-        style={{
-          borderColor: 'var(--border-subtle)',
-          color: 'var(--text-muted)',
-        }}
-      >
-        Trainer since {fmtDate(trainer.joinedAt)}
       </div>
     </article>
   )
 }
 
-// ─── states ─────────────────────────────────────────────────────────────────
+// states 
 
 function EmptyState() {
   return (
@@ -177,30 +224,38 @@ function ErrorState({ onRetry }) {
 
 function SkeletonCard() {
   return (
-    <div className="card-base p-5 flex flex-col gap-4 animate-pulse">
-      <div className="flex items-start gap-3">
-        <div className="rounded-full flex-shrink-0" style={{ width: 44, height: 44, background: 'var(--border-color)' }} />
-        <div className="flex-1 flex flex-col gap-2 pt-1">
-          <div className="h-3 rounded w-2/3" style={{ background: 'var(--border-color)' }} />
-          <div className="h-2.5 rounded w-1/3" style={{ background: 'var(--border-subtle)' }} />
+    <div className="card-base overflow-hidden animate-pulse">
+      {/* Image skeleton */}
+      <div 
+        className="w-full"
+        style={{ 
+          height: '224px',
+          background: 'var(--border-color)',
+        }}
+      />
+      
+      {/* Content skeleton */}
+      <div className="p-5 flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
+          <div className="h-3 rounded w-full" style={{ background: 'var(--border-subtle)' }} />
+          <div className="h-3 rounded w-5/6" style={{ background: 'var(--border-subtle)' }} />
+          <div className="h-3 rounded w-4/6" style={{ background: 'var(--border-subtle)' }} />
         </div>
-      </div>
-      <div className="flex flex-col gap-2">
-        <div className="h-2.5 rounded w-full" style={{ background: 'var(--border-subtle)' }} />
-        <div className="h-2.5 rounded w-5/6" style={{ background: 'var(--border-subtle)' }} />
-        <div className="h-2.5 rounded w-4/6" style={{ background: 'var(--border-subtle)' }} />
-      </div>
-      <div className="flex gap-1.5">
-        {[60, 80, 50].map((w) => (
-          <div key={w} className="h-5 rounded" style={{ width: w, background: 'var(--border-color)' }} />
-        ))}
+        <div className="flex gap-1.5">
+          {[60, 80, 50].map((w) => (
+            <div key={w} className="h-6 rounded" style={{ width: w, background: 'var(--border-color)' }} />
+          ))}
+        </div>
+        <div className="pt-3 border-t flex justify-between" style={{ borderColor: 'var(--border-subtle)' }}>
+          <div className="h-2.5 rounded w-1/3" style={{ background: 'var(--border-subtle)' }} />
+          <div className="h-2.5 rounded w-1/4" style={{ background: 'var(--border-subtle)' }} />
+        </div>
       </div>
     </div>
   )
 }
 
-// ─── page ────────────────────────────────────────────────────────────────────
-
+// page 
 export default function Trainers() {
   const { data, isLoading, error, refetch } = useTrainers()
   const trainers = data ?? []
@@ -210,10 +265,10 @@ export default function Trainers() {
       className="min-h-screen px-4 py-10 md:px-8 lg:px-12"
       style={{ backgroundColor: 'var(--bg-page)' }}
     >
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto">
 
-        {/* ── header ── */}
-        <div className="mb-8">
+        {/* header */}
+        <div className="mb-10">
           <span className="label-uppercase flex items-center gap-2 mb-3">
             <Users size={13} />
             Our team
@@ -236,7 +291,7 @@ export default function Trainers() {
               </p>
             </div>
 
-            {/* live count — only when data is loaded */}
+            {/* counted only when data is loaded */}
             {!isLoading && !error && trainers.length > 0 && (
               <div className="flex items-center gap-2 flex-shrink-0">
                 <CheckCircle2 size={14} style={{ color: 'var(--section-label)' }} />
@@ -253,9 +308,10 @@ export default function Trainers() {
           />
         </div>
 
-        {/* ── grid ── */}
+
+       {/* grid */}
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
           </div>
         ) : error ? (
@@ -263,7 +319,7 @@ export default function Trainers() {
         ) : trainers.length === 0 ? (
           <EmptyState />
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {trainers.map((trainer) => (
               <TrainerCard key={trainer.id} trainer={trainer} />
             ))}
