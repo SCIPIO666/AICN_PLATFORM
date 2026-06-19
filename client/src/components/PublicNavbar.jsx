@@ -1,19 +1,17 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom';
+import { GraduationCap } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import ThemeToggle from '../components/ui/ThemeToggle';
 
-
 export default function PublicNavbar() {
   const { isAuthenticated } = useAuth();
-
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const { user, logout } = useAuth();
   
   const handleLogout = async () => {
     await logout();
     navigate('/login');
   };
-
 
   return (
     <nav className="
@@ -40,24 +38,26 @@ export default function PublicNavbar() {
             w-10
             h-10
             rounded-card
-            bg-forest-green
             flex
             items-center
             justify-center
-            text-xl
           "
+          style={{ background: 'var(--color-forest-green)' }}
         >
-          🎓
+          <GraduationCap 
+            size={22} 
+            style={{ color: 'var(--color-neon-volt)' }} 
+          />
         </div>
 
         <span
           className="
             text-feature-title
             font-bold
-            text-primary
           "
+          style={{ color: 'var(--text-primary)' }}
         >
-          AICN 
+          AICN
         </span>
       </Link>
 
@@ -68,9 +68,11 @@ export default function PublicNavbar() {
           className="
             text-caption
             font-medium
-            text-secondary
-            hover:text-primary
+            transition-colors
           "
+          style={{ color: 'var(--text-secondary)' }}
+          onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
+          onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
         >
           Home
         </Link>
@@ -80,9 +82,11 @@ export default function PublicNavbar() {
           className="
             text-caption
             font-medium
-            text-secondary
-            hover:text-primary
+            transition-colors
           "
+          style={{ color: 'var(--text-secondary)' }}
+          onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
+          onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
         >
           Verify Certificate
         </Link>
@@ -107,7 +111,7 @@ export default function PublicNavbar() {
 
             <Link to="/trainers">
               <button className="btn-outline">
-               Trainers
+                Trainers
               </button>
             </Link>
 
@@ -119,20 +123,19 @@ export default function PublicNavbar() {
           </>
         ) : (
           <>
-          <Link to="/dashboard">
-            <button className="btn-neon">
-              Dashboard
+            <Link to="/dashboard">
+              <button className="btn-neon">
+                Dashboard
+              </button>
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="btn-outline"
+              style={{ padding: '8px 16px' }}
+            >
+              Logout
             </button>
-          </Link>
-          <button
-          onClick={handleLogout}
-          className="btn-outline"
-          style={{ padding: '8px 16px' }}
-        >
-          Logout
-        </button>
-        
-        </>
+          </>
         )}
       </div>
     </nav>

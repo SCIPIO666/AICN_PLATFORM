@@ -10,7 +10,6 @@ import {
   EyeOff,
   CheckCircle2,
   Loader2,
-  Sparkles,
   ChevronRight,
   MapPin,
   Mail,
@@ -37,11 +36,6 @@ const staggerContainer = {
     opacity: 1,
     transition: { staggerChildren: 0.1 }
   }
-};
-
-const slideRight = {
-  hidden: { opacity: 0, x: -40 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.6 } }
 };
 
 function SignupPage() {
@@ -108,7 +102,6 @@ function SignupPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Mark all fields as touched
     const allTouched = Object.keys(formData).reduce((acc, key) => {
       acc[key] = true;
       return acc;
@@ -129,7 +122,6 @@ function SignupPage() {
     }
   };
 
-  // Password strength calculation
   const getPasswordStrength = (password) => {
     if (!password) return { score: 0, label: '', color: '' };
     
@@ -183,100 +175,37 @@ function SignupPage() {
          style={{ background: 'var(--bg-page)' }}>
       <div className="max-w-6xl w-full grid lg:grid-cols-[1.1fr_0.9fr] gap-8 lg:gap-12">
         
-        {/* ─── LEFT PANEL (Marketing) ─── */}
+        {/* ─── LEFT PANEL (Image) ─── */}
         <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={slideRight}
-          className="relative overflow-hidden rounded-2xl p-8 lg:p-12 hidden lg:flex flex-col justify-center"
-          style={{
-            background: 'linear-gradient(135deg, var(--bg-page), var(--bg-card))',
-            border: '1px solid var(--border-color)'
-          }}
+          initial={{ opacity: 0, x: -40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+          className="relative rounded-2xl overflow-hidden hidden lg:block min-h-[600px]"
         >
-          {/* Neon Glow */}
-          <div
-            className="absolute top-0 right-0 w-72 h-72 rounded-full"
-            style={{
-              background: 'var(--color-neon-volt)',
-              filter: 'blur(140px)',
-              opacity: 0.08
-            }}
+          <img
+            src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=1200&q=80"
+            alt="Students learning together"
+            className="w-full h-full object-cover"
           />
-
-          <div className="relative z-10">
-            {/* Logo/Brand */}
-            <div className="flex items-center gap-3 mb-8">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+          
+          {/* Overlay Content */}
+          <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
+            <div className="flex items-center gap-3 mb-4">
               <div
-                className="w-10 h-10 rounded-lg flex items-center justify-center"
+                className="w-12 h-12 rounded-lg flex items-center justify-center"
                 style={{ background: 'var(--color-forest-green)' }}
               >
-                <Sparkles size={20} style={{ color: 'var(--color-neon-volt)' }} />
+                <GraduationCap size={24} style={{ color: 'var(--color-neon-volt)' }} />
               </div>
-              <span className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>
-                AICN
-              </span>
+              <span className="text-2xl font-bold">AICN</span>
             </div>
-
-            {/* Headline */}
-            <h1 className="text-4xl lg:text-5xl font-bold leading-tight" style={{ color: 'var(--text-primary)' }}>
-              Build Skills.
-              <br />
-              <span style={{ color: 'var(--color-neon-volt)' }}>Earn Certifications.</span>
-              <br />
-              Grow Your Career.
-            </h1>
-
-            <p className="mt-4 text-body-large" style={{ color: 'var(--text-secondary)' }}>
-              Join learners across Kenya and Africa building practical digital skills
-              through expert-led training sessions.
+            <h2 className="text-3xl font-bold mb-2">
+              Start Your Learning Journey Today
+            </h2>
+            <p className="text-white/80 max-w-md">
+              Join thousands of learners building practical skills for the future.
             </p>
-
-            {/* Benefits Grid */}
-            <motion.div
-              variants={staggerContainer}
-              initial="hidden"
-              animate="visible"
-              className="grid grid-cols-2 gap-4 mt-8"
-            >
-              {benefits.map((benefit, idx) => (
-                <motion.div
-                  key={benefit.title}
-                  variants={fadeUp}
-                  className="card-base p-4"
-                >
-                  <benefit.icon size={20} style={{ color: 'var(--color-neon-volt)' }} />
-                  <h4 className="text-sm font-semibold mt-2" style={{ color: 'var(--text-primary)' }}>
-                    {benefit.title}
-                  </h4>
-                  <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                    {benefit.description}
-                  </p>
-                </motion.div>
-              ))}
-            </motion.div>
-
-            {/* Trust Stats */}
-            <div className="flex items-center gap-6 mt-8 pt-6 border-t" style={{ borderColor: 'var(--border-subtle)' }}>
-              <div>
-                <p className="text-2xl font-bold" style={{ color: 'var(--color-neon-volt)' }}>
-                  15,000+
-                </p>
-                <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Learners</p>
-              </div>
-              <div>
-                <p className="text-2xl font-bold" style={{ color: 'var(--color-neon-volt)' }}>
-                  200+
-                </p>
-                <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Courses</p>
-              </div>
-              <div>
-                <p className="text-2xl font-bold" style={{ color: 'var(--color-neon-volt)' }}>
-                  95%
-                </p>
-                <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Completion Rate</p>
-              </div>
-            </div>
           </div>
         </motion.div>
 
@@ -289,6 +218,14 @@ function SignupPage() {
         >
           {/* Header */}
           <div className="text-center mb-6">
+            <div className="flex justify-center mb-4 lg:hidden">
+              <div
+                className="w-12 h-12 rounded-lg flex items-center justify-center"
+                style={{ background: 'var(--color-forest-green)' }}
+              >
+                <GraduationCap size={24} style={{ color: 'var(--color-neon-volt)' }} />
+              </div>
+            </div>
             <h2 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
               Create Account
             </h2>
