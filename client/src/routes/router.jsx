@@ -15,6 +15,8 @@ import Unauthorized from '../pages/shared/Unauthorized';
 import LandingPage from '../pages/shared/LandingPage';
 import VerifyCertificate from '@/pages/shared/VerifyCertificate';
 import NotFound from '@/pages/shared/NotFound.jsx';
+import PublicSessions from '../pages/shared/PublicSessions'
+import PublicTrainers from '../pages/shared/PublicTrainers'
 
 // Routes configuration
 import { learnerRoutes, trainerRoutes, adminRoutes, sharedRoutes } from './index';
@@ -48,6 +50,14 @@ export const router = createBrowserRouter([
   {
     path: '/unauthorized',
     element: <Unauthorized />,
+  },
+    {
+    path: '/trainers',
+    element: <PublicTrainers />,
+  },
+    {
+    path: '/sessions',
+    element: <PublicSessions />,
   },
   
   // Protected routes - WITH LAYOUT
