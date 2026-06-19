@@ -70,7 +70,7 @@ export default function CTA() {
                   borderColor: 'var(--color-neon-volt)',
                   color: 'var(--color-neon-volt)'
                 }}
-                to='/trainer-signup'
+                to='/login'
               >
                 Become A Trainer
                 <ArrowRight size={20} />

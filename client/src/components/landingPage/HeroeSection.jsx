@@ -88,9 +88,22 @@ export default function HeroeSection() {
               </Link>
             </div>
           </Reveal>
+        </div>
 
-          {/* Floating Metrics - Desktop */}
-          <div className="absolute left-12 top-12 hidden lg:block">
+        {/* RIGHT */}
+        <div className="relative overflow-hidden min-h-[400px] lg:min-h-0">
+          <motion.img
+            initial={{ scale: 1.1 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 1.2 }}
+            src={heroImage}
+            alt="Professional learning environment"
+            className="h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+          
+          {/* Floating Metrics - Now positioned on the image side */}
+          <div className="absolute left-6 bottom-6 lg:left-8 lg:bottom-8 flex flex-col gap-3">
             {floatingMetrics.map((metric, idx) => (
               <motion.div
                 key={metric.label}
@@ -108,15 +121,16 @@ export default function HeroeSection() {
                     delay: idx * 0.5
                   }
                 }}
-                className="card-base p-3 mb-3 flex items-center gap-3"
+                className="card-base p-3 flex items-center gap-3 backdrop-blur-sm"
                 style={{ 
-                  background: 'var(--bg-card)',
-                  backdropFilter: 'blur(12px)'
+                  background: 'rgba(0, 0, 0, 0.7)',
+                  backdropFilter: 'blur(12px)',
+                  borderColor: 'var(--color-neon-volt)'
                 }}
               >
                 <metric.icon size={18} style={{ color: 'var(--color-neon-volt)' }} />
                 <div>
-                  <span className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>
+                  <span className="text-sm font-bold text-white">
                     {metric.value}
                   </span>
                   <span className="text-xs ml-1" style={{ color: 'var(--text-muted)' }}>
@@ -126,19 +140,6 @@ export default function HeroeSection() {
               </motion.div>
             ))}
           </div>
-        </div>
-
-        {/* RIGHT */}
-        <div className="relative overflow-hidden min-h-[400px] lg:min-h-0">
-          <motion.img
-            initial={{ scale: 1.1 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 1.2 }}
-            src={heroImage}
-            alt="Professional learning environment"
-            className="h-full w-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
         </div>
       </div>
     </section>
