@@ -16,7 +16,7 @@ import LandingPage from '../pages/shared/LandingPage';
 import VerifyCertificate from '@/pages/shared/VerifyCertificate';
 import NotFound from '@/pages/shared/NotFound.jsx';
 import PublicSessions from '../pages/shared/PublicSessions'
-import PublicTrainers from '../pages/shared/PublicTrainers'
+import PublicTrainers from '@/pages/shared/PublicTrainers';
 
 // Routes configuration
 import { learnerRoutes, trainerRoutes, adminRoutes, sharedRoutes } from './index';
@@ -26,6 +26,18 @@ export const router = createBrowserRouter([
   {
     path: '/',
     element: <LandingPage />,
+  },
+    {
+    path: '/unauthorized',
+    element: <Unauthorized />,
+  },
+    {
+    path: '/trainers',
+    element: <PublicTrainers />,
+  },
+    {
+    path: '/sessions',
+    element: <PublicSessions />,
   },
   {
     path: '/verify-certificate',
@@ -47,18 +59,7 @@ export const router = createBrowserRouter([
     path: '/reset-password',
     element: <PublicRoute><ResetPassword /></PublicRoute>,
   },
-  {
-    path: '/unauthorized',
-    element: <Unauthorized />,
-  },
-    {
-    path: '/trainers',
-    element: <PublicTrainers />,
-  },
-    {
-    path: '/sessions',
-    element: <PublicSessions />,
-  },
+
   
   // Protected routes - WITH LAYOUT
   {

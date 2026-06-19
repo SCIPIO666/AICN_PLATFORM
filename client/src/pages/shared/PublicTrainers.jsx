@@ -11,55 +11,14 @@ import {
   ChevronRight,
   Sparkles,
   UserCheck,
+  AlertCircle,
   Briefcase
 } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo } from 'react';
 import Reveal from '@/components/Reveal';
-import { fadeUp, staggerContainer, fadeLeft, fadeRight } from '@/utils/motion';
-
-// Sample data - would come from API
-const trainersData = [
-  {
-    id: "cmqgqkxu2000gjsy884u7x46e",
-    name: "Brian Otieno",
-    profilePicture: null,
-    skills: ["Cyber Hygiene", "Basics in Cyber Security"],
-    bio: "Cybersecurity professional, CompTIA Security+ certified. 5 years in network security.",
-    availability: "online-only",
-    totalCompletedSessions: 1,
-    joinedAt: "2026-06-16T14:27:36.650Z"
-  },
-  {
-    id: "cmqgqkxty000fjsy8be7ahh8m",
-    name: "Fatuma Njeri",
-    profilePicture: null,
-    skills: ["Digital Marketing", "Content Creation & Monetization", "Video Editing"],
-    bio: "Digital marketer and content creator. Runs a successful YouTube channel on East African tech trends.",
-    availability: "weekends",
-    totalCompletedSessions: 1,
-    joinedAt: "2026-06-16T14:27:36.646Z"
-  },
-  {
-    id: "cmqgqkxtv000ejsy8d5h5xw6m",
-    name: "Amara Osei",
-    profilePicture: null,
-    skills: ["Data Analysis", "Soft Skills"],
-    bio: "Data analyst with 4 years experience in fintech and NGO reporting. Passionate about making data accessible to young people.",
-    availability: "weekends",
-    totalCompletedSessions: 1,
-    joinedAt: "2026-06-16T14:27:36.643Z"
-  },
-  {
-    id: "cmqgqkxsl000djsy8zn9puaba",
-    name: "Trainer User",
-    profilePicture: null,
-    skills: ["Digital Marketing", "Data Analysis", "Soft Skills", "Cyber Hygiene"],
-    bio: "All-rounder trainer used for development and QA. Covers multiple skill areas and has both online and physical sessions.",
-    availability: "weekdays",
-    totalCompletedSessions: 1,
-    joinedAt: "2026-06-16T14:27:36.597Z"
-  }
-];
+import { fadeUp, staggerContainer } from '@/utils/motion';
+import Spinner from '@/components/ui/Spinner';
+import { useTrainers, useSessions } from '@/hooks';
 
 const availabilityLabels = {
   'online-only': { label: 'Online Trainer', icon: Monitor, color: 'var(--info-text)' },
@@ -80,15 +39,15 @@ function TrainerAvatar({ name, picture, size = 80 }) {
   }
   
   const initials = name
-    .split(' ')
+    ?.split(' ')
     .slice(0, 2)
     .map(word => word[0])
     .join('')
-    .toUpperCase();
+    .toUpperCase() || '?';
 
   return (
     <div
-      className="rounded-full flex items-center justify-center font-bold text-2xl"
+      className="rounded-full flex items-center justify-center font-bold text-2xl flex-shrink-0"
       style={{
         width: size,
         height: size,
@@ -101,9 +60,14 @@ function TrainerAvatar({ name, picture, size = 80 }) {
   );
 }
 
-function TrainerCard({ trainer }) {
+function TrainerCard({ trainer, sessions }) {
   const availability = availabilityLabels[trainer.availability] || availabilityLabels['online-only'];
   const AvailabilityIcon = availability.icon;
+  
+  // Calculate derived stats from sessions
+  const trainerSessions = sessions?.filter(s => s.trainerId === trainer.id) || [];
+  const upcomingSessions = trainerSessions.filter(s => s.status === 'SCHEDULED');
+  const totalLearners = trainerSessions.reduce((acc, s) => acc + (s._count?.enrolments || 0), 0);
 
   return (
     <motion.div
@@ -134,18 +98,22 @@ function TrainerCard({ trainer }) {
             <div className="flex items-center gap-3 mt-2">
               <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
                 <Users size={12} className="inline mr-1" />
-                {trainer.totalCompletedSessions} Sessions
+                {upcomingSessions.length} Upcoming
+              </span>
+              <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                <UserCheck size={12} className="inline mr-1" />
+                {totalLearners} Learners
               </span>
             </div>
           </div>
         </div>
 
         <p className="text-sm mt-3 line-clamp-2" style={{ color: 'var(--text-secondary)' }}>
-          {trainer.bio}
+          {trainer.bio || 'Experienced trainer passionate about sharing knowledge.'}
         </p>
 
         <div className="flex flex-wrap gap-2 mt-4">
-          {trainer.skills.slice(0, 3).map((skill) => (
+          {trainer.skills?.slice(0, 3).map((skill) => (
             <span
               key={skill}
               className="px-2 py-1 rounded text-xs font-medium"
@@ -157,7 +125,7 @@ function TrainerCard({ trainer }) {
               {skill}
             </span>
           ))}
-          {trainer.skills.length > 3 && (
+          {trainer.skills?.length > 3 && (
             <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
               +{trainer.skills.length - 3} more
             </span>
@@ -177,12 +145,78 @@ function TrainerCard({ trainer }) {
   );
 }
 
-export default function Trainers() {
-  const stats = {
-    total: trainersData.length,
-    skills: [...new Set(trainersData.flatMap(t => t.skills))].length,
-    sessions: trainersData.reduce((acc, t) => acc + t.totalCompletedSessions, 0)
-  };
+export default function PublicTrainers() {
+  const { data: trainersData, error: trainersError, isError: isTrainersError, isLoading: isTrainersLoading } = useTrainers();
+  const { data: sessionsData } = useSessions();
+
+  const trainers = useMemo(() => {
+    if (!trainersData) return [];
+    if (Array.isArray(trainersData)) return trainersData;
+    if (trainersData.data && Array.isArray(trainersData.data)) return trainersData.data;
+    if (trainersData.items && Array.isArray(trainersData.items)) return trainersData.items;
+    if (trainersData.results && Array.isArray(trainersData.results)) return trainersData.results;
+    return [];
+  }, [trainersData]);
+
+  const sessions = useMemo(() => {
+    if (!sessionsData) return [];
+    if (Array.isArray(sessionsData)) return sessionsData;
+    if (sessionsData.data && Array.isArray(sessionsData.data)) return sessionsData.data;
+    return [];
+  }, [sessionsData]);
+
+  const stats = useMemo(() => {
+    const allSkills = trainers.flatMap(t => t.skills || []);
+    const totalSessions = trainers.reduce((acc, t) => acc + (t.totalCompletedSessions || 0), 0);
+    const totalUpcoming = sessions.filter(s => s.status === 'SCHEDULED').length;
+    
+    return {
+      total: trainers.length,
+      skills: new Set(allSkills).size,
+      sessions: totalSessions,
+      upcoming: totalUpcoming
+    };
+  }, [trainers, sessions]);
+
+  if (isTrainersLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-page)' }}>
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (isTrainersError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'var(--bg-page)' }}>
+        <div className="text-center max-w-md">
+          <AlertCircle size={48} className="mx-auto mb-4" style={{ color: 'var(--error-text)' }} />
+          <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
+            Failed to load trainers
+          </h3>
+          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+            {trainersError?.message || 'Please try refreshing the page or check back later.'}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (trainers.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'var(--bg-page)' }}>
+        <div className="text-center max-w-md">
+          <Users size={48} className="mx-auto mb-4" style={{ color: 'var(--text-muted)' }} />
+          <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
+            No trainers available
+          </h3>
+          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+            Check back soon for new expert trainers.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen px-4 py-8 md:px-8 lg:px-12" style={{ background: 'var(--bg-page)' }}>
@@ -200,8 +234,8 @@ export default function Trainers() {
           <div className="relative">
             <Reveal variant={fadeUp}>
               <p className="label-uppercase flex items-center gap-2">
-                <Users size={16} />
-                Meet Our Experts
+                <Sparkles size={16} />
+                Meet Our Expert Trainers
               </p>
             </Reveal>
             
@@ -223,6 +257,7 @@ export default function Trainers() {
               {[
                 { icon: Users, value: stats.total, label: 'Expert Trainers' },
                 { icon: Award, value: stats.skills, label: 'Skills Covered' },
+                { icon: Calendar, value: stats.upcoming, label: 'Upcoming Sessions' },
                 { icon: UserCheck, value: stats.sessions, label: 'Sessions Completed' }
               ].map((stat, idx) => (
                 <Reveal key={stat.label} variant={fadeUp} delay={0.3 + idx * 0.1}>
@@ -250,9 +285,9 @@ export default function Trainers() {
           animate="visible"
           className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          {trainersData.map((trainer) => (
+          {trainers.map((trainer) => (
             <Reveal key={trainer.id} variant={fadeUp}>
-              <TrainerCard trainer={trainer} />
+              <TrainerCard trainer={trainer} sessions={sessions} />
             </Reveal>
           ))}
         </motion.div>
