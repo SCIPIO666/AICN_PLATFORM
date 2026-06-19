@@ -17,12 +17,6 @@ const {
 } = require('../../shared/validators/trainerValidation');
 
 // ============ PUBLIC ROUTES (No authentication) ============
-// None - all trainer routes require authentication
-
-// ============ PROTECTED ROUTES (Authentication required) ============
-trainersRouter.use(verifyToken); // Apply to all routes below
-
-// GET / - Now requires authentication (but not necessarily admin)
 trainersRouter.get(
   '/', 
   validate(trainerFiltersSchema, 'query'),
@@ -35,6 +29,9 @@ trainersRouter.post(
   validate(createTrainerProfileSchema, 'body'),
   trainersController.applyForTrainer
 );
+
+// ============ PROTECTED ROUTES (Authentication required) ============
+trainersRouter.use(verifyToken); // Apply to all routes below
 
 // Get my trainer profile
 trainersRouter.get('/me', trainersController.getMyTrainerProfile);
