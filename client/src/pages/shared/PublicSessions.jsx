@@ -7,126 +7,17 @@ import {
   Clock, 
   Users,
   ChevronRight,
-  Search,
-  Filter,
   Sparkles,
   Award,
-  UserCheck
+  AlertCircle,
+  UserCheck 
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Reveal from '@/components/Reveal';
 import { fadeUp, staggerContainer } from '@/utils/motion';
+import Spinner from '@/components/ui/Spinner';
+import { useSessions } from '@/hooks';
 
-// Sample data - would come from API
-const sessionsData = [
-  {
-    id: "cmqgqkxuc000ijsy8d7ath6o8",
-    title: "Cyber Hygiene Bootcamp — Nairobi",
-    skillArea: "Cyber Hygiene",
-    description: "Learn how to protect yourself and your devices online. Covers passwords, phishing, safe browsing, and social media safety.",
-    date: "2026-05-26T06:00:00.000Z",
-    durationMins: 120,
-    locationType: "PHYSICAL",
-    venue: "Nairobi Innovation Hub, Westlands",
-    county: "Nairobi",
-    capacity: 30,
-    status: "COMPLETED",
-    trainer: {
-      id: "cmqgqkxrw0004jsy8n3wzu3nz",
-      name: "Brian Otieno"
-    },
-    _count: { enrolments: 4 }
-  },
-  {
-    id: "cmqgqkxum000kjsy82d6mmqbz",
-    title: "Content Creation & Monetization — Online",
-    skillArea: "Content Creation & Monetization",
-    description: "How to create content on YouTube, TikTok, and Instagram — and actually earn from it.",
-    date: "2026-06-09T11:00:00.000Z",
-    durationMins: 180,
-    locationType: "ONLINE",
-    venue: "https://meet.google.com/aicn-content-001",
-    county: null,
-    capacity: 50,
-    status: "COMPLETED",
-    trainer: {
-      id: "cmqgqkxrt0003jsy8h87d84z3",
-      name: "Fatuma Njeri"
-    },
-    _count: { enrolments: 5 }
-  },
-  {
-    id: "cmqgqkxvm000tjsy83aqt1w2q",
-    title: "Soft Skills Workshop — Narok",
-    skillArea: "Soft Skills",
-    description: "Communication, teamwork, time management and professional etiquette.",
-    date: "2026-06-13T06:00:00.000Z",
-    durationMins: 120,
-    locationType: "PHYSICAL",
-    venue: "Narok County Library",
-    county: "Narok",
-    capacity: 30,
-    status: "CANCELLED",
-    trainer: null,
-    _count: { enrolments: 0 }
-  },
-  {
-    id: "cmqgqkxvi000sjsy8ka05kt5w",
-    title: "Data Analysis Masterclass — Online",
-    skillArea: "Data Analysis",
-    description: "Advanced data storytelling, dashboard design, and presenting insights to non-technical stakeholders.",
-    date: "2026-06-21T08:00:00.000Z",
-    durationMins: 150,
-    locationType: "ONLINE",
-    venue: "https://meet.google.com/aicn-dev-001",
-    county: null,
-    capacity: 50,
-    status: "SCHEDULED",
-    trainer: {
-      id: "cmqgqkxrm0001jsy8sjjiho26",
-      name: "Trainer User"
-    },
-    _count: { enrolments: 1 }
-  },
-  {
-    id: "cmqgqkxut000mjsy8l1hsb7rc",
-    title: "Digital Marketing Fundamentals — Nairobi",
-    skillArea: "Digital Marketing",
-    description: "SEO, social media marketing, email campaigns, and how to run paid ads on a budget.",
-    date: "2026-06-23T06:00:00.000Z",
-    durationMins: 120,
-    locationType: "PHYSICAL",
-    venue: "iHub Nairobi, Ngong Road",
-    county: "Nairobi",
-    capacity: 30,
-    status: "SCHEDULED",
-    trainer: {
-      id: "cmqgqkxrt0003jsy8h87d84z3",
-      name: "Fatuma Njeri"
-    },
-    _count: { enrolments: 4 }
-  },
-  {
-    id: "cmqgqkxv6000ojsy8klx53q57",
-    title: "Cyber Security Basics — Online",
-    skillArea: "Basics in Cyber Security",
-    description: "Understanding threats, firewalls, VPNs, and how to build a career in cybersecurity.",
-    date: "2026-06-30T11:00:00.000Z",
-    durationMins: 180,
-    locationType: "ONLINE",
-    venue: "https://meet.google.com/aicn-cyber-002",
-    county: null,
-    capacity: 60,
-    status: "SCHEDULED",
-    trainer: {
-      id: "cmqgqkxrw0004jsy8n3wzu3nz",
-      name: "Brian Otieno"
-    },
-    _count: { enrolments: 4 }
-  }
-];
-
-// Skill area to image mapping
 const skillImages = {
   "Data Analysis": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800",
   "Cyber Hygiene": "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800",
@@ -134,21 +25,14 @@ const skillImages = {
   "Graphic Design": "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800",
   "Soft Skills": "https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=800",
   "Basics in Cyber Security": "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800",
-  "Content Creation & Monetization": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800"
+  "Content Creation & Monetization": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800",
+  "Introduction to Online Jobs": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800"
 };
 
 function SessionCard({ session }) {
   const isOnline = session.locationType === 'ONLINE';
   const isScheduled = session.status === 'SCHEDULED';
-  const isCompleted = session.status === 'COMPLETED';
-  const isCancelled = session.status === 'CANCELLED';
   
-  const statusColors = {
-    SCHEDULED: 'var(--success-text)',
-    COMPLETED: 'var(--text-muted)',
-    CANCELLED: 'var(--error-text)'
-  };
-
   const date = new Date(session.date);
   const formattedDate = date.toLocaleDateString('en-KE', {
     day: 'numeric',
@@ -196,17 +80,15 @@ function SessionCard({ session }) {
             }}
           >
             {isOnline ? <Monitor size={12} /> : <MapPin size={12} />}
-            {isOnline ? 'Online' : session.county}
+            {isOnline ? 'Online' : session.county || 'Physical'}
           </span>
         </div>
       </div>
 
       <div className="p-6">
-        <div className="flex items-start justify-between gap-2">
-          <h3 className="text-lg font-bold line-clamp-1" style={{ color: 'var(--text-primary)' }}>
-            {session.title}
-          </h3>
-        </div>
+        <h3 className="text-lg font-bold line-clamp-2 min-h-[3.5rem]" style={{ color: 'var(--text-primary)' }}>
+          {session.title}
+        </h3>
 
         <div className="flex flex-wrap gap-3 mt-3 text-sm" style={{ color: 'var(--text-muted)' }}>
           <span className="flex items-center gap-1">
@@ -219,12 +101,12 @@ function SessionCard({ session }) {
           </span>
           <span className="flex items-center gap-1">
             <Users size={14} />
-            {session._count.enrolments}/{session.capacity}
+            {session._count?.enrolments || 0}/{session.capacity}
           </span>
         </div>
 
         {session.trainer && (
-          <p className="text-sm mt-2" style={{ color: 'var(--text-secondary)' }}>
+          <p className="text-sm mt-2 truncate" style={{ color: 'var(--text-secondary)' }}>
             By {session.trainer.name}
           </p>
         )}
@@ -242,19 +124,76 @@ function SessionCard({ session }) {
   );
 }
 
-export default function Sessions() {
-  const [filter, setFilter] = useState('all');
-  const [search, setSearch] = useState('');
+export default function PublicSessions() {
+  const { data, error, isError, isLoading } = useSessions();
 
-  const upcomingSessions = sessionsData.filter(s => s.status === 'SCHEDULED');
-  const featuredSession = upcomingSessions[0];
+  // Handle different data structures
+  const sessions = useMemo(() => {
+    // If data is an array, use it directly
+    if (Array.isArray(data)) {
+      return data;
+    }
+    // If data has a data property (pagination wrapper)
+    if (data?.data && Array.isArray(data.data)) {
+      return data.data;
+    }
+    return [];
+  }, [data]);
 
-  const stats = {
-    total: sessionsData.length,
-    upcoming: upcomingSessions.length,
-    skills: [...new Set(sessionsData.map(s => s.skillArea))].length,
-    trainers: [...new Set(sessionsData.filter(s => s.trainer).map(s => s.trainer.name))].length
-  };
+  const upcomingSessions = useMemo(() => {
+    return sessions.filter(s => s.status === 'SCHEDULED');
+  }, [sessions]);
+
+  const featuredSession = upcomingSessions[0] || sessions[0];
+
+  const stats = useMemo(() => {
+    return {
+      total: sessions.length,
+      upcoming: upcomingSessions.length,
+      skills: new Set(sessions.map(s => s.skillArea).filter(Boolean)).size,
+      trainers: new Set(sessions.filter(s => s.trainer).map(s => s.trainer?.name).filter(Boolean)).size
+    };
+  }, [sessions, upcomingSessions]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-page)' }}>
+        <Spinner />
+      </div>
+    );
+  }
+  
+  if (isError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'var(--bg-page)' }}>
+        <div className="text-center max-w-md">
+          <AlertCircle size={48} className="mx-auto mb-4" style={{ color: 'var(--error-text)' }} />
+          <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
+            Failed to load sessions
+          </h3>
+          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+            {error?.message || 'Please try refreshing the page or check back later.'}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (sessions.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'var(--bg-page)' }}>
+        <div className="text-center max-w-md">
+          <Sparkles size={48} className="mx-auto mb-4" style={{ color: 'var(--text-muted)' }} />
+          <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
+            No sessions available
+          </h3>
+          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+            Check back soon for upcoming training sessions.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen px-4 py-8 md:px-8 lg:px-12" style={{ background: 'var(--bg-page)' }}>
@@ -329,20 +268,20 @@ export default function Sessions() {
                   }}
                 />
                 <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                  <div>
+                  <div className="flex-1">
                     <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--color-neon-volt)' }}>
                       Featured Session
                     </span>
                     <h2 className="text-2xl font-bold mt-1" style={{ color: 'var(--text-primary)' }}>
                       {featuredSession.title}
                     </h2>
-                    <p className="text-sm mt-1 max-w-lg" style={{ color: 'var(--text-secondary)' }}>
+                    <p className="text-sm mt-1 max-w-lg line-clamp-2" style={{ color: 'var(--text-secondary)' }}>
                       {featuredSession.description}
                     </p>
                     <div className="flex flex-wrap gap-4 mt-3 text-sm" style={{ color: 'var(--text-muted)' }}>
                       <span className="flex items-center gap-1">
                         {featuredSession.locationType === 'ONLINE' ? <Monitor size={14} /> : <MapPin size={14} />}
-                        {featuredSession.locationType === 'ONLINE' ? 'Online' : featuredSession.county}
+                        {featuredSession.locationType === 'ONLINE' ? 'Online' : featuredSession.county || 'Physical'}
                       </span>
                       <span className="flex items-center gap-1">
                         <Calendar size={14} />
@@ -358,13 +297,13 @@ export default function Sessions() {
                       </span>
                       <span className="flex items-center gap-1">
                         <Users size={14} />
-                        {featuredSession._count.enrolments} enrolled
+                        {featuredSession._count?.enrolments || 0} enrolled
                       </span>
                     </div>
                   </div>
                   <Link
                     to={`/sessions/${featuredSession.id}`}
-                    className="btn-neon px-6 py-2.5 font-semibold whitespace-nowrap"
+                    className="btn-neon px-6 py-2.5 font-semibold whitespace-nowrap flex-shrink-0"
                   >
                     Reserve Seat
                   </Link>
@@ -381,7 +320,7 @@ export default function Sessions() {
           animate="visible"
           className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          {sessionsData.map((session) => (
+          {sessions.map((session) => (
             <Reveal key={session.id} variant={fadeUp}>
               <SessionCard session={session} />
             </Reveal>
