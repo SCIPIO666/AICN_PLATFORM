@@ -241,17 +241,44 @@
     color: transparent;
   }
   /* landing */
+/* Add to your App.css */
+
+/* Subtle background glow - dark mode only */
 .dark {
   background-image:
-    linear-gradient(rgba(250, 255, 105, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(250, 255, 105, 0.03) 1px, transparent 1px);
+    linear-gradient(rgba(250, 255, 105, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(250, 255, 105, 0.02) 1px, transparent 1px);
   background-size: 40px 40px;
 }
+
+.dark::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(
+    circle at top right,
+    rgba(250, 255, 105, 0.05),
+    transparent 40%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+  main {
+    position: relative;
+    z-index: 1;
+  }
+
+
+  .card-base:hover {
+    border-color: var(--color-neon-volt);
+  }
   /* Card base */
   .card-base {
     background-color: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-card);
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
   }
 
   .card-neon {

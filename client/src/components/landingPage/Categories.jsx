@@ -1,4 +1,6 @@
 import { motion } from 'framer-motion';
+import Reveal from '@/components/Reveal';
+import { fadeUp, staggerContainer } from '@/utils/motion';
 
 const categories = [
   'Leadership', 'ICT', 'Finance',
@@ -8,39 +10,41 @@ const categories = [
 
 export default function Categories() {
   return (
-    <motion.section
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.6 }}
-      className="space-y-8"
-    >
+    <section className="space-y-8">
       <div className="text-center">
-        <p className="label-uppercase">Categories</p>
-        <h2 className="text-feature-heading font-bold" style={{ color: 'var(--text-primary)' }}>
-          Explore Learning Paths
-        </h2>
+        <Reveal variant={fadeUp}>
+          <p className="label-uppercase">Categories</p>
+        </Reveal>
+        <Reveal variant={fadeUp} delay={0.1}>
+          <h2 className="text-feature-heading font-bold" style={{ color: 'var(--text-primary)' }}>
+            Explore Learning Paths
+          </h2>
+        </Reveal>
       </div>
 
-      <div className="flex flex-wrap justify-center gap-3">
-        {categories.map((category, idx) => (
-          <motion.div
-            key={category}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: idx * 0.05 }}
-            whileHover={{
-              scale: 1.05,
-              boxShadow: '0 0 20px rgba(250,255,105,0.15)',
-              borderColor: 'var(--color-neon-volt)'
-            }}
-            className="card-base px-6 py-3 cursor-pointer transition-all"
-          >
-            <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
-              {category}
-            </span>
-          </motion.div>
+      <motion.div 
+        variants={staggerContainer}
+        initial="hidden"
+        animate="visible"
+        className="flex flex-wrap justify-center gap-3"
+      >
+        {categories.map((category) => (
+          <Reveal key={category} variant={fadeUp}>
+            <motion.div
+              whileHover={{
+                scale: 1.05,
+                boxShadow: '0 0 30px rgba(250,255,105,0.15)',
+                borderColor: 'var(--color-neon-volt)'
+              }}
+              className="card-base px-6 py-3 cursor-pointer transition-all"
+            >
+              <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
+                {category}
+              </span>
+            </motion.div>
+          </Reveal>
         ))}
-      </div>
-    </motion.section>
+      </motion.div>
+    </section>
   );
 }
