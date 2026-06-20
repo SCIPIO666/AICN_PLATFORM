@@ -51,8 +51,8 @@ function SkillPill({ label }) {
     <span
       className="inline-block px-2.5 py-1 rounded text-xs font-medium border"
       style={{
-        color: 'var(--color-neon-volt)',
-        borderColor: 'var(--color-neon-volt)',
+        color: 'var--color-forest-green)',
+        borderColor: 'var--color-forest-green)',
         background: 'rgba(250, 255, 105, 0.05)',
         letterSpacing: '0.02em',
       }}
@@ -80,7 +80,7 @@ function TrainerCard({ trainer }) {
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'translateY(-4px)'
         e.currentTarget.style.boxShadow = 'var(--shadow-elevated)'
-        e.currentTarget.style.borderColor = 'var(--color-neon-volt)'
+        e.currentTarget.style.borderColor = 'var--color-forest-green)'
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = 'translateY(0)'
@@ -131,14 +131,14 @@ function TrainerCard({ trainer }) {
           className="absolute top-3 right-3 flex items-center gap-2 px-3 py-1.5 rounded-full backdrop-blur-sm"
           style={{
             background: 'rgba(0, 0, 0, 0.6)',
-            border: '1px solid var(--color-neon-volt)',
+            border: '1px solid var--color-forest-green)',
             boxShadow: '0 0 20px rgba(250, 255, 105, 0.1)',
           }}
         >
           <Star size={14} className="text-neon-volt" />
           <span 
             className="text-sm font-bold"
-            style={{ color: 'var(--color-neon-volt)' }}
+            style={{ color: 'var--color-forest-green)' }}
           >
             {trainer.totalCompletedSessions}
           </span>
@@ -181,7 +181,7 @@ function TrainerCard({ trainer }) {
           <span>Trainer since {fmtDate(trainer.joinedAt)}</span>
           <span 
             className="flex items-center gap-1 text-[10px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-            style={{ color: 'var(--color-neon-volt)' }}
+            style={{ color: 'var--color-forest-green)' }}
           >
             <CheckCircle2 size={12} />
             Verified
@@ -304,7 +304,7 @@ export default function Trainers() {
 
           <div
             className="mt-5 h-px w-12"
-            style={{ backgroundColor: 'var(--color-neon-volt)' }}
+            style={{ backgroundColor: 'var--color-forest-green)' }}
           />
         </div>
 

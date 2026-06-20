@@ -34,7 +34,7 @@ export default function TrustedOrganizations() {
             variants={fadeUp}
             whileHover={{ 
               scale: 1.05,
-              color: 'var(--color-neon-volt)',
+              color: 'var--color-forest-green)',
               transition: { duration: 0.2 }
             }}
             className="flex items-center gap-2 text-2xl md:text-3xl font-bold opacity-40 hover:opacity-100 transition-all cursor-default"

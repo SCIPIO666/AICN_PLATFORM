@@ -64,12 +64,12 @@ export default function TrainersSpotlight() {
                 src={trainer.image}
                 alt={trainer.name}
                 className="w-28 h-28 rounded-full mx-auto mb-4 object-cover border-2"
-                style={{ borderColor: 'var(--color-neon-volt)' }}
+                style={{ borderColor: 'var--color-forest-green)' }}
               />
               <h3 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>
                 {trainer.name}
               </h3>
-              <p className="text-sm font-semibold" style={{ color: 'var(--color-neon-volt)' }}>
+              <p className="text-sm font-semibold" style={{ color: 'var--color-forest-green)' }}>
                 {trainer.role}
               </p>
               <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
@@ -77,7 +77,7 @@ export default function TrainersSpotlight() {
               </p>
               <div className="mt-3 flex items-center justify-center gap-4">
                 <div className="flex items-center gap-1">
-                  <Star size={14} fill="var(--color-neon-volt)" style={{ color: 'var(--color-neon-volt)' }} />
+                  <Star size={14} fill="var--color-forest-green)" style={{ color: 'var--color-forest-green)' }} />
                   <span className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>
                     {trainer.rating}
                   </span>

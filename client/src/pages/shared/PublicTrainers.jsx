@@ -51,7 +51,7 @@ function TrainerAvatar({ name, picture, size = 80 }) {
       style={{
         width: size,
         height: size,
-        background: 'linear-gradient(135deg, var(--color-forest-green), var(--color-neon-volt))',
+        background: 'linear-gradient(135deg, var(--color-forest-green), var--color-forest-green))',
         color: 'var(--color-pure-black)'
       }}
     >
@@ -119,7 +119,7 @@ function TrainerCard({ trainer, sessions }) {
               className="px-2 py-1 rounded text-xs font-medium"
               style={{
                 background: 'rgba(250,255,105,0.08)',
-                color: 'var(--color-neon-volt)'
+                color: 'var--color-forest-green)'
               }}
             >
               {skill}
@@ -135,7 +135,7 @@ function TrainerCard({ trainer, sessions }) {
         <Link
           to={`/trainers/${trainer.id}`}
           className="inline-flex items-center gap-1 mt-4 text-sm font-semibold transition-all group-hover:gap-2"
-          style={{ color: 'var(--color-neon-volt)' }}
+          style={{ color: 'var--color-forest-green)' }}
         >
           View Profile
           <ChevronRight size={16} />
@@ -226,7 +226,7 @@ export default function PublicTrainers() {
           <div
             className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-10"
             style={{
-              background: 'var(--color-neon-volt)',
+              background: 'var--color-forest-green)',
               filter: 'blur(60px)'
             }}
           />
@@ -242,7 +242,7 @@ export default function PublicTrainers() {
             <Reveal variant={fadeUp} delay={0.1}>
               <h1 className="text-4xl md:text-5xl font-bold tracking-tight mt-2" style={{ color: 'var(--text-primary)' }}>
                 Learn from practitioners,<br />
-                <span style={{ color: 'var(--color-neon-volt)' }}>industry leaders and experts</span>
+                <span style={{ color: 'var--color-forest-green)' }}>industry leaders and experts</span>
               </h1>
             </Reveal>
 
@@ -262,7 +262,7 @@ export default function PublicTrainers() {
               ].map((stat, idx) => (
                 <Reveal key={stat.label} variant={fadeUp} delay={0.3 + idx * 0.1}>
                   <div className="flex items-center gap-3">
-                    <stat.icon size={24} style={{ color: 'var(--color-neon-volt)' }} />
+                    <stat.icon size={24} style={{ color: 'var--color-forest-green)' }} />
                     <div>
                       <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
                         {stat.value}

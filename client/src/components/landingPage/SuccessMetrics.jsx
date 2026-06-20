@@ -61,7 +61,7 @@ export default function SuccessMetrics() {
       <div 
         className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full opacity-10"
         style={{ 
-          background: 'var(--color-neon-volt)',
+          background: 'var--color-forest-green)',
           filter: 'blur(80px)'
         }}
       />
@@ -69,7 +69,7 @@ export default function SuccessMetrics() {
       <div className="relative z-10">
         <div className="text-center">
           <Reveal variant={fadeUp}>
-            <p className="label-uppercase" style={{ color: 'var(--color-neon-volt)' }}>
+            <p className="label-uppercase" style={{ color: 'var--color-forest-green)' }}>
               Our Impact
             </p>
           </Reveal>
@@ -95,7 +95,7 @@ export default function SuccessMetrics() {
                 }}
                 className="relative"
               >
-                <div className="text-display-hero font-bold" style={{ color: 'var(--color-neon-volt)' }}>
+                <div className="text-display-hero font-bold" style={{ color: 'var--color-forest-green)' }}>
                   <AnimatedCounter 
                     end={metric.value} 
                     suffix={metric.suffix || ''} 
@@ -108,7 +108,7 @@ export default function SuccessMetrics() {
                 {/* Decorative underline */}
                 <div 
                   className="w-12 h-0.5 mx-auto mt-3"
-                  style={{ background: 'var(--color-neon-volt)' }}
+                  style={{ background: 'var--color-forest-green)' }}
                 />
               </motion.div>
             </Reveal>

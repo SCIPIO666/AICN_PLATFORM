@@ -72,7 +72,7 @@ export default function Features() {
               <div className="p-6">
                 <feature.icon 
                   size={28} 
-                  style={{ color: 'var(--color-neon-volt)' }}
+                  style={{ color: 'var--color-forest-green)' }}
                   className="mb-3"
                 />
                 <h3 className="text-feature-title font-semibold" style={{ color: 'var(--text-primary)' }}>
@@ -84,7 +84,7 @@ export default function Features() {
                 <motion.div
                   whileHover={{ x: 4 }}
                   className="mt-4 inline-flex items-center gap-1 text-sm font-semibold"
-                  style={{ color: 'var(--color-neon-volt)' }}
+                  style={{ color: 'var--color-forest-green)' }}
                 >
                   Learn More
                   <ArrowRight size={14} />

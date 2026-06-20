@@ -25,7 +25,7 @@ export default function CTA() {
 
       <div className="relative z-10">
         <Reveal variant={fadeUp}>
-          <p className="label-uppercase" style={{ color: 'var(--color-neon-volt)' }}>
+          <p className="label-uppercase" style={{ color: 'var--color-forest-green)' }}>
             Ready To Advance?
           </p>
         </Reveal>
@@ -67,8 +67,8 @@ export default function CTA() {
               <Link
                 className="px-8 py-3.5 text-lg font-semibold rounded border inline-flex items-center gap-2"
                 style={{
-                  borderColor: 'var(--color-neon-volt)',
-                  color: 'var(--color-neon-volt)'
+                  borderColor: 'var--color-forest-green)',
+                  color: 'var--color-forest-green)'
                 }}
                 to='/login'
               >

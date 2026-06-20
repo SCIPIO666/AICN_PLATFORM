@@ -196,7 +196,7 @@ function SignupPage() {
                 className="w-12 h-12 rounded-lg flex items-center justify-center"
                 style={{ background: 'var(--color-forest-green)' }}
               >
-                <GraduationCap size={24} style={{ color: 'var(--color-neon-volt)' }} />
+                <GraduationCap size={24} style={{ color: 'var--color-forest-green)' }} />
               </div>
               <span className="text-2xl font-bold">AICN</span>
             </div>
@@ -223,7 +223,7 @@ function SignupPage() {
                 className="w-12 h-12 rounded-lg flex items-center justify-center"
                 style={{ background: 'var(--color-forest-green)' }}
               >
-                <GraduationCap size={24} style={{ color: 'var(--color-neon-volt)' }} />
+                <GraduationCap size={24} style={{ color: 'var--color-forest-green)' }} />
               </div>
             </div>
             <h2 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
@@ -231,7 +231,7 @@ function SignupPage() {
             </h2>
             <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>
               Already have an account?{' '}
-              <Link to="/login" className="font-semibold hover:underline" style={{ color: 'var(--color-neon-volt)' }}>
+              <Link to="/login" className="font-semibold hover:underline" style={{ color: 'var--color-forest-green)' }}>
                 Sign In
               </Link>
             </p>
@@ -288,7 +288,7 @@ function SignupPage() {
                       borderColor: errors.name && touched.name ? 'var(--error-border)' : 'var(--border-subtle)',
                       color: 'var(--text-primary)'
                     }}
-                    onFocus={(e) => e.target.style.borderColor = 'var(--color-neon-volt)'}
+                    onFocus={(e) => e.target.style.borderColor = 'var--color-forest-green)'}
                     onBlur={(e) => {
                       handleBlur(e);
                       if (!errors.name) e.target.style.borderColor = 'var(--border-subtle)';
@@ -320,7 +320,7 @@ function SignupPage() {
                       borderColor: errors.county && touched.county ? 'var(--error-border)' : 'var(--border-subtle)',
                       color: 'var(--text-primary)'
                     }}
-                    onFocus={(e) => e.target.style.borderColor = 'var(--color-neon-volt)'}
+                    onFocus={(e) => e.target.style.borderColor = 'var--color-forest-green)'}
                     onBlur={(e) => {
                       handleBlur(e);
                       if (!errors.county) e.target.style.borderColor = 'var(--border-subtle)';
@@ -356,7 +356,7 @@ function SignupPage() {
                     borderColor: errors.email && touched.email ? 'var(--error-border)' : 'var(--border-subtle)',
                     color: 'var(--text-primary)'
                   }}
-                  onFocus={(e) => e.target.style.borderColor = 'var(--color-neon-volt)'}
+                  onFocus={(e) => e.target.style.borderColor = 'var--color-forest-green)'}
                   onBlur={(e) => {
                     handleBlur(e);
                     if (!errors.email) e.target.style.borderColor = 'var(--border-subtle)';
@@ -389,7 +389,7 @@ function SignupPage() {
                     borderColor: errors.phone && touched.phone ? 'var(--error-border)' : 'var(--border-subtle)',
                     color: 'var(--text-primary)'
                   }}
-                  onFocus={(e) => e.target.style.borderColor = 'var(--color-neon-volt)'}
+                  onFocus={(e) => e.target.style.borderColor = 'var--color-forest-green)'}
                   onBlur={(e) => {
                     handleBlur(e);
                     if (!errors.phone) e.target.style.borderColor = 'var(--border-subtle)';
@@ -423,7 +423,7 @@ function SignupPage() {
                     borderColor: errors.password && touched.password ? 'var(--error-border)' : 'var(--border-subtle)',
                     color: 'var(--text-primary)'
                   }}
-                  onFocus={(e) => e.target.style.borderColor = 'var(--color-neon-volt)'}
+                  onFocus={(e) => e.target.style.borderColor = 'var--color-forest-green)'}
                   onBlur={(e) => {
                     handleBlur(e);
                     if (!errors.password) e.target.style.borderColor = 'var(--border-subtle)';
@@ -488,7 +488,7 @@ function SignupPage() {
                     borderColor: errors.confirmPassword && touched.confirmPassword ? 'var(--error-border)' : 'var(--border-subtle)',
                     color: 'var(--text-primary)'
                   }}
-                  onFocus={(e) => e.target.style.borderColor = 'var(--color-neon-volt)'}
+                  onFocus={(e) => e.target.style.borderColor = 'var--color-forest-green)'}
                   onBlur={(e) => {
                     handleBlur(e);
                     if (!errors.confirmPassword) e.target.style.borderColor = 'var(--border-subtle)';
@@ -537,7 +537,7 @@ function SignupPage() {
                 'Expert-Led Training'
               ].map((text) => (
                 <span key={text} className="text-xs flex items-center gap-1.5" style={{ color: 'var(--text-muted)' }}>
-                  <CheckCircle2 size={12} style={{ color: 'var(--color-neon-volt)' }} />
+                  <CheckCircle2 size={12} style={{ color: 'var--color-forest-green)' }} />
                   {text}
                 </span>
               ))}
@@ -546,11 +546,11 @@ function SignupPage() {
             {/* Footer */}
             <p className="text-xs text-center" style={{ color: 'var(--text-muted)' }}>
               By creating an account, you agree to our{' '}
-              <Link to="/terms" className="hover:underline" style={{ color: 'var(--color-neon-volt)' }}>
+              <Link to="/terms" className="hover:underline" style={{ color: 'var--color-forest-green)' }}>
                 Terms of Service
               </Link>
               {' '}and{' '}
-              <Link to="/privacy" className="hover:underline" style={{ color: 'var(--color-neon-volt)' }}>
+              <Link to="/privacy" className="hover:underline" style={{ color: 'var--color-forest-green)' }}>
                 Privacy Policy
               </Link>
             </p>

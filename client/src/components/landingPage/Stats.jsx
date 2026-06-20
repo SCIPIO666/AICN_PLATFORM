@@ -50,7 +50,7 @@ function AnimatedStat({ icon: Icon, value, label, suffix = '' }) {
       <Icon
         size={28}
         className="mx-auto mb-2"
-        style={{ color: 'var(--color-neon-volt)' }}
+        style={{ color: 'var--color-forest-green)' }}
       />
       <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
         {count.toLocaleString()}{suffix}

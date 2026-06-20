@@ -105,26 +105,42 @@
   --error-text: #991b1b;
   --error-border: #fca5a5;
   
-  /* Neon volt dark mode version (for light mode) */
-  --neon-volt-dark: #5a5f00;
-  --neon-volt-hover: #e5e700;
-
-  --neon-volt: #faff69;
-  
-
-  --bg-nav: rgba(255, 255, 255, 0.9);
-  --card-hover: rgba(0, 0, 0, 0.04);
-  --border-color: rgba(0, 0, 0, 0.1);
-
-  /*  light mode */
-  --neon-volt-dark: #5a5f00;
-  --neon-volt-hover: #e5e700;
-  
   /* Toast colors */
   --info-bg: #dbeafe;
   --info-text: #1e40af;
   --info-border: #93c5fd;
 
+  /* For text  */
+  --neon-text: #166534;
+  --neon-text-hover: #14572f;
+  
+  /* For backgrounds and borders */
+  --neon-bg: #faff69;
+  --neon-border: #faff69;
+  
+  /* For buttons */
+  --neon-button-bg: #faff69;
+  --neon-button-text: #000000;
+  
+  /* For accents and highlights */
+  --neon-accent: #5a5f00;
+  --neon-accent-hover: #e5e700;
+  
+  /* For active states - use forest green with neon border */
+  --neon-active-bg: rgba(22, 101, 52, 0.08);
+  --neon-active-border: #166534;
+  
+  /* For icons  */
+  --neon-icon: #166534;
+
+  --color-neon-volt: #faff69;
+  --neon-volt: #faff69;
+  --neon-volt-dark: #5a5f00;
+  --neon-volt-hover: #e5e700;
+
+  --bg-nav: rgba(255, 255, 255, 0.9);
+  --card-hover: rgba(0, 0, 0, 0.04);
+  --border-color: rgba(0, 0, 0, 0.1);
 }
 
 .dark {
@@ -151,42 +167,56 @@
   --input-bg:  #141414;
   --select-bg: #141414;
 
-
-  /* Neon volt */
-  --neon-volt: #faff69;
-  --neon-volt-dark: #faff69;
-
-    /* dark mode */
+  /* Toast */
   --info-bg: #1e3a8a20;
   --info-text: #60a5fa;
   --info-border: #1e3a8a60;
+
+  /* Success */
+  --success-bg: #14532d;
+  --success-text: #86efac;
+  --success-border: #166534;
+
+  /* Error */
+  --error-bg: #450a0a;
+  --error-text: #fca5a5;
+  --error-border: #991b1b;
+
+  /* Warning */
+  --warning-bg: #431407;
+  --warning-text: #fde68a;
+  --warning-border: #92400e;
 
   --bg-nav: rgba(10, 10, 10, 0.9);
   --card-hover: rgba(255, 255, 255, 0.04);
   --border-color: rgba(255, 255, 255, 0.1);
 
+  /*NEON VOLT DARK MODE*/
+  /* For text */
+  --neon-text: #faff69;
+  --neon-text-hover: #f4f692;
+  
+  /* For backgrounds */
+  --neon-bg: #faff69;
+  --neon-border: #faff69;
+  
+  /* For buttons  */
+  --neon-button-bg: #faff69;
+  --neon-button-text: #000000;
+  
+  /* For accents */
+  --neon-accent: #faff69;
+  --neon-accent-hover: #f4f692;
+  
+  /* For active states  */
+  --neon-active-bg: rgba(250, 255, 105, 0.08);
+  --neon-active-border: #faff69;
+  
+  /* For icons  */
+  --neon-icon: #faff69;
 
-/* ---toast---- */
-
-  /* Success  */
-  --success-bg:     #14532d;
-  --success-text:   #86efac;
-  --success-border: #166534;
-
-  /* Error */
-  --error-bg:     #450a0a;
-  --error-text:   #fca5a5;
-  --error-border: #991b1b;
-
-  /* Warning  */
-  --warning-bg:     #431407;
-  --warning-text:   #fde68a;
-  --warning-border: #92400e;
-
-  /* Info — was too transparent at #1e3a8a20 */
-  --info-bg:     #0f1f4a;
-  --info-text:   #93c5fd;
-  --info-border: #1e3a8a;
+  --neon-volt: #faff69;
+  --neon-volt-dark: #faff69;
 }
 
 /* base */
@@ -207,9 +237,9 @@
     transition: background-color 0.2s ease, color 0.2s ease;
   }
 
-  /* Focus ring — neon volt always */
+  /* Focus ring */
   *:focus-visible {
-    outline: 2px solid #faff69;
+    outline: 2px solid var(--neon-border);
     outline-offset: 2px;
   }
 
@@ -217,7 +247,7 @@
   .dark ::-webkit-scrollbar { width: 6px; height: 6px; }
   .dark ::-webkit-scrollbar-track { background: #0a0a0a; }
   .dark ::-webkit-scrollbar-thumb { background: #414141; border-radius: 3px; }
-  .dark ::-webkit-scrollbar-thumb:hover { background: #faff69; }
+  .dark ::-webkit-scrollbar-thumb:hover { background: var(--neon-text); }
 }
 
 /* reusable layer utilities */
@@ -235,44 +265,38 @@
   }
 
   .gradient-text {
-    background: linear-gradient(135deg, #166534, #faff69);
+    background: linear-gradient(135deg, var(--neon-text), var(--neon-bg));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
-  /* landing */
-/* Add to your App.css */
 
-/* Subtle background glow - dark mode only */
-.dark {
-  background-image:
-    linear-gradient(rgba(250, 255, 105, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(250, 255, 105, 0.02) 1px, transparent 1px);
-  background-size: 40px 40px;
-}
+  /* landing - subtle background glow dark mode  */
+  .dark {
+    background-image:
+      linear-gradient(rgba(250, 255, 105, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(250, 255, 105, 0.02) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
 
-.dark::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(
-    circle at top right,
-    rgba(250, 255, 105, 0.05),
-    transparent 40%
-  );
-  pointer-events: none;
-  z-index: 0;
-}
+  .dark::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(
+      circle at top right,
+      rgba(250, 255, 105, 0.05),
+      transparent 40%
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
 
   main {
     position: relative;
     z-index: 1;
   }
 
-
-  .card-base:hover {
-    border-color: var(--color-neon-volt);
-  }
   /* Card base */
   .card-base {
     background-color: var(--bg-card);
@@ -281,9 +305,13 @@
     transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
   }
 
+  .card-base:hover {
+    border-color: var(--neon-border);
+  }
+
   .card-neon {
     background-color: var(--bg-card);
-    border: 1px solid #faff69;
+    border: 1px solid var(--neon-border);
     border-radius: var(--radius-card);
   }
 
@@ -309,7 +337,7 @@
 
   .select-themed:focus {
     outline: none;
-    border-color: #faff69;
+    border-color: var(--neon-border);
   }
 
   /* Sidebar link */
@@ -332,14 +360,14 @@
   }
 
   .sidebar-link.active {
-    background-color: var(--card-hover);
-    color: #faff69;
-    border-left: 2px solid #faff69;
+    background-color: var(--neon-active-bg);
+    color: var(--neon-text);
+    border-left: 2px solid var(--neon-active-border);
     padding-left: calc(1rem - 2px);
   }
 
   .dark .sidebar-link:hover { 
-    color: #faff69; 
+    color: var(--neon-text); 
   }
 
   /* Nav */
@@ -388,13 +416,20 @@
   }
 
   .btn-neon {
-    background-color: var(--color-neon-volt);
-    color: black;
+    background-color: var(--neon-button-bg);
+    color: var(--neon-button-text);
     border-radius: var(--radius-sharp);
     padding: 0.625rem 1rem;
     font-weight: 700;
+    transition: all .2s;
   }
-.modal-backdrop {
+
+  .btn-neon:hover {
+    opacity: 0.9;
+    transform: scale(1.02);
+  }
+
+  .modal-backdrop {
     background: rgba(0,0,0,.65);
     backdrop-filter: blur(6px);
   }
@@ -424,7 +459,7 @@
   }
 
   .input-themed:focus {
-    border-color: var(--color-neon-volt);
+    border-color: var(--neon-border);
     outline: none;
   }
 
@@ -458,7 +493,8 @@
     background: var(--card-hover);
     color: var(--text-primary);
   }
-   @keyframes slide-in {
+
+  @keyframes slide-in {
     from {
       transform: translateX(100%);
       opacity: 0;

@@ -34,7 +34,7 @@ export default function Categories() {
               whileHover={{
                 scale: 1.05,
                 boxShadow: '0 0 30px rgba(250,255,105,0.15)',
-                borderColor: 'var(--color-neon-volt)'
+                borderColor: 'var--color-forest-green)'
               }}
               className="card-base px-6 py-3 cursor-pointer transition-all"
             >

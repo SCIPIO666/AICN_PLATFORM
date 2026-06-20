@@ -26,12 +26,12 @@ export default function HeroeSection() {
           <Reveal variant={fadeUp}>
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 border"
               style={{
-                borderColor: 'var(--color-neon-volt)',
+                borderColor: 'var--color-forest-green)',
                 background: 'var(--success-bg)'
               }}
             >
-              <Sparkles size={16} style={{ color: 'var(--color-neon-volt)' }} />
-              <span className="text-sm font-semibold" style={{ color: 'var(--color-neon-volt)' }}>
+              <Sparkles size={16} style={{ color: 'var--color-forest-green)' }} />
+              <span className="text-sm font-semibold" style={{ color: 'var--color-forest-green)' }}>
                 New Courses Every Month
               </span>
             </div>
@@ -125,10 +125,10 @@ export default function HeroeSection() {
                 style={{ 
                   background: 'rgba(0, 0, 0, 0.7)',
                   backdropFilter: 'blur(12px)',
-                  borderColor: 'var(--color-neon-volt)'
+                  borderColor: 'var--color-forest-green)'
                 }}
               >
-                <metric.icon size={18} style={{ color: 'var(--color-neon-volt)' }} />
+                <metric.icon size={18} style={{ color: 'var--color-forest-green)' }} />
                 <div>
                   <span className="text-sm font-bold text-white">
                     {metric.value}

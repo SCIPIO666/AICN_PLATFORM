@@ -78,8 +78,8 @@ export default function Testimonials() {
                   <Star
                     key={i}
                     size={16}
-                    fill="var(--color-neon-volt)"
-                    style={{ color: 'var(--color-neon-volt)' }}
+                    fill="var--color-forest-green)"
+                    style={{ color: 'var--color-forest-green)' }}
                   />
                 ))}
               </div>

@@ -30,7 +30,7 @@ function Avatar({ name, picture, size = 72 }) {
         style={{ 
           width: size, 
           height: size,
-          borderColor: 'var(--color-neon-volt)'
+          borderColor: 'var--color-forest-green)'
         }}
       />
     )
@@ -43,8 +43,8 @@ function Avatar({ name, picture, size = 72 }) {
       style={{
         width: size, height: size,
         background: 'var(--color-forest-green)',
-        color: 'var(--color-neon-volt)',
-        borderColor: 'var(--color-neon-volt)',
+        color: 'var--color-forest-green)',
+        borderColor: 'var--color-forest-green)',
       }}
     >
       {initials}
@@ -64,7 +64,7 @@ function SectionHeader({ label, title }) {
       </h2>
       <div
         className="mt-3 h-px w-12"
-        style={{ background: 'var(--color-neon-volt)' }}
+        style={{ background: 'var--color-forest-green)' }}
       />
     </div>
   )
@@ -75,7 +75,7 @@ function StatCard({ icon: Icon, value, label }) {
   return (
     <div className="card-base p-4 text-center">
       <div className="flex items-center justify-center gap-2 mb-1">
-        <Icon size={16} style={{ color: 'var(--color-neon-volt)' }} />
+        <Icon size={16} style={{ color: 'var--color-forest-green)' }} />
         <span className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
           {value}
         </span>
@@ -92,7 +92,7 @@ function InfoField({ icon: Icon, label, value }) {
   return (
     <div className="card-base p-4">
       <div className="flex items-center gap-2 mb-1.5">
-        <Icon size={14} style={{ color: 'var(--color-neon-volt)' }} />
+        <Icon size={14} style={{ color: 'var--color-forest-green)' }} />
         <span className="text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
           {label}
         </span>
@@ -147,7 +147,7 @@ export default function Profile() {
       <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-page)' }}>
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10 rounded-full border-2 border-t-transparent animate-spin"
-            style={{ borderColor: 'var(--color-neon-volt)', borderTopColor: 'transparent' }} />
+            style={{ borderColor: 'var--color-forest-green)', borderTopColor: 'transparent' }} />
           <span className="text-sm" style={{ color: 'var(--text-muted)' }}>Loading profile…</span>
         </div>
       </div>
@@ -203,7 +203,7 @@ export default function Profile() {
           <div
             className="absolute top-0 right-0 w-48 h-48 opacity-10 rounded-full"
             style={{
-              background: 'var(--color-neon-volt)',
+              background: 'var--color-forest-green)',
               filter: 'blur(60px)',
             }}
           />

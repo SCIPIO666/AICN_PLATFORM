@@ -23,7 +23,7 @@ export default function TrustedBy() {
             transition={{ delay: idx * 0.1 }}
             whileHover={{
               scale: 1.1,
-              color: 'var(--color-neon-volt)',
+              color: 'var--color-forest-green)',
               transition: { duration: 0.2 }
             }}
             className="text-3xl md:text-4xl font-bold opacity-40 hover:opacity-100 transition-all cursor-default"

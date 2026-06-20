@@ -1,4 +1,3 @@
-
 export default function Badge({ children, variant = 'default', className = '' }) {
   const base =
     'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-[4px] ' +
@@ -9,9 +8,15 @@ export default function Badge({ children, variant = 'default', className = '' })
     default:
       'bg-[var(--card-hover)] text-[var(--text-secondary)] ' +
       'border border-[var(--border-color)]',
+
     neon:
-      'bg-[#faff69]/25 text-[#3a3d00] border border-[#faff69]/60 font-semibold ' +
-      'dark:bg-[#2a2d00] dark:text-[#faff69] dark:border-[#faff69]/40',
+      'bg-[var(--neon-active-bg)] text-[var(--neon-text)] ' +
+      'border border-[var(--neon-border)] font-semibold ' +
+      'hover:opacity-80 transition-opacity',
+
+    primary:
+      'bg-[var(--color-forest-green)] text-white ' +
+      'border border-[var(--color-forest-green)] font-semibold',
 
     success:
       'bg-[var(--success-bg)] text-[var(--success-text)] ' +
@@ -24,6 +29,10 @@ export default function Badge({ children, variant = 'default', className = '' })
     error:
       'bg-[var(--error-bg)] text-[var(--error-text)] ' +
       'border border-[var(--error-border)]',
+
+    info:
+      'bg-[var(--info-bg)] text-[var(--info-text)] ' +
+      'border border-[var(--info-border)]',
 
     outline:
       'bg-transparent text-[var(--text-primary)] ' +

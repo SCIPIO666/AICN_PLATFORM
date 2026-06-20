@@ -36,7 +36,7 @@ export default function MyCertificates() {
 
         <div
           className="mt-5 h-px w-12"
-          style={{ backgroundColor: 'var(--color-neon-volt)' }}
+          style={{ backgroundColor: 'var--color-forest-green)' }}
         />
       </div>
 

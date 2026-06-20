@@ -65,7 +65,7 @@ function SessionCard({ session }) {
             className="px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-sm"
             style={{
               background: isScheduled ? 'rgba(22, 101, 52, 0.9)' : 'rgba(0,0,0,0.7)',
-              color: isScheduled ? 'var(--color-neon-volt)' : 'var(--text-muted)'
+              color: isScheduled ? 'var--color-forest-green)' : 'var(--text-muted)'
             }}
           >
             {session.status}
@@ -76,7 +76,7 @@ function SessionCard({ session }) {
             className="px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-sm flex items-center gap-1"
             style={{
               background: 'rgba(0,0,0,0.7)',
-              color: 'var(--color-neon-volt)'
+              color: 'var--color-forest-green)'
             }}
           >
             {isOnline ? <Monitor size={12} /> : <MapPin size={12} />}
@@ -114,7 +114,7 @@ function SessionCard({ session }) {
         <Link
           to={`/sessions/${session.id}`}
           className="inline-flex items-center gap-1 mt-4 text-sm font-semibold transition-all group-hover:gap-2"
-          style={{ color: 'var(--color-neon-volt)' }}
+          style={{ color: 'var--color-forest-green)' }}
         >
           View Details
           <ChevronRight size={16} />
@@ -127,7 +127,6 @@ function SessionCard({ session }) {
 export default function PublicSessions() {
   const { data, error, isError, isLoading } = useSessions();
 
-  // Handle different data structures
   const sessions = useMemo(() => {
     // If data is an array, use it directly
     if (Array.isArray(data)) {
@@ -203,7 +202,7 @@ export default function PublicSessions() {
           <div
             className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-10"
             style={{
-              background: 'var(--color-neon-volt)',
+              background: 'var--color-forest-green)',
               filter: 'blur(60px)'
             }}
           />
@@ -220,7 +219,7 @@ export default function PublicSessions() {
               <h1 className="text-4xl md:text-5xl font-bold tracking-tight mt-2" style={{ color: 'var(--text-primary)' }}>
                 Build practical skills from
                 <br />
-                <span style={{ color: 'var(--color-neon-volt)' }}>industry experts</span>
+                <span style={{ color: 'var--color-forest-green)' }}>industry experts</span>
               </h1>
             </Reveal>
 
@@ -239,7 +238,7 @@ export default function PublicSessions() {
               ].map((stat, idx) => (
                 <Reveal key={stat.label} variant={fadeUp} delay={0.3 + idx * 0.1}>
                   <div className="flex items-center gap-3">
-                    <stat.icon size={24} style={{ color: 'var(--color-neon-volt)' }} />
+                    <stat.icon size={24} style={{ color: 'var--color-forest-green)' }} />
                     <div>
                       <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
                         {stat.value}
@@ -263,13 +262,13 @@ export default function PublicSessions() {
                 <div
                   className="absolute top-0 right-0 w-48 h-48 rounded-full opacity-10"
                   style={{
-                    background: 'var(--color-neon-volt)',
+                    background: 'var--color-forest-green)',
                     filter: 'blur(60px)'
                   }}
                 />
                 <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                   <div className="flex-1">
-                    <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--color-neon-volt)' }}>
+                    <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var--color-forest-green)' }}>
                       Featured Session
                     </span>
                     <h2 className="text-2xl font-bold mt-1" style={{ color: 'var(--text-primary)' }}>
