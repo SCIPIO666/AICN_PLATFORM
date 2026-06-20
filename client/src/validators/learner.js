@@ -1,9 +1,14 @@
 import {z} from 'zod'
 
-
 export const verifyCertificateSchema = z.object({
-  certCode: z.string()
-    .regex(/^CERT-[A-F0-9]{16}$/, 'Invalid certificate code format. Expected format: CERT-XXXXXXXXXXXXXXXX')
+  certCode: z
+    .string()
+    .trim()
+    .toUpperCase()
+    .regex(
+      /^CERT-[A-F0-9]{16}$/,
+      'Invalid certificate code format. Expected format: CERT-XXXXXXXXXXXXXXXX'
+    ),
 });
 
 export const applyTrainerSchema = z.object({

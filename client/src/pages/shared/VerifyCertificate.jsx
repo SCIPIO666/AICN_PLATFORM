@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ShieldCheck,
@@ -30,8 +30,7 @@ import { fadeUp, staggerContainer, scaleUp, slideUp } from '@/utils/motion';
 
 const VerifyCertificate = () => {
   const [certCode, setCertCode] = useState('');
-  const [shouldVerify, setShouldVerify] = useState(false);
-
+  
   const {
     register,
     handleSubmit,
@@ -44,29 +43,29 @@ const VerifyCertificate = () => {
       certCode: ''
     }
   });
-
   const { 
-    data: response, 
+    data, 
     isLoading, 
-    error: queryError, 
-    isSuccess,
-    isError,
-    refetch
-  } = useVerifyCertificate(shouldVerify ? certCode : null);
+    error, 
+    isSuccess, 
+    isError, 
+    refetch 
+  } = useVerifyCertificate(certCode);
 
-  // Extract certificate data from response
-  const certData = response?.data;
+  useEffect(() => {
+    if (certCode) {
+      refetch();
+    }
+  }, [certCode, refetch]);
 
-  const onSubmit = (data) => {
-    setCertCode(data.certCode);
-    setShouldVerify(true);
-    refetch();
+  const onSubmit = (validatedData) => {
+
+    setCertCode(validatedData.certCode);
   };
 
   const handleReset = () => {
     reset();
     setCertCode('');
-    setShouldVerify(false);
   };
 
   const formatDate = (dateString) => {
@@ -90,60 +89,55 @@ const VerifyCertificate = () => {
   };
 
   const getErrorMessage = () => {
-    if (!queryError) return null;
+    if (!error) return null;
     
-    // Handle different error responses
-    if (queryError.response?.status === 404) {
+    if (error.response?.status === 404) {
       return 'The certificate code provided does not exist in the AICN registry.';
     }
-    if (queryError.response?.status === 400) {
+    if (error.response?.status === 400) {
       return 'Invalid certificate format. Please check the code and try again.';
     }
-    if (queryError.response?.data?.message) {
-      return queryError.response.data.message;
+    if (error.response?.data?.message) {
+      return error.response.data.message;
     }
-    if (queryError.message) {
-      return queryError.message;
+    if (error.message) {
+      return error.message;
     }
     return 'An error occurred while verifying the certificate. Please try again.';
   };
 
   const errorMessage = getErrorMessage();
 
-  // Trust stats for hero
+  const isRevoked = !!data?.revokedAt;
+
   const trustStats = [
     { value: '500+', label: 'Certificates Issued', icon: Award },
     { value: '100%', label: 'Authentic Records', icon: ShieldCheck },
     { value: '24/7', label: 'Verification', icon: Clock3 }
   ];
 
-  // How it works steps
   const howItWorks = [
     { icon: Search, title: 'Enter Certificate Code', description: 'Paste or type your unique certificate code' },
     { icon: ShieldCheck, title: 'Verify Authenticity', description: 'We check against the AICN registry' },
     { icon: Award, title: 'View Credential Details', description: 'See the full certificate information' }
   ];
 
-  // Security trust badges
   const securityBadges = [
     { icon: ShieldCheck, label: 'Issuer Verified' },
     { icon: Database, label: 'Record Exists In Registry' },
     { icon: Lock, label: 'Certificate Not Revoked' }
   ];
 
-  // Check if certificate is revoked
-  const isRevoked = certData?.revokedAt !== null;
-
   return (
     <div className="min-h-screen px-4 py-8 md:px-8 lg:px-12" style={{ background: 'var(--bg-page)' }}>
       <div className="max-w-5xl mx-auto">
         
-        {/* ─── HERO SECTION ─── */}
+        {/* HERO */}
         <section className="relative overflow-hidden mb-12 text-center">
           <div
             className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full"
             style={{
-              background: 'var--color-forest-green)',
+              background: 'var(--color-neon-volt)',
               filter: 'blur(180px)',
               opacity: 0.08
             }}
@@ -152,11 +146,11 @@ const VerifyCertificate = () => {
           <div className="relative">
             <Reveal variant={fadeUp}>
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4 border" style={{
-                borderColor: 'var--color-forest-green)',
+                borderColor: 'var(--color-neon-volt)',
                 background: 'rgba(250,255,105,0.05)'
               }}>
-                <ShieldCheck size={16} style={{ color: 'var--color-forest-green)' }} />
-                <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var--color-forest-green)' }}>
+                <ShieldCheck size={16} style={{ color: 'var(--color-neon-volt)' }} />
+                <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--color-neon-volt)' }}>
                   Certificate Verification
                 </span>
               </div>
@@ -164,20 +158,19 @@ const VerifyCertificate = () => {
 
             <Reveal variant={fadeUp} delay={0.1}>
               <h1 className="text-4xl md:text-5xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
-                Verify Digital Credentials
+                Certificates
                 <br />
-                <span style={{ color: 'var--color-forest-green)' }}>Issued By AICN</span>
+                <span style={{ color: 'var(--color-neon-volt)' }}>Issued By AICN</span>
               </h1>
             </Reveal>
 
             <Reveal variant={fadeUp} delay={0.2}>
               <p className="text-body-large mt-4 max-w-2xl mx-auto" style={{ color: 'var(--text-secondary)' }}>
-                Instantly validate learner achievements, training completion 
-                and digital certifications.
+                Instantly validate learner achievements and training completion
               </p>
             </Reveal>
 
-            {/* Trust Stats */}
+            {/* Stats */}
             <motion.div 
               variants={staggerContainer}
               initial="hidden"
@@ -187,7 +180,7 @@ const VerifyCertificate = () => {
               {trustStats.map((stat, idx) => (
                 <Reveal key={stat.label} variant={fadeUp} delay={0.3 + idx * 0.1}>
                   <div className="card-base p-4 text-center">
-                    <stat.icon size={20} className="mx-auto mb-1" style={{ color: 'var--color-forest-green)' }} />
+                    <stat.icon size={20} className="mx-auto mb-1" style={{ color: 'var(--color-neon-volt)' }} />
                     <p className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>
                       {stat.value}
                     </p>
@@ -201,7 +194,7 @@ const VerifyCertificate = () => {
           </div>
         </section>
 
-        {/* ─── SEARCH CARD ─── */}
+        {/* SEARCH CARD */}
         <Reveal variant={scaleUp}>
           <div className="card-base p-6 md:p-8 max-w-3xl mx-auto mb-8">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -215,7 +208,7 @@ const VerifyCertificate = () => {
                       {...register('certCode')}
                       id="certCode"
                       type="text"
-                      placeholder="CERT-XXXXXXXXXXXXXXX"
+                      placeholder="CERT-XXXXXXXXXXXXXXXX"
                       className="w-full h-14 px-5 rounded-xl font-mono tracking-wider text-center text-lg border transition-all focus:outline-none"
                       style={{
                         background: 'var(--input-bg)',
@@ -223,7 +216,7 @@ const VerifyCertificate = () => {
                         color: 'var(--text-primary)'
                       }}
                       onFocus={(e) => {
-                        e.target.style.borderColor = 'var--color-forest-green)';
+                        e.target.style.borderColor = 'var(--color-neon-volt)';
                         e.target.style.boxShadow = '0 0 0 4px rgba(250,255,105,0.1)';
                       }}
                       onBlur={(e) => {
@@ -235,9 +228,6 @@ const VerifyCertificate = () => {
                       disabled={isLoading}
                       autoComplete="off"
                       spellCheck="false"
-                      onChange={(e) => {
-                        e.target.value = e.target.value.toUpperCase();
-                      }}
                     />
                     {errors.certCode && (
                       <p className="mt-2 text-sm flex items-center gap-1" style={{ color: 'var(--error-text)' }}>
@@ -264,7 +254,7 @@ const VerifyCertificate = () => {
                         </>
                       )}
                     </button>
-                    {(certData || isError) && (
+                    {(data || isError) && (
                       <button
                         type="button"
                         onClick={handleReset}
@@ -280,8 +270,8 @@ const VerifyCertificate = () => {
           </div>
         </Reveal>
 
-        {/* ─── EMPTY STATE (How It Works) ─── */}
-        {!isLoading && !isSuccess && !isError && !certData && (
+        {/* EMPTY STATE */}
+        {!isLoading && !isSuccess && !isError && !data && (
           <Reveal variant={fadeUp}>
             <div className="card-base p-8 md:p-10 max-w-3xl mx-auto">
               <h3 className="text-xl font-bold text-center mb-6" style={{ color: 'var(--text-primary)' }}>
@@ -294,10 +284,10 @@ const VerifyCertificate = () => {
                       className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3"
                       style={{
                         background: 'rgba(250,255,105,0.08)',
-                        border: '1px solid var--color-forest-green)'
+                        border: '1px solid var(--color-neon-volt)'
                       }}
                     >
-                      <step.icon size={24} style={{ color: 'var--color-forest-green)' }} />
+                      <step.icon size={24} style={{ color: 'var(--color-neon-volt)' }} />
                     </div>
                     <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
                       {step.title}
@@ -319,7 +309,7 @@ const VerifyCertificate = () => {
           </Reveal>
         )}
 
-        {/* ─── LOADING STATE ─── */}
+        {/* LOADING STATE */}
         {isLoading && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -327,21 +317,21 @@ const VerifyCertificate = () => {
             className="card-base p-12 text-center max-w-3xl mx-auto"
           >
             <div className="flex flex-col items-center gap-4">
-              <Loader2 size={48} className="animate-spin" style={{ color: 'var--color-forest-green)' }} />
+              <Loader2 size={48} className="animate-spin" style={{ color: 'var(--color-neon-volt)' }} />
               <h3 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>
                 Checking Authenticity...
               </h3>
               <div className="space-y-1 text-sm" style={{ color: 'var(--text-muted)' }}>
                 <p className="flex items-center gap-2 justify-center">
-                  <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: 'var--color-forest-green)' }} />
+                  <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: 'var(--color-neon-volt)' }} />
                   Cross-referencing records
                 </p>
                 <p className="flex items-center gap-2 justify-center">
-                  <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: 'var--color-forest-green)' }} />
+                  <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: 'var(--color-neon-volt)' }} />
                   Validating credential integrity
                 </p>
                 <p className="flex items-center gap-2 justify-center">
-                  <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: 'var--color-forest-green)' }} />
+                  <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: 'var(--color-neon-volt)' }} />
                   Verifying issuer signature
                 </p>
               </div>
@@ -349,7 +339,7 @@ const VerifyCertificate = () => {
           </motion.div>
         )}
 
-        {/* ─── ERROR STATE ─── */}
+        {/* ERROR STATE */}
         {isError && !isLoading && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -378,8 +368,8 @@ const VerifyCertificate = () => {
           </motion.div>
         )}
 
-        {/* ─── SUCCESS STATE ─── */}
-        {isSuccess && certData && !isLoading && (
+        {/* SUCCESS STATE */}
+        {isSuccess && data && !isLoading && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -392,7 +382,7 @@ const VerifyCertificate = () => {
                 <div
                   className="absolute top-0 right-0 w-48 h-48 rounded-full opacity-10"
                   style={{
-                    background: isRevoked ? 'var(--error-text)' : 'var--color-forest-green)',
+                    background: isRevoked ? 'var(--error-text)' : 'var(--color-neon-volt)',
                     filter: 'blur(60px)'
                   }}
                 />
@@ -400,7 +390,7 @@ const VerifyCertificate = () => {
                   {isRevoked ? (
                     <ShieldAlert size={64} className="mx-auto mb-4" style={{ color: 'var(--error-text)' }} />
                   ) : (
-                    <CheckCircle2 size={64} className="mx-auto mb-4" style={{ color: 'var--color-forest-green)' }} />
+                    <CheckCircle2 size={64} className="mx-auto mb-4" style={{ color: 'var(--color-neon-volt)' }} />
                   )}
                   <h2 className="text-2xl font-bold" style={{ color: isRevoked ? 'var(--error-text)' : 'var(--text-primary)' }}>
                     {isRevoked ? 'Certificate Revoked' : 'Verified Credential'}
@@ -414,10 +404,10 @@ const VerifyCertificate = () => {
                   {!isRevoked && (
                     <div className="inline-flex items-center gap-2 mt-4 px-4 py-1.5 rounded-full" style={{
                       background: 'rgba(250,255,105,0.08)',
-                      border: '1px solid var--color-forest-green)'
+                      border: '1px solid var(--color-neon-volt)'
                     }}>
-                      <BadgeCheck size={16} style={{ color: 'var--color-forest-green)' }} />
-                      <span className="text-xs font-semibold" style={{ color: 'var--color-forest-green)' }}>
+                      <BadgeCheck size={16} style={{ color: 'var(--color-neon-volt)' }} />
+                      <span className="text-xs font-semibold" style={{ color: 'var(--color-neon-volt)' }}>
                         Verified By AICN Registry
                       </span>
                     </div>
@@ -435,10 +425,10 @@ const VerifyCertificate = () => {
                       className="w-10 h-10 rounded-lg flex items-center justify-center"
                       style={{ background: 'var(--color-forest-green)' }}
                     >
-                      <Award size={20} style={{ color: 'var--color-forest-green)' }} />
+                      <Award size={20} style={{ color: 'var(--color-neon-volt)' }} />
                     </div>
                     <div>
-                      <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var--color-forest-green)' }}>
+                      <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--color-neon-volt)' }}>
                         AICN Certification
                       </p>
                       <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
@@ -449,7 +439,7 @@ const VerifyCertificate = () => {
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
-                  {/* Certificate Code */}
+                  {/* Cert Code */}
                   <div className="col-span-full">
                     <div className="p-4 rounded-lg text-center" style={{
                       background: 'rgba(250,255,105,0.05)',
@@ -459,16 +449,16 @@ const VerifyCertificate = () => {
                         Certificate ID
                       </p>
                       <p className="font-mono text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>
-                        {certData.certCode}
+                        {data.certCode}
                       </p>
-                      {certData.issuedAt && (
+                      {data.issuedAt && (
                         <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
-                          Issued: {formatDateTime(certData.issuedAt)}
+                          Issued: {formatDateTime(data.issuedAt)}
                         </p>
                       )}
-                      {certData.revokedAt && (
+                      {data.revokedAt && (
                         <p className="text-xs mt-1" style={{ color: 'var(--error-text)' }}>
-                          Revoked: {formatDateTime(certData.revokedAt)}
+                          Revoked: {formatDateTime(data.revokedAt)}
                         </p>
                       )}
                     </div>
@@ -480,19 +470,19 @@ const VerifyCertificate = () => {
                       <div
                         className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0"
                         style={{
-                          background: 'linear-gradient(135deg, var(--color-forest-green), var--color-forest-green))',
+                          background: 'linear-gradient(135deg, var(--color-forest-green), var(--color-neon-volt))',
                           color: 'var(--color-pure-black)'
                         }}
                       >
-                        {certData.user?.name?.split(' ').map(n => n[0]).join('').toUpperCase() || '?'}
+                        {data.user?.name?.split(' ').map(n => n[0]).join('').toUpperCase() || '?'}
                       </div>
                       <div>
                         <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
-                          {certData.user?.name || 'N/A'}
+                          {data.user?.name || 'N/A'}
                         </p>
                         <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
                           <Mail size={12} className="inline mr-1" />
-                          {certData.user?.email || 'N/A'}
+                          {data.user?.email || 'N/A'}
                         </p>
                       </div>
                     </div>
@@ -503,7 +493,7 @@ const VerifyCertificate = () => {
                     {isRevoked ? (
                       <ShieldAlert size={20} style={{ color: 'var(--error-text)' }} />
                     ) : (
-                      <BadgeCheck size={20} style={{ color: 'var--color-forest-green)' }} />
+                      <BadgeCheck size={20} style={{ color: 'var(--color-neon-volt)' }} />
                     )}
                     <div>
                       <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Status</p>
@@ -515,7 +505,7 @@ const VerifyCertificate = () => {
                 </div>
 
                 {/* Session Details */}
-                {certData.session && (
+                {data.session && (
                   <div className="mt-6 pt-6 border-t" style={{ borderColor: 'var(--border-subtle)' }}>
                     <h4 className="text-sm font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>
                       Session Information
@@ -523,55 +513,55 @@ const VerifyCertificate = () => {
                     <div className="grid md:grid-cols-3 gap-4">
                       <div className="card-base p-4">
                         <div className="flex items-center gap-2 mb-1">
-                          <BrainCircuit size={16} style={{ color: 'var--color-forest-green)' }} />
+                          <BrainCircuit size={16} style={{ color: 'var(--color-neon-volt)' }} />
                           <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Skill Area</p>
                         </div>
                         <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
-                          {certData.session.skillArea || 'N/A'}
+                          {data.session.skillArea || 'N/A'}
                         </p>
                       </div>
 
                       <div className="card-base p-4">
                         <div className="flex items-center gap-2 mb-1">
-                          <Clock3 size={16} style={{ color: 'var--color-forest-green)' }} />
+                          <Clock3 size={16} style={{ color: 'var(--color-neon-volt)' }} />
                           <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Date & Duration</p>
                         </div>
                         <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
-                          {formatDate(certData.session.date)}
+                          {formatDate(data.session.date)}
                         </p>
                         <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                          {certData.session.durationMins} minutes
+                          {data.session.durationMins} minutes
                         </p>
                       </div>
 
                       <div className="card-base p-4">
                         <div className="flex items-center gap-2 mb-1">
-                          {certData.session.locationType === 'PHYSICAL' ? (
-                            <Building2 size={16} style={{ color: 'var--color-forest-green)' }} />
+                          {data.session.locationType === 'PHYSICAL' ? (
+                            <Building2 size={16} style={{ color: 'var(--color-neon-volt)' }} />
                           ) : (
-                            <Video size={16} style={{ color: 'var--color-forest-green)' }} />
+                            <Video size={16} style={{ color: 'var(--color-neon-volt)' }} />
                           )}
                           <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Location</p>
                         </div>
                         <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
-                          {certData.session.locationType === 'PHYSICAL' ? 'In-Person' : 'Online'}
+                          {data.session.locationType === 'PHYSICAL' ? 'In-Person' : 'Online'}
                         </p>
-                        {certData.session.venue && (
+                        {data.session.venue && (
                           <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                            {certData.session.venue}
+                            {data.session.venue}
                           </p>
                         )}
                       </div>
                     </div>
 
-                    {/* Session Description */}
-                    {certData.session.description && (
+                    {/* Description */}
+                    {data.session.description && (
                       <div className="mt-4 p-4 rounded-lg" style={{
                         background: 'rgba(250,255,105,0.03)',
                         border: '1px solid var(--border-color)'
                       }}>
                         <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                          {certData.session.description}
+                          {data.session.description}
                         </p>
                       </div>
                     )}
@@ -580,7 +570,7 @@ const VerifyCertificate = () => {
               </div>
             </Reveal>
 
-            {/* Security Trust Section */}
+            {/* Security Trust */}
             {!isRevoked && (
               <Reveal variant={fadeUp}>
                 <div className="card-base p-6">
@@ -590,7 +580,7 @@ const VerifyCertificate = () => {
                   <div className="grid md:grid-cols-3 gap-4">
                     {securityBadges.map((badge) => (
                       <div key={badge.label} className="flex items-center justify-center gap-2">
-                        <badge.icon size={16} style={{ color: 'var--color-forest-green)' }} />
+                        <badge.icon size={16} style={{ color: 'var(--color-neon-volt)' }} />
                         <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                           {badge.label}
                         </span>
