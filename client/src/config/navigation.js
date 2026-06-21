@@ -10,14 +10,14 @@ export const navigation = [
     roles: ['LEARNER', 'TRAINER', 'ADMIN'],
     order: 1
   },
-  {
-    id: 'learner-sessions',
-    label: 'Browse Sessions',
-    path: '/dashboard/learner/sessions',
-    icon: 'BookOpen',
-    roles: ['LEARNER', 'TRAINER', 'ADMIN'],
-    order: 2
-  },
+  // {
+  //   id: 'learner-sessions',
+  //   label: 'Browse Sessions',
+  //   path: '/dashboard/learner/sessions',
+  //   icon: 'BookOpen',
+  //   roles: ['LEARNER', 'TRAINER', 'ADMIN'],
+  //   order: 2
+  // },
   {
     id: 'learner-enrolments',
     label: 'My Enrolments',
@@ -34,14 +34,14 @@ export const navigation = [
     roles: ['LEARNER', 'TRAINER', 'ADMIN'],
     order: 4
   },
-  {
-    id: 'learner-trainers',
-    label: 'Find Trainers',
-    path: '/dashboard/learner/trainers',
-    icon: 'Users',
-    roles: ['LEARNER', 'TRAINER', 'ADMIN'],
-    order: 5
-  },
+  // {
+  //   id: 'learner-trainers',
+  //   label: 'Find Trainers',
+  //   path: '/dashboard/learner/trainers',
+  //   icon: 'Users',
+  //   roles: ['LEARNER', 'TRAINER', 'ADMIN'],
+  //   order: 5
+  // },
   {
     id: 'learner-apply',
     label: 'Become a Trainer',

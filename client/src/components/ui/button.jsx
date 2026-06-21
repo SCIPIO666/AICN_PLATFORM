@@ -49,7 +49,7 @@ export function Button({
       'bg-transparent text-[var(--text-primary)] border border-[#4f5100] ' +
       'hover:bg-[var(--card-hover)] ' +
       'active:text-[#f4f692] ' +
-      /* Light mode: fallback to standard border so it's visible */
+      /* Light mode*/
       'light:border-[var(--border-color)]',
     destructive:
       'bg-[var(--error-bg)] text-[var(--error-text)] border border-[var(--error-border)] ' +
@@ -58,7 +58,7 @@ export function Button({
       'focus:ring-2 focus:ring-[var(--error-text)]/50',
   };
 
-  /* Ghost light-mode fix via a utility class */
+  /* Ghost light-mode */
   const ghostLight = variant === 'ghost'
     ? 'dark:border-[#4f5100] border-[var(--border-color)]'
     : '';

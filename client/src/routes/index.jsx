@@ -9,7 +9,7 @@ import CertificateDetails from '../pages/learner/CertificateDetails'
 import Trainers from '../pages/learner/Trainers'
 import TrainerDetails from '../pages/learner/TrainerDetails'
 import ApplyTrainer from '../pages/learner/ApplyTrainer'
-import ApplicationStatus from '../pages/learner/ApplicationStatus'
+
 
 // TRAINER PAGES (Shells)
 import TrainerDashboard from '@/pages/trainer/TrainerDashboard'
@@ -42,16 +42,15 @@ import Settings from '@/pages/shared/Settings'
 // ==================== LEARNER ROUTES ====================
 export const learnerRoutes = [
   { path: "dashboard/learner", element: <LearnerDashboard />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
-  { path: "dashboard/learner/sessions", element: <LearnerSessions />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
-  { path: "dashboard/learner/sessions/:id", element: <SessionDetails />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
+  // { path: "dashboard/learner/sessions", element: <LearnerSessions />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
+  // { path: "dashboard/learner/sessions/:id", element: <SessionDetails />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
   { path: "dashboard/learner/my-enrolments", element: <MyEnrolments />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
   { path: "dashboard/learner/my-enrolments/:id", element: <EnrolmentDetails />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
   { path: "dashboard/learner/my-certificates", element: <MyCertificates />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
   { path: "dashboard/learner/my-certificates/:id", element: <CertificateDetails />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
-  { path: "dashboard/learner/trainers", element: <Trainers />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
-  { path: "dashboard/learner/trainers/:id", element: <TrainerDetails />, roles: ['LEARNER', 'TRAINER', 'ADMIN'] },
+  
   { path: "dashboard/learner/apply-trainer", element: <ApplyTrainer />, roles: ['LEARNER'] },
-  { path: "dashboard/learner/apply-trainer/status", element: <ApplicationStatus />, roles: ['LEARNER'] },
+
 ]
 
 // ==================== TRAINER ROUTES ====================

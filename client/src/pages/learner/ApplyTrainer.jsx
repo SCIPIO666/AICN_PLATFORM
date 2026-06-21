@@ -236,8 +236,8 @@ export default function ApplyTrainer() {
           </p>
         </div>
 
-        {/* Status Display */}
-        {renderStatus()}
+        {/* Status Display
+        {renderStatus()} */}
 
         {/* Benefits Panel */}
         <div className="card-inset p-5 mb-8">

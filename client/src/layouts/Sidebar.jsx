@@ -118,7 +118,7 @@ export default function Sidebar() {
   };
 
   const renderNavItem = (item) => {
-    // Get icon from lucide-react if it exists
+    // icon from lucide-react if it exists
     const IconComponent = item.icon ? 
       (() => {
         const icons = {
