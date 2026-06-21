@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getSessions } from '@/api/sessions';
 import { enrolInSession } from '@/api/enrolments';
 import useSessionFilters from '../../stores/sessionFilters';
+
 import SessionCard from '../../components/dormain/SessionCard';
 import FilterBar from '../../components/dormain/FilterBar';
 import Pagination from '@/components/ui/Pagination';

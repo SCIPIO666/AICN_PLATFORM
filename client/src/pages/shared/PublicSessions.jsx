@@ -1,5 +1,10 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import FilterBar from '../../components/dormain/FilterBar';
+import { useEffect } from 'react';
+import Pagination from '@/components/ui/Pagination';
+import useSessionFilters from '../../stores/sessionFilters';
+
 import { 
   Calendar, 
   MapPin, 
@@ -125,7 +130,8 @@ function SessionCard({ session }) {
 }
 
 export default function PublicSessions() {
-  const { data, error, isError, isLoading } = useSessions();
+  const { data, error, isError, isLoading,refetch } = useSessions();
+  const { filters, setFilters, resetFilters } = useSessionFilters();
 
   const sessions = useMemo(() => {
     // If data is an array, use it directly
@@ -145,6 +151,7 @@ export default function PublicSessions() {
 
   const featuredSession = upcomingSessions[0] || sessions[0];
 
+
   const stats = useMemo(() => {
     return {
       total: sessions.length,
@@ -154,6 +161,8 @@ export default function PublicSessions() {
     };
   }, [sessions, upcomingSessions]);
 
+
+useEffect(() => { refetch(); }, [filters, refetch]);
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-page)' }}>
@@ -311,6 +320,7 @@ export default function PublicSessions() {
             </Reveal>
           </section>
         )}
+        <FilterBar filters={filters} onFilterChange={setFilters} onReset={resetFilters} />
 
         {/* Sessions Grid */}
         <motion.div
