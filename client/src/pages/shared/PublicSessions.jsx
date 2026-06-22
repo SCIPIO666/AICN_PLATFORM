@@ -1,7 +1,8 @@
+// src/pages/learner/PublicSessions.jsx (updated)
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import FilterBar from '../../components/dormain/FilterBar';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Pagination from '@/components/ui/Pagination';
 import useSessionFilters from '../../stores/sessionFilters';
 
@@ -17,11 +18,13 @@ import {
   AlertCircle,
   UserCheck 
 } from 'lucide-react';
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import Reveal from '@/components/Reveal';
 import { fadeUp, staggerContainer } from '@/utils/motion';
 import Spinner from '@/components/ui/Spinner';
-import { useSessions } from '@/hooks';
+import { useSessions, useMyEnrolments } from '@/hooks';
+
+import SessionDetailsModal from '@/components/dormain/SessionDetailsModal';
 
 const skillImages = {
   "Data Analysis": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800",
@@ -34,7 +37,7 @@ const skillImages = {
   "Introduction to Online Jobs": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800"
 };
 
-function SessionCard({ session }) {
+function SessionCard({ session, onViewDetails }) {
   const isOnline = session.locationType === 'ONLINE';
   const isScheduled = session.status === 'SCHEDULED';
   
@@ -54,7 +57,8 @@ function SessionCard({ session }) {
         boxShadow: '0 0 40px rgba(250,255,105,0.08)',
         transition: { duration: 0.2 }
       }}
-      className="card-base overflow-hidden transition-all group"
+      className="card-base overflow-hidden transition-all group cursor-pointer"
+      onClick={() => onViewDetails(session)}
     >
       <div className="relative h-48 overflow-hidden">
         <motion.img
@@ -70,7 +74,7 @@ function SessionCard({ session }) {
             className="px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-sm"
             style={{
               background: isScheduled ? 'rgba(22, 101, 52, 0.9)' : 'rgba(0,0,0,0.7)',
-              color: isScheduled ? 'var--color-forest-green)' : 'var(--text-muted)'
+              color: isScheduled ? '#fff' : '#ccc'
             }}
           >
             {session.status}
@@ -81,7 +85,7 @@ function SessionCard({ session }) {
             className="px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-sm flex items-center gap-1"
             style={{
               background: 'rgba(0,0,0,0.7)',
-              color: 'var--color-forest-green)'
+              color: '#a3e635'
             }}
           >
             {isOnline ? <Monitor size={12} /> : <MapPin size={12} />}
@@ -116,29 +120,34 @@ function SessionCard({ session }) {
           </p>
         )}
 
-        <Link
-          to={`/sessions/${session.id}`}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onViewDetails(session);
+          }}
           className="inline-flex items-center gap-1 mt-4 text-sm font-semibold transition-all group-hover:gap-2"
           style={{ color: 'var--color-forest-green)' }}
         >
           View Details
           <ChevronRight size={16} />
-        </Link>
+        </button>
       </div>
     </motion.div>
   );
 }
 
 export default function PublicSessions() {
-  const { data, error, isError, isLoading,refetch } = useSessions();
+  const [selectedSession, setSelectedSession] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  const { data, error, isError, isLoading, refetch } = useSessions();
+  const { enrol, isEnrolling } = useMyEnrolments();
   const { filters, setFilters, resetFilters } = useSessionFilters();
 
   const sessions = useMemo(() => {
-    // If data is an array, use it directly
     if (Array.isArray(data)) {
       return data;
     }
-    // If data has a data property (pagination wrapper)
     if (data?.data && Array.isArray(data.data)) {
       return data.data;
     }
@@ -151,7 +160,6 @@ export default function PublicSessions() {
 
   const featuredSession = upcomingSessions[0] || sessions[0];
 
-
   const stats = useMemo(() => {
     return {
       total: sessions.length,
@@ -161,8 +169,25 @@ export default function PublicSessions() {
     };
   }, [sessions, upcomingSessions]);
 
+  useEffect(() => { 
+    refetch(); 
+  }, [filters, refetch]);
 
-useEffect(() => { refetch(); }, [filters, refetch]);
+  const handleViewDetails = (session) => {
+    setSelectedSession(session);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedSession(null);
+  };
+
+  const handleEnrol = async (sessionId) => {
+    await enrol(sessionId);
+    await refetch(); // Refresh to update enrolment status
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-page)' }}>
@@ -204,138 +229,152 @@ useEffect(() => { refetch(); }, [filters, refetch]);
   }
 
   return (
-    <div className="min-h-screen px-4 py-8 md:px-8 lg:px-12" style={{ background: 'var(--bg-page)' }}>
-      <div className="max-w-7xl mx-auto">
-        {/* Hero Section */}
-        <section className="card-base p-8 md:p-12 relative overflow-hidden mb-12">
-          <div
-            className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-10"
-            style={{
-              background: 'var--color-forest-green)',
-              filter: 'blur(60px)'
-            }}
-          />
-          
-          <div className="relative">
-            <Reveal variant={fadeUp}>
-              <p className="label-uppercase flex items-center gap-2">
-                <Sparkles size={16} />
-                Discover Training Sessions
-              </p>
-            </Reveal>
+    <>
+      <div className="min-h-screen px-4 py-8 md:px-8 lg:px-12" style={{ background: 'var(--bg-page)' }}>
+        <div className="max-w-7xl mx-auto">
+          {/* Hero Section */}
+          <section className="card-base p-8 md:p-12 relative overflow-hidden mb-12">
+            <div
+              className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-10"
+              style={{
+                background: 'var--color-forest-green)',
+                filter: 'blur(60px)'
+              }}
+            />
             
-            <Reveal variant={fadeUp} delay={0.1}>
-              <h1 className="text-4xl md:text-5xl font-bold tracking-tight mt-2" style={{ color: 'var(--text-primary)' }}>
-                Build practical skills from
-                <br />
-                <span style={{ color: 'var--color-forest-green)' }}>industry experts</span>
-              </h1>
-            </Reveal>
+            <div className="relative">
+              <Reveal variant={fadeUp}>
+                <p className="label-uppercase flex items-center gap-2">
+                  <Sparkles size={16} />
+                  Discover Training Sessions
+                </p>
+              </Reveal>
+              
+              <Reveal variant={fadeUp} delay={0.1}>
+                <h1 className="text-4xl md:text-5xl font-bold tracking-tight mt-2" style={{ color: 'var(--text-primary)' }}>
+                  Build practical skills from
+                  <br />
+                  <span style={{ color: 'var--color-forest-green)' }}>industry experts</span>
+                </h1>
+              </Reveal>
 
-            <Reveal variant={fadeUp} delay={0.2}>
-              <p className="text-body-large mt-4 max-w-2xl" style={{ color: 'var(--text-secondary)' }}>
-                Browse our catalog of live training sessions designed to help you
-                gain real-world skills and advance your career.
-              </p>
-            </Reveal>
+              <Reveal variant={fadeUp} delay={0.2}>
+                <p className="text-body-large mt-4 max-w-2xl" style={{ color: 'var(--text-secondary)' }}>
+                  Browse our catalog of live training sessions designed to help you
+                  gain real-world skills and advance your career.
+                </p>
+              </Reveal>
 
-            <div className="flex flex-wrap gap-8 mt-8">
-              {[
-                { icon: Calendar, value: stats.upcoming, label: 'Upcoming Sessions' },
-                { icon: Award, value: stats.skills, label: 'Skill Areas' },
-                { icon: UserCheck, value: stats.trainers, label: 'Expert Trainers' }
-              ].map((stat, idx) => (
-                <Reveal key={stat.label} variant={fadeUp} delay={0.3 + idx * 0.1}>
-                  <div className="flex items-center gap-3">
-                    <stat.icon size={24} style={{ color: 'var--color-forest-green)' }} />
-                    <div>
-                      <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
-                        {stat.value}
-                      </p>
-                      <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
-                        {stat.label}
-                      </p>
+              <div className="flex flex-wrap gap-8 mt-8">
+                {[
+                  { icon: Calendar, value: stats.upcoming, label: 'Upcoming Sessions' },
+                  { icon: Award, value: stats.skills, label: 'Skill Areas' },
+                  { icon: UserCheck, value: stats.trainers, label: 'Expert Trainers' }
+                ].map((stat, idx) => (
+                  <Reveal key={stat.label} variant={fadeUp} delay={0.3 + idx * 0.1}>
+                    <div className="flex items-center gap-3">
+                      <stat.icon size={24} style={{ color: 'var--color-forest-green)' }} />
+                      <div>
+                        <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
+                          {stat.value}
+                        </p>
+                        <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+                          {stat.label}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Featured Session */}
-        {featuredSession && (
-          <section className="mb-12">
-            <Reveal variant={fadeUp}>
-              <div className="card-neon p-6 md:p-8 relative overflow-hidden">
-                <div
-                  className="absolute top-0 right-0 w-48 h-48 rounded-full opacity-10"
-                  style={{
-                    background: 'var--color-forest-green)',
-                    filter: 'blur(60px)'
-                  }}
-                />
-                <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                  <div className="flex-1">
-                    <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var--color-forest-green)' }}>
-                      Featured Session
-                    </span>
-                    <h2 className="text-2xl font-bold mt-1" style={{ color: 'var(--text-primary)' }}>
-                      {featuredSession.title}
-                    </h2>
-                    <p className="text-sm mt-1 max-w-lg line-clamp-2" style={{ color: 'var(--text-secondary)' }}>
-                      {featuredSession.description}
-                    </p>
-                    <div className="flex flex-wrap gap-4 mt-3 text-sm" style={{ color: 'var(--text-muted)' }}>
-                      <span className="flex items-center gap-1">
-                        {featuredSession.locationType === 'ONLINE' ? <Monitor size={14} /> : <MapPin size={14} />}
-                        {featuredSession.locationType === 'ONLINE' ? 'Online' : featuredSession.county || 'Physical'}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Calendar size={14} />
-                        {new Date(featuredSession.date).toLocaleDateString('en-KE', { 
-                          day: 'numeric', 
-                          month: 'long', 
-                          year: 'numeric' 
-                        })}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Clock size={14} />
-                        {featuredSession.durationMins} min
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Users size={14} />
-                        {featuredSession._count?.enrolments || 0} enrolled
-                      </span>
-                    </div>
-                  </div>
-                  <Link
-                    to={`/sessions/${featuredSession.id}`}
-                    className="btn-neon px-6 py-2.5 font-semibold whitespace-nowrap flex-shrink-0"
-                  >
-                    Reserve Seat
-                  </Link>
-                </div>
+                  </Reveal>
+                ))}
               </div>
-            </Reveal>
+            </div>
           </section>
-        )}
-        <FilterBar filters={filters} onFilterChange={setFilters} onReset={resetFilters} />
 
-        {/* Sessions Grid */}
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          animate="visible"
-          className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {sessions.map((session) => (
-            <Reveal key={session.id} variant={fadeUp}>
-              <SessionCard session={session} />
-            </Reveal>
-          ))}
-        </motion.div>
+          {/* Featured Session */}
+          {featuredSession && (
+            <section className="mb-12">
+              <Reveal variant={fadeUp}>
+                <div className="card-neon p-6 md:p-8 relative overflow-hidden cursor-pointer" onClick={() => handleViewDetails(featuredSession)}>
+                  <div
+                    className="absolute top-0 right-0 w-48 h-48 rounded-full opacity-10"
+                    style={{
+                      background: 'var--color-forest-green)',
+                      filter: 'blur(60px)'
+                    }}
+                  />
+                  <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <div className="flex-1">
+                      <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var--color-forest-green)' }}>
+                        Featured Session
+                      </span>
+                      <h2 className="text-2xl font-bold mt-1" style={{ color: 'var(--text-primary)' }}>
+                        {featuredSession.title}
+                      </h2>
+                      <p className="text-sm mt-1 max-w-lg line-clamp-2" style={{ color: 'var(--text-secondary)' }}>
+                        {featuredSession.description}
+                      </p>
+                      <div className="flex flex-wrap gap-4 mt-3 text-sm" style={{ color: 'var(--text-muted)' }}>
+                        <span className="flex items-center gap-1">
+                          {featuredSession.locationType === 'ONLINE' ? <Monitor size={14} /> : <MapPin size={14} />}
+                          {featuredSession.locationType === 'ONLINE' ? 'Online' : featuredSession.county || 'Physical'}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Calendar size={14} />
+                          {new Date(featuredSession.date).toLocaleDateString('en-KE', { 
+                            day: 'numeric', 
+                            month: 'long', 
+                            year: 'numeric' 
+                          })}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Clock size={14} />
+                          {featuredSession.durationMins} min
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Users size={14} />
+                          {featuredSession._count?.enrolments || 0} enrolled
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleViewDetails(featuredSession);
+                      }}
+                      className="btn-neon px-6 py-2.5 font-semibold whitespace-nowrap flex-shrink-0"
+                    >
+                      View Details
+                    </button>
+                  </div>
+                </div>
+              </Reveal>
+            </section>
+          )}
+          
+          <FilterBar filters={filters} onFilterChange={setFilters} onReset={resetFilters} />
+
+          {/* Sessions Grid */}
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {sessions.map((session) => (
+              <Reveal key={session.id} variant={fadeUp}>
+                <SessionCard session={session} onViewDetails={handleViewDetails} />
+              </Reveal>
+            ))}
+          </motion.div>
+        </div>
       </div>
-    </div>
+
+      {/* Session Details Modal */}
+      <SessionDetailsModal
+        session={selectedSession}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onEnrol={handleEnrol}
+      />
+    </>
   );
 }
