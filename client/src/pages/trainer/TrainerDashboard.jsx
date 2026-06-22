@@ -196,7 +196,7 @@ export default function TrainerDashboard() {
                 Upcoming Sessions
               </h3>
               <Link 
-                to="/trainer/sessions" 
+                to="sessions" 
                 className="text-sm flex items-center gap-1"
                 style={{ color: 'var(--color-forest-green)' }}
               >
@@ -232,7 +232,7 @@ export default function TrainerDashboard() {
             </h3>
             <div className="space-y-3">
               <Link
-                to="/trainer/sessions"
+                to="sessions"
                 className="flex items-center gap-3 p-3 rounded-lg transition-all hover:bg-card-hover"
                 style={{ color: 'var(--text-secondary)' }}
               >
@@ -241,7 +241,7 @@ export default function TrainerDashboard() {
                 <ChevronRight size={16} className="ml-auto" />
               </Link>
               <Link
-                to="/trainer/attendance"
+                to="attendance"
                 className="flex items-center gap-3 p-3 rounded-lg transition-all hover:bg-card-hover"
                 style={{ color: 'var(--text-secondary)' }}
               >
@@ -250,7 +250,7 @@ export default function TrainerDashboard() {
                 <ChevronRight size={16} className="ml-auto" />
               </Link>
               <Link
-                to="/trainer/certificates"
+                to="certificates"
                 className="flex items-center gap-3 p-3 rounded-lg transition-all hover:bg-card-hover"
                 style={{ color: 'var(--text-secondary)' }}
               >
@@ -258,15 +258,7 @@ export default function TrainerDashboard() {
                 <span className="text-sm">Issue Certificates</span>
                 <ChevronRight size={16} className="ml-auto" />
               </Link>
-              <Link
-                to="/profile"
-                className="flex items-center gap-3 p-3 rounded-lg transition-all hover:bg-card-hover"
-                style={{ color: 'var(--text-secondary)' }}
-              >
-                <FileCheck size={18} style={{ color: 'var(--color-forest-green)' }} />
-                <span className="text-sm">Update Profile</span>
-                <ChevronRight size={16} className="ml-auto" />
-              </Link>
+             
             </div>
           </motion.div>
 

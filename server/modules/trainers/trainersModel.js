@@ -16,6 +16,17 @@ async function createTrainerProfile(userId, data) {
 
 async function getTrainerProfileByUserId(userId) {
   try {
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      role: true
+    }
+  });
+
+  if( user.role==='ADMIN'){
+    return user;
+  }
     return await prisma.trainerProfile.findUnique({
       where: { userId },
       include: { user: { select: { id: true, name: true, email: true, phone: true, county: true, createdAt: true } } }
