@@ -1,29 +1,21 @@
 // src/pages/learner/PublicSessions.jsx
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import FilterBar from '../../components/dormain/FilterBar';
 import { useEffect, useState } from 'react';
-import Pagination from '@/components/ui/Pagination';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { getSessions } from '@/api/sessions';
+import { enrolInSession } from '@/api/enrolments';
 import useSessionFilters from '../../stores/sessionFilters';
 
-import { 
-  Calendar, 
-  MapPin, 
-  Monitor, 
-  Clock, 
-  Users,
-  ChevronRight,
-  Sparkles,
-  Award,
-  AlertCircle,
-  UserCheck 
-} from 'lucide-react';
-import { useMemo } from 'react';
+import FilterBar from '../../components/dormain/FilterBar';
+import Pagination from '@/components/ui/Pagination';
+import Spinner from '@/components/ui/Spinner';
+import { Button } from '@/components/ui/Button';
+import { Search, X, AlertCircle, Sparkles, Award, UserCheck } from 'lucide-react';
+import { toast } from '@/stores/toastStore';
+
+import { Calendar, MapPin, Monitor, Clock, Users, ChevronRight } from 'lucide-react';
 import Reveal from '@/components/Reveal';
 import { fadeUp, staggerContainer } from '@/utils/motion';
-import Spinner from '@/components/ui/Spinner';
-import { useSessions, useMyEnrolments } from '@/hooks';
-
 import SessionDetailsModal from '@/components/dormain/SessionDetailsModal';
 
 const skillImages = {
@@ -140,38 +132,44 @@ export default function PublicSessions() {
   const [selectedSession, setSelectedSession] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   
-  const { data, error, isError, isLoading, refetch } = useSessions();
-  const { enrol, isEnrolling } = useMyEnrolments();
+  // Use the session filters store - same as LearnerSessions
   const { filters, setFilters, resetFilters } = useSessionFilters();
+  const queryClient = useQueryClient();
 
-  const sessions = useMemo(() => {
-    if (Array.isArray(data)) {
-      return data;
-    }
-    if (data?.data && Array.isArray(data.data)) {
-      return data.data;
-    }
-    return [];
-  }, [data]);
+  // Use React Query with filters - same pattern as LearnerSessions
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ['sessions', filters],
+    queryFn: () => getSessions(filters),
+    keepPreviousData: true,
+  });
 
-  const upcomingSessions = useMemo(() => {
-    return sessions.filter(s => s.status === 'SCHEDULED');
-  }, [sessions]);
+  // Enrolment mutation - same as LearnerSessions
+  const enrolMutation = useMutation({
+    mutationFn: (sessionId) => enrolInSession(sessionId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['sessions'] });
+      toast.success('Enrolled successfully!');
+    },
+    onError: (error) => {
+      toast.error(error.response?.data?.message || 'Enrolment failed');
+    },
+  });
 
-  const featuredSession = upcomingSessions[0] || sessions[0];
-
-  const stats = useMemo(() => {
-    return {
-      total: sessions.length,
-      upcoming: upcomingSessions.length,
-      skills: new Set(sessions.map(s => s.skillArea).filter(Boolean)).size,
-      trainers: new Set(sessions.filter(s => s.trainer).map(s => s.trainer?.name).filter(Boolean)).size
-    };
-  }, [sessions, upcomingSessions]);
-
-  useEffect(() => { 
-    refetch(); 
+  // Refetch when filters change - same as LearnerSessions
+  useEffect(() => {
+    refetch();
   }, [filters, refetch]);
+
+  // Extract sessions and pagination from response
+  const sessions = data?.data || [];
+  const pagination = data?.pagination;
+
+  // Calculate stats from the filtered sessions (not all sessions)
+  const stats = {
+    total: pagination?.total || sessions.length,
+    skills: new Set(sessions.map(s => s.skillArea).filter(Boolean)).size,
+    trainers: new Set(sessions.filter(s => s.trainer).map(s => s.trainer?.name).filter(Boolean)).size
+  };
 
   const handleViewDetails = (session) => {
     setSelectedSession(session);
@@ -184,19 +182,21 @@ export default function PublicSessions() {
   };
 
   const handleEnrol = async (sessionId) => {
-    await enrol(sessionId);
+    await enrolMutation.mutateAsync(sessionId);
     await refetch(); // Refresh to update enrolment status
   };
 
+  // Loading state
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-page)' }}>
-        <Spinner />
+        <Spinner fullScreen />
       </div>
     );
   }
-  
-  if (isError) {
+
+  // Error state
+  if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'var(--bg-page)' }}>
         <div className="text-center max-w-md">
@@ -204,25 +204,35 @@ export default function PublicSessions() {
           <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
             Failed to load sessions
           </h3>
-          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+          <p className="text-sm mb-4" style={{ color: 'var(--text-muted)' }}>
             {error?.message || 'Please try refreshing the page or check back later.'}
           </p>
+          <Button onClick={() => refetch()}>Try Again</Button>
         </div>
       </div>
     );
   }
 
+  // No sessions state
   if (sessions.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'var(--bg-page)' }}>
         <div className="text-center max-w-md">
-          <Sparkles size={48} className="mx-auto mb-4" style={{ color: 'var(--text-muted)' }} />
+          <Search size={64} className="mx-auto mb-4" style={{ color: 'var(--text-muted)' }} />
           <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
-            No sessions available
+            No sessions found
           </h3>
-          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
-            Check back soon for upcoming training sessions.
+          <p className="text-sm mb-4" style={{ color: 'var(--text-muted)' }}>
+            {Object.keys(filters).some(key => filters[key]) 
+              ? 'Try adjusting your filters' 
+              : 'Check back soon for upcoming training sessions.'}
           </p>
+          {Object.keys(filters).some(key => filters[key]) && (
+            <Button variant="outline" onClick={resetFilters}>
+              <X size={16} className="mr-2" />
+              Clear Filters
+            </Button>
+          )}
         </div>
       </div>
     );
@@ -267,7 +277,7 @@ export default function PublicSessions() {
 
               <div className="flex flex-wrap gap-8 mt-8">
                 {[
-                  { icon: Calendar, value: stats.upcoming, label: 'Upcoming Sessions' },
+                  { icon: Calendar, value: stats.total, label: 'Total Sessions' },
                   { icon: Award, value: stats.skills, label: 'Skill Areas' },
                   { icon: UserCheck, value: stats.trainers, label: 'Expert Trainers' }
                 ].map((stat, idx) => (
@@ -289,68 +299,25 @@ export default function PublicSessions() {
             </div>
           </section>
 
-          {/* Featured Session */}
-          {featuredSession && (
-            <section className="mb-12">
-              <Reveal variant={fadeUp}>
-                <div className="card-neon p-6 md:p-8 relative overflow-hidden cursor-pointer" onClick={() => handleViewDetails(featuredSession)}>
-                  <div
-                    className="absolute top-0 right-0 w-48 h-48 rounded-full opacity-10"
-                    style={{
-                      background: 'var(--color-forest-green)',
-                      filter: 'blur(60px)'
-                    }}
-                  />
-                  <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                    <div className="flex-1">
-                      <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--color-forest-green)' }}>
-                        Featured Session
-                      </span>
-                      <h2 className="text-2xl font-bold mt-1" style={{ color: 'var(--text-primary)' }}>
-                        {featuredSession.title}
-                      </h2>
-                      <p className="text-sm mt-1 max-w-lg line-clamp-2" style={{ color: 'var(--text-secondary)' }}>
-                        {featuredSession.description}
-                      </p>
-                      <div className="flex flex-wrap gap-4 mt-3 text-sm" style={{ color: 'var(--text-muted)' }}>
-                        <span className="flex items-center gap-1">
-                          {featuredSession.locationType === 'ONLINE' ? <Monitor size={14} /> : <MapPin size={14} />}
-                          {featuredSession.locationType === 'ONLINE' ? 'Online' : featuredSession.county || 'Physical'}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Calendar size={14} />
-                          {new Date(featuredSession.date).toLocaleDateString('en-KE', { 
-                            day: 'numeric', 
-                            month: 'long', 
-                            year: 'numeric' 
-                          })}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Clock size={14} />
-                          {featuredSession.durationMins} min
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Users size={14} />
-                          {featuredSession._count?.enrolments || 0} enrolled
-                        </span>
-                      </div>
-                    </div>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleViewDetails(featuredSession);
-                      }}
-                      className="btn-neon px-6 py-2.5 font-semibold whitespace-nowrap flex-shrink-0"
-                    >
-                      View Details
-                    </button>
-                  </div>
-                </div>
-              </Reveal>
-            </section>
-          )}
-          
+          {/* Filter Bar - same as LearnerSessions */}
           <FilterBar filters={filters} onFilterChange={setFilters} onReset={resetFilters} />
+
+          {/* Results count - same as LearnerSessions */}
+          <div className="text-caption flex items-center gap-2 mb-6" style={{ color: 'var(--text-muted)' }}>
+            <Search size={14} />
+            Found {pagination?.total || sessions.length} sessions
+            {Object.keys(filters).some(key => filters[key]) && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={resetFilters}
+                className="text-xs"
+              >
+                <X size={12} className="mr-1" />
+                Clear Filters
+              </Button>
+            )}
+          </div>
 
           {/* Sessions Grid */}
           <motion.div
@@ -361,10 +328,24 @@ export default function PublicSessions() {
           >
             {sessions.map((session) => (
               <Reveal key={session.id} variant={fadeUp}>
-                <SessionCard session={session} onViewDetails={handleViewDetails} />
+                <SessionCard 
+                  session={session} 
+                  onViewDetails={handleViewDetails} 
+                />
               </Reveal>
             ))}
           </motion.div>
+
+          {/* Pagination - same as LearnerSessions */}
+          {pagination && pagination.totalPages > 1 && (
+            <div className="flex justify-center pt-8">
+              <Pagination 
+                currentPage={pagination.page} 
+                totalPages={pagination.totalPages} 
+                onPageChange={(page) => setFilters({ page })} 
+              />
+            </div>
+          )}
         </div>
       </div>
 

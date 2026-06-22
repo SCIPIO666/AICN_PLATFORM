@@ -1,4 +1,4 @@
-
+// Updated PublicTrainers.jsx
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { 
@@ -19,6 +19,8 @@ import Reveal from '@/components/Reveal';
 import { fadeUp, staggerContainer } from '@/utils/motion';
 import Spinner from '@/components/ui/Spinner';
 import { useTrainers, useSessions } from '@/hooks';
+import useModalStore from '@/stores/useModalStore';
+import TrainerProfileModal from '@/components/dormain/TrainerProfileModal';
 
 const availabilityLabels = {
   'online-only': { label: 'Online Trainer', icon: Monitor, color: 'var(--info-text)' },
@@ -51,8 +53,8 @@ function TrainerAvatar({ name, picture, size = 80 }) {
       style={{
         width: size,
         height: size,
-        background: 'linear-gradient(135deg, var(--color-forest-green), var--color-forest-green))',
-        color: 'var(--color-pure-black)'
+        background: 'var(--color-forest-green)',
+        color: 'white'
       }}
     >
       {initials}
@@ -60,11 +62,10 @@ function TrainerAvatar({ name, picture, size = 80 }) {
   );
 }
 
-function TrainerCard({ trainer, sessions }) {
+function TrainerCard({ trainer, sessions, onViewProfile }) {
   const availability = availabilityLabels[trainer.availability] || availabilityLabels['online-only'];
   const AvailabilityIcon = availability.icon;
   
-  // Calculate derived stats from sessions
   const trainerSessions = sessions?.filter(s => s.trainerId === trainer.id) || [];
   const upcomingSessions = trainerSessions.filter(s => s.status === 'SCHEDULED');
   const totalLearners = trainerSessions.reduce((acc, s) => acc + (s._count?.enrolments || 0), 0);
@@ -76,7 +77,8 @@ function TrainerCard({ trainer, sessions }) {
         boxShadow: '0 0 40px rgba(250,255,105,0.08)',
         transition: { duration: 0.2 }
       }}
-      className="card-base overflow-hidden transition-all group"
+      className="card-base overflow-hidden transition-all group cursor-pointer"
+      onClick={() => onViewProfile(trainer)}
     >
       <div className="p-6">
         <div className="flex items-start gap-4">
@@ -119,7 +121,7 @@ function TrainerCard({ trainer, sessions }) {
               className="px-2 py-1 rounded text-xs font-medium"
               style={{
                 background: 'rgba(250,255,105,0.08)',
-                color: 'var--color-forest-green)'
+                color: 'var(--color-forest-green)'
               }}
             >
               {skill}
@@ -132,20 +134,24 @@ function TrainerCard({ trainer, sessions }) {
           )}
         </div>
 
-        <Link
-          to={`/trainers/${trainer.id}`}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onViewProfile(trainer);
+          }}
           className="inline-flex items-center gap-1 mt-4 text-sm font-semibold transition-all group-hover:gap-2"
-          style={{ color: 'var--color-forest-green)' }}
+          style={{ color: 'var(--color-forest-green)' }}
         >
           View Profile
           <ChevronRight size={16} />
-        </Link>
+        </button>
       </div>
     </motion.div>
   );
 }
 
 export default function PublicTrainers() {
+  const { openModal, closeModal, isOpen, modalData, modalType } = useModalStore();
   const { data: trainersData, error: trainersError, isError: isTrainersError, isLoading: isTrainersLoading } = useTrainers();
   const { data: sessionsData } = useSessions();
 
@@ -177,6 +183,10 @@ export default function PublicTrainers() {
       upcoming: totalUpcoming
     };
   }, [trainers, sessions]);
+
+  const handleViewProfile = (trainer) => {
+    openModal('trainerProfile', trainer);
+  };
 
   if (isTrainersLoading) {
     return (
@@ -219,79 +229,92 @@ export default function PublicTrainers() {
   }
 
   return (
-    <div className="min-h-screen px-4 py-8 md:px-8 lg:px-12" style={{ background: 'var(--bg-page)' }}>
-      <div className="max-w-7xl mx-auto">
-        {/* Hero Section */}
-        <section className="card-base p-8 md:p-12 relative overflow-hidden mb-12">
-          <div
-            className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-10"
-            style={{
-              background: 'var--color-forest-green)',
-              filter: 'blur(60px)'
-            }}
-          />
-          
-          <div className="relative">
-            <Reveal variant={fadeUp}>
-              <p className="label-uppercase flex items-center gap-2">
-                <Sparkles size={16} />
-                Meet Our Expert Trainers
-              </p>
-            </Reveal>
+    <>
+      <div className="min-h-screen px-4 py-8 md:px-8 lg:px-12" style={{ background: 'var(--bg-page)' }}>
+        <div className="max-w-7xl mx-auto">
+          {/* Hero Section */}
+          <section className="card-base p-8 md:p-12 relative overflow-hidden mb-12">
+            <div
+              className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-10"
+              style={{
+                background: 'var(--color-forest-green)',
+                filter: 'blur(60px)'
+              }}
+            />
             
-            <Reveal variant={fadeUp} delay={0.1}>
-              <h1 className="text-4xl md:text-5xl font-bold tracking-tight mt-2" style={{ color: 'var(--text-primary)' }}>
-                Learn from practitioners,<br />
-                <span style={{ color: 'var--color-forest-green)' }}>industry leaders and experts</span>
-              </h1>
-            </Reveal>
+            <div className="relative">
+              <Reveal variant={fadeUp}>
+                <p className="label-uppercase flex items-center gap-2">
+                  <Sparkles size={16} />
+                  Meet Our Expert Trainers
+                </p>
+              </Reveal>
+              
+              <Reveal variant={fadeUp} delay={0.1}>
+                <h1 className="text-4xl md:text-5xl font-bold tracking-tight mt-2" style={{ color: 'var(--text-primary)' }}>
+                  Learn from practitioners,<br />
+                  <span style={{ color: 'var(--color-forest-green)' }}>industry leaders and experts</span>
+                </h1>
+              </Reveal>
 
-            <Reveal variant={fadeUp} delay={0.2}>
-              <p className="text-body-large mt-4 max-w-2xl" style={{ color: 'var(--text-secondary)' }}>
-                Discover trainers who are driving change across Africa with practical,
-                hands-on experience in their fields.
-              </p>
-            </Reveal>
+              <Reveal variant={fadeUp} delay={0.2}>
+                <p className="text-body-large mt-4 max-w-2xl" style={{ color: 'var(--text-secondary)' }}>
+                  Discover trainers who are driving change across Africa with practical,
+                  hands-on experience in their fields.
+                </p>
+              </Reveal>
 
-            <div className="flex flex-wrap gap-8 mt-8">
-              {[
-                { icon: Users, value: stats.total, label: 'Expert Trainers' },
-                { icon: Award, value: stats.skills, label: 'Skills Covered' },
-                { icon: Calendar, value: stats.upcoming, label: 'Upcoming Sessions' },
-                { icon: UserCheck, value: stats.sessions, label: 'Sessions Completed' }
-              ].map((stat, idx) => (
-                <Reveal key={stat.label} variant={fadeUp} delay={0.3 + idx * 0.1}>
-                  <div className="flex items-center gap-3">
-                    <stat.icon size={24} style={{ color: 'var--color-forest-green)' }} />
-                    <div>
-                      <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
-                        {stat.value}
-                      </p>
-                      <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
-                        {stat.label}
-                      </p>
+              <div className="flex flex-wrap gap-8 mt-8">
+                {[
+                  { icon: Users, value: stats.total, label: 'Expert Trainers' },
+                  { icon: Award, value: stats.skills, label: 'Skills Covered' },
+                  { icon: Calendar, value: stats.upcoming, label: 'Upcoming Sessions' },
+                  { icon: UserCheck, value: stats.sessions, label: 'Sessions Completed' }
+                ].map((stat, idx) => (
+                  <Reveal key={stat.label} variant={fadeUp} delay={0.3 + idx * 0.1}>
+                    <div className="flex items-center gap-3">
+                      <stat.icon size={24} style={{ color: 'var(--color-forest-green)' }} />
+                      <div>
+                        <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
+                          {stat.value}
+                        </p>
+                        <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+                          {stat.label}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </Reveal>
-              ))}
+                  </Reveal>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
 
-        {/* Trainers Grid */}
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          animate="visible"
-          className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {trainers.map((trainer) => (
-            <Reveal key={trainer.id} variant={fadeUp}>
-              <TrainerCard trainer={trainer} sessions={sessions} />
-            </Reveal>
-          ))}
-        </motion.div>
+          {/* Trainers Grid */}
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {trainers.map((trainer) => (
+              <Reveal key={trainer.id} variant={fadeUp}>
+                <TrainerCard 
+                  trainer={trainer} 
+                  sessions={sessions} 
+                  onViewProfile={handleViewProfile}
+                />
+              </Reveal>
+            ))}
+          </motion.div>
+        </div>
       </div>
-    </div>
+
+      {/* Single Modal - Mounted at End */}
+      <TrainerProfileModal
+        isOpen={isOpen && modalType === 'trainerProfile'}
+        data={modalData}
+        onClose={closeModal}
+      />
+    </>
   );
 }
