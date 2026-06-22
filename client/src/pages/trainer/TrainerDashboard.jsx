@@ -140,7 +140,7 @@ export default function TrainerDashboard() {
             </span>
           </div>
           <h1 className="text-3xl md:text-4xl font-bold mt-2" style={{ color: 'var(--text-primary)' }}>
-            Welcome back, {user?.name || 'Trainer'} 👋
+            Welcome back, {user?.name || 'Trainer'} 
           </h1>
           <p className="mt-2" style={{ color: 'var(--text-secondary)' }}>
             {profile?.bio || 'Manage your sessions, track attendance, and issue certificates.'}
