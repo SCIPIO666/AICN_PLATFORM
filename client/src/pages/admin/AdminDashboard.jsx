@@ -7,21 +7,20 @@ import {
   UserCheck, 
   Calendar, 
   Award,
-  TrendingUp,
-  TrendingDown,
   Sparkles,
   ChevronRight,
   AlertCircle,
   Briefcase,
   Bell,
-  FileCheck
+  Activity
 } from 'lucide-react';
 
 import { useAdminStats, useUsers, useTrainerApplications } from '@/hooks';
 import Spinner from '@/components/ui/Spinner';
 import StatsCard from '@/components/dashboard/StatsCard';
-import { safeFormatRelative } from '@/utils/date';
+import { safeFormatRelative, getSafeDate } from '@/utils/date';
 
+// Helper component for recent activity
 function RecentActivityItem({ activity }) {
   const icons = {
     user_registered: Users,
@@ -32,7 +31,15 @@ function RecentActivityItem({ activity }) {
     announcement_posted: Bell,
   };
 
-  const Icon = icons[activity.type] || Bell;
+  const Icon = icons[activity?.type] || Bell;
+
+  // ✅ SAFE DATE HANDLING
+  const getTimeAgo = () => {
+    if (!activity?.timestamp) return 'Recently';
+    const date = getSafeDate(activity.timestamp);
+    if (!date) return 'Recently';
+    return safeFormatRelative(date);
+  };
 
   return (
     <motion.div
@@ -45,10 +52,10 @@ function RecentActivityItem({ activity }) {
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-sm truncate" style={{ color: 'var(--text-primary)' }}>
-          {activity.message}
+          {activity?.message || 'Activity occurred'}
         </p>
         <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-          {safeFormatRelative(activity.timestamp)}
+          {getTimeAgo()}
         </p>
       </div>
     </motion.div>
@@ -57,18 +64,72 @@ function RecentActivityItem({ activity }) {
 
 export default function AdminDashboard() {
   const { data: statsData, isLoading: statsLoading, error: statsError } = useAdminStats();
-  const { data: usersData } = useUsers({ limit: 5 });
-  const { data: applicationsData } = useTrainerApplications({ limit: 5 });
+  const { data: usersData, isLoading: usersLoading } = useUsers({ limit: 5 });
+  const { data: applicationsData, isLoading: appsLoading } = useTrainerApplications({ limit: 5 });
 
+  // ✅ SAFE DATA EXTRACTION
   const stats = useMemo(() => {
-    if (!statsData?.data) return null;
+    if (!statsData?.data) {
+      return {
+        totalUsers: 0,
+        totalTrainers: 0,
+        totalSessions: 0,
+        totalCertificates: 0,
+      };
+    }
     return statsData.data;
   }, [statsData]);
 
-  const recentUsers = usersData?.data?.slice(0, 5) || [];
-  const pendingApplications = applicationsData?.data?.filter(a => a.status === 'PENDING') || [];
+  // ✅ SAFE ARRAY EXTRACTION
+  const recentUsers = useMemo(() => {
+    if (!usersData?.data) return [];
+    return Array.isArray(usersData.data) ? usersData.data : [];
+  }, [usersData]);
 
-  if (statsLoading) {
+  // ✅ SAFE ARRAY EXTRACTION
+  const pendingApplications = useMemo(() => {
+    if (!applicationsData?.data) return [];
+    const apps = Array.isArray(applicationsData.data) ? applicationsData.data : [];
+    return apps.filter(a => a?.status === 'PENDING');
+  }, [applicationsData]);
+
+  // ✅ SAFE ACTIVITY GENERATION
+  const activities = useMemo(() => {
+    const items = [];
+
+    // Add user registrations
+    recentUsers.slice(0, 3).forEach(u => {
+      if (u?.name) {
+        items.push({
+          type: 'user_registered',
+          message: `${u.name} registered as a ${u.role || 'user'}`,
+          timestamp: u.createdAt || new Date(),
+        });
+      }
+    });
+
+    // Add pending applications
+    pendingApplications.slice(0, 3).forEach(a => {
+      if (a?.user?.name) {
+        items.push({
+          type: 'trainer_applied',
+          message: `${a.user.name} applied to become a trainer`,
+          timestamp: a.createdAt || new Date(),
+        });
+      }
+    });
+
+    // Sort by timestamp (newest first)
+    return items.sort((a, b) => {
+      const dateA = getSafeDate(a.timestamp);
+      const dateB = getSafeDate(b.timestamp);
+      if (!dateA || !dateB) return 0;
+      return dateB - dateA;
+    }).slice(0, 5);
+  }, [recentUsers, pendingApplications]);
+
+  // Loading state
+  if (statsLoading || usersLoading || appsLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-page)' }}>
         <Spinner />
@@ -76,7 +137,8 @@ export default function AdminDashboard() {
     );
   }
 
-  if (statsError || !stats) {
+  // Error state - check if we have critical data
+  if (statsError || !statsData) {
     return (
       <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'var(--bg-page)' }}>
         <div className="text-center max-w-md">
@@ -84,33 +146,26 @@ export default function AdminDashboard() {
           <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
             Failed to load dashboard
           </h3>
-          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
-            Please try refreshing the page.
+          <p className="text-sm mb-4" style={{ color: 'var(--text-muted)' }}>
+            {statsError?.message || 'Please try refreshing the page.'}
           </p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="btn-primary"
+          >
+            Try Again
+          </button>
         </div>
       </div>
     );
   }
 
   const statCards = [
-    { icon: Users, label: 'Total Users', value: stats.totalUsers, color: '#3b82f6' },
-    { icon: UserCheck, label: 'Trainers', value: stats.totalTrainers, color: 'var(--color-forest-green)' },
-    { icon: Calendar, label: 'Sessions', value: stats.totalSessions, color: '#8b5cf6' },
-    { icon: Award, label: 'Certificates', value: stats.totalCertificates, color: '#f59e0b' },
+    { icon: Users, label: 'Total Users', value: stats.totalUsers || 0, color: '#3b82f6' },
+    { icon: UserCheck, label: 'Trainers', value: stats.totalTrainers || 0, color: 'var(--color-forest-green)' },
+    { icon: Calendar, label: 'Sessions', value: stats.totalSessions || 0, color: '#8b5cf6' },
+    { icon: Award, label: 'Certificates', value: stats.totalCertificates || 0, color: '#f59e0b' },
   ];
-
-  const activities = [
-    ...recentUsers.map(u => ({
-      type: 'user_registered',
-      message: `${u.name} registered as a ${u.role}`,
-      timestamp: u.createdAt,
-    })),
-    ...pendingApplications.map(a => ({
-      type: 'trainer_applied',
-      message: `${a.user?.name} applied to become a trainer`,
-      timestamp: a.createdAt,
-    })),
-  ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 5);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 md:px-8">
@@ -177,7 +232,7 @@ export default function AdminDashboard() {
                 Pending Trainer Applications
               </h3>
               <Link 
-                to="/admin/applications" 
+                to="/dashboard/admin/applications" 
                 className="text-sm flex items-center gap-1"
                 style={{ color: 'var(--color-forest-green)' }}
               >
@@ -190,7 +245,7 @@ export default function AdminDashboard() {
                 {pendingApplications.slice(0, 3).map((application) => (
                   <Link
                     key={application.id}
-                    to={`/admin/applications/${application.id}`}
+                    to={`/dashboard/admin/applications/${application.id}`}
                     className="flex items-center justify-between p-3 rounded-lg transition-all hover:bg-card-hover"
                     style={{ background: 'var(--bg-surface)' }}
                   >
@@ -205,7 +260,7 @@ export default function AdminDashboard() {
                           {application.user?.name || 'Unknown'}
                         </p>
                         <p className="text-xs truncate" style={{ color: 'var(--text-muted)' }}>
-                          {application.skillArea || 'No skill area'} • {safeFormatRelative(application.createdAt)}
+                          {application.skillArea || 'No skill area'}
                         </p>
                       </div>
                     </div>
@@ -235,7 +290,7 @@ export default function AdminDashboard() {
                 Recent Users
               </h3>
               <Link 
-                to="/admin/users" 
+                to="/dashboard/admin/users" 
                 className="text-sm flex items-center gap-1"
                 style={{ color: 'var(--color-forest-green)' }}
               >
@@ -245,10 +300,10 @@ export default function AdminDashboard() {
             </div>
             {recentUsers.length > 0 ? (
               <div className="space-y-3">
-                {recentUsers.map((user) => (
+                {recentUsers.slice(0, 5).map((user) => (
                   <Link
                     key={user.id}
-                    to={`/admin/users/${user.id}`}
+                    to={`/dashboard/admin/users/${user.id}`}
                     className="flex items-center justify-between p-3 rounded-lg transition-all hover:bg-card-hover"
                     style={{ background: 'var(--bg-surface)' }}
                   >
@@ -263,7 +318,7 @@ export default function AdminDashboard() {
                           {user.name || 'Unknown'}
                         </p>
                         <p className="text-xs truncate" style={{ color: 'var(--text-muted)' }}>
-                          {user.email} • {safeFormatRelative(user.createdAt)}
+                          {user.email || 'No email'}
                         </p>
                       </div>
                     </div>
@@ -282,7 +337,7 @@ export default function AdminDashboard() {
                           : '#3b82f6'
                       }}
                     >
-                      {user.role}
+                      {user.role || 'User'}
                     </span>
                   </Link>
                 ))}
@@ -310,7 +365,7 @@ export default function AdminDashboard() {
             </h3>
             <div className="space-y-3">
               <Link
-                to="/admin/announcements/new"
+                to="/dashboard/admin/announcements/create"
                 className="flex items-center gap-3 p-3 rounded-lg transition-all hover:bg-card-hover"
                 style={{ color: 'var(--text-secondary)' }}
               >
@@ -319,7 +374,7 @@ export default function AdminDashboard() {
                 <ChevronRight size={16} className="ml-auto" />
               </Link>
               <Link
-                to="/admin/users"
+                to="/dashboard/admin/users"
                 className="flex items-center gap-3 p-3 rounded-lg transition-all hover:bg-card-hover"
                 style={{ color: 'var(--text-secondary)' }}
               >
@@ -328,7 +383,7 @@ export default function AdminDashboard() {
                 <ChevronRight size={16} className="ml-auto" />
               </Link>
               <Link
-                to="/admin/applications"
+                to="/dashboard/admin/applications"
                 className="flex items-center gap-3 p-3 rounded-lg transition-all hover:bg-card-hover"
                 style={{ color: 'var(--text-secondary)' }}
               >
@@ -337,7 +392,7 @@ export default function AdminDashboard() {
                 <ChevronRight size={16} className="ml-auto" />
               </Link>
               <Link
-                to="/admin/certificates"
+                to="/dashboard/admin/certificates"
                 className="flex items-center gap-3 p-3 rounded-lg transition-all hover:bg-card-hover"
                 style={{ color: 'var(--text-secondary)' }}
               >

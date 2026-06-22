@@ -6,12 +6,12 @@ import MyEnrolments from '../pages/learner/MyEnrolments'
 import EnrolmentDetails from '../pages/learner/EnrolmentDetails'
 import MyCertificates from '../pages/learner/MyCertificates'
 import CertificateDetails from '../pages/learner/CertificateDetails'
-import Trainers from '../pages/learner/Trainers'
-import TrainerDetails from '../pages/learner/TrainerDetails'
+// import Trainers from '../pages/learner/Trainers'
+// import TrainerDetails from '../pages/learner/TrainerDetails'
 import ApplyTrainer from '../pages/learner/ApplyTrainer'
 
 
-// TRAINER PAGES (Shells)
+// TRAINER PAGES 
 import TrainerDashboard from '@/pages/trainer/TrainerDashboard'
 import TrainerSessions from '../pages/trainer/TrainerSessions '
 import TrainerSessionDetails from '../pages/trainer/TrainerSessionDetails'
@@ -22,8 +22,8 @@ import TrainerProfile from '@/pages/trainer/TrainerProfile'
 import ManageCertificates from '@/pages/trainer/ManageCertificates'
 import IssueCertificates from '@/pages/trainer/IssueCertificates'
 
-// ADMIN PAGES (Shells)
-import AdminDashboard from '../pages/admin/Dashboard'
+// ADMIN PAGES 
+import AdminDashboard from '../pages/admin/AdminDashboard'
 import Users from '../pages/admin/Users'
 import UserDetails from '../pages/admin/UserDetails'
 import AdminSessions from '../pages/admin/Sessions'
@@ -35,7 +35,8 @@ import AnnouncementForm from '../pages/admin/AnnouncementForm'
 import AdminCertificates from '../pages/admin/Certificates'
 import SystemSettings from '../pages/admin/SystemSettings'
 
-// SHARED PAGES (Shells)
+
+// SHARED PAGES 
 import Profile from '@/pages/shared/Profile'
 import Settings from '@/pages/shared/Settings'
 
