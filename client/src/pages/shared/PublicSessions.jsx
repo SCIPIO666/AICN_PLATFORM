@@ -1,4 +1,4 @@
-// src/pages/learner/PublicSessions.jsx (updated)
+// src/pages/learner/PublicSessions.jsx
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import FilterBar from '../../components/dormain/FilterBar';
@@ -126,7 +126,7 @@ function SessionCard({ session, onViewDetails }) {
             onViewDetails(session);
           }}
           className="inline-flex items-center gap-1 mt-4 text-sm font-semibold transition-all group-hover:gap-2"
-          style={{ color: 'var--color-forest-green)' }}
+          style={{ color: 'var(--color-forest-green)' }}
         >
           View Details
           <ChevronRight size={16} />
@@ -237,7 +237,7 @@ export default function PublicSessions() {
             <div
               className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-10"
               style={{
-                background: 'var--color-forest-green)',
+                background: 'var(--color-forest-green)',
                 filter: 'blur(60px)'
               }}
             />
@@ -254,7 +254,7 @@ export default function PublicSessions() {
                 <h1 className="text-4xl md:text-5xl font-bold tracking-tight mt-2" style={{ color: 'var(--text-primary)' }}>
                   Build practical skills from
                   <br />
-                  <span style={{ color: 'var--color-forest-green)' }}>industry experts</span>
+                  <span style={{ color: 'var(--color-forest-green)' }}>industry experts</span>
                 </h1>
               </Reveal>
 
@@ -273,7 +273,7 @@ export default function PublicSessions() {
                 ].map((stat, idx) => (
                   <Reveal key={stat.label} variant={fadeUp} delay={0.3 + idx * 0.1}>
                     <div className="flex items-center gap-3">
-                      <stat.icon size={24} style={{ color: 'var--color-forest-green)' }} />
+                      <stat.icon size={24} style={{ color: 'var(--color-forest-green)' }} />
                       <div>
                         <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
                           {stat.value}
@@ -297,13 +297,13 @@ export default function PublicSessions() {
                   <div
                     className="absolute top-0 right-0 w-48 h-48 rounded-full opacity-10"
                     style={{
-                      background: 'var--color-forest-green)',
+                      background: 'var(--color-forest-green)',
                       filter: 'blur(60px)'
                     }}
                   />
                   <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                     <div className="flex-1">
-                      <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var--color-forest-green)' }}>
+                      <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--color-forest-green)' }}>
                         Featured Session
                       </span>
                       <h2 className="text-2xl font-bold mt-1" style={{ color: 'var(--text-primary)' }}>

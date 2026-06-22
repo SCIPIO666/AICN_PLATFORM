@@ -8,6 +8,17 @@ import {
 import { format } from 'date-fns';
 import { useAuth } from '@/contexts/AuthContext';
 
+const skillImages = {
+  "Data Analysis": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800",
+  "Cyber Hygiene": "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800",
+  "Digital Marketing": "https://images.unsplash.com/photo-1432881476120-f99dd183d1b5?w=800",
+  "Graphic Design": "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800",
+  "Soft Skills": "https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=800",
+  "Basics in Cyber Security": "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800",
+  "Content Creation & Monetization": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800",
+  "Introduction to Online Jobs": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800"
+};
+
 const SessionDetailsModal = ({ session, isOpen, onClose, onEnrol }) => {
   const [isEnrolling, setIsEnrolling] = useState(false);
   const { user } = useAuth();
@@ -19,11 +30,13 @@ const SessionDetailsModal = ({ session, isOpen, onClose, onEnrol }) => {
   const isFull = session._count?.enrolments >= session.capacity;
   const isPast = new Date(session.date) < new Date();
   
-  // if user is already enrolled
+  // Check if user is already enrolled
   const isEnrolled = session.enrolments?.some(e => e.userId === user?.id) || false;
   const hasCancelled = session.enrolments?.some(e => 
     e.userId === user?.id && e.status === 'CANCELLED'
   ) || false;
+
+  const imageUrl = skillImages[session.skillArea] || skillImages['Soft Skills'];
 
   const formatDate = (date) => {
     return format(new Date(date), 'EEEE, MMMM d, yyyy');
@@ -48,31 +61,29 @@ const SessionDetailsModal = ({ session, isOpen, onClose, onEnrol }) => {
   const getActionButton = () => {
     if (isEnrolled) {
       return (
-        <button
-          disabled
-          className="w-full py-3 rounded-lg text-sm bg-green-100 
-                     text-green-700 border border-green-300 cursor-not-allowed
-                     flex items-center justify-center gap-2"
-        >
-          <CheckCircle size={16} />
-          Already Enrolled
-        </button>
+        <div className="card-inset p-4 text-center border border-green-500/30">
+          <p className="flex items-center justify-center gap-2 text-sm font-medium" style={{ color: 'var(--success-text)' }}>
+            <CheckCircle size={18} />
+            Already Enrolled
+          </p>
+        </div>
       );
     }
 
     if (hasCancelled) {
       return (
-        <div className="space-y-2">
-          <p className="text-xs text-amber-600 text-center">
+        <div className="space-y-3">
+          <p className="text-xs text-center font-medium" style={{ color: 'var(--warning-text)' }}>
             You previously cancelled this session
           </p>
           <button
             onClick={handleEnrol}
             disabled={isEnrolling || isPast || isFull}
-            className="w-full py-3 rounded-lg text-sm bg-amber-500 
-                       text-white hover:bg-amber-600 transition-colors
-                       disabled:opacity-50 disabled:cursor-not-allowed
-                       flex items-center justify-center gap-2"
+            className="btn-primary w-full flex items-center justify-center gap-2"
+            style={{
+              background: isPast || isFull ? 'var(--text-muted)' : 'var(--color-forest-green)',
+              cursor: isPast || isFull ? 'not-allowed' : 'pointer'
+            }}
           >
             {isEnrolling ? (
               <>
@@ -91,10 +102,11 @@ const SessionDetailsModal = ({ session, isOpen, onClose, onEnrol }) => {
       <button
         onClick={handleEnrol}
         disabled={isEnrolling || isPast || isFull}
-        className="w-full py-3 rounded-lg text-sm bg-green-600 
-                  text-white hover:bg-green-700 disabled:opacity-50 
-                  disabled:cursor-not-allowed transition-colors
-                  flex items-center justify-center gap-2"
+        className="btn-primary w-full flex items-center justify-center gap-2"
+        style={{
+          background: isPast || isFull ? 'var(--text-muted)' : 'var(--color-forest-green)',
+          cursor: isPast || isFull ? 'not-allowed' : 'pointer'
+        }}
       >
         {isEnrolling ? (
           <>
@@ -114,19 +126,25 @@ const SessionDetailsModal = ({ session, isOpen, onClose, onEnrol }) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center p-4"
-        style={{ background: 'rgba(0,0,0,0.7)' }}
+        className="fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-4"
         onClick={onClose}
       >
         <motion.div
           initial={{ scale: 0.9, y: 20 }}
           animate={{ scale: 1, y: 0 }}
           exit={{ scale: 0.9, y: 20 }}
-          className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto"
+          className="card-base shadow-elevated max-w-3xl w-full max-h-[90vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Header Container for Badges & Close Button */}
-          <div className="relative h-20 bg-transparent">
+          {/* Image Header */}
+          <div className="relative h-56 overflow-hidden">
+            <img
+              src={imageUrl}
+              alt={session.title}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+            
             {/* Close Button */}
             <button
               onClick={onClose}
@@ -136,7 +154,7 @@ const SessionDetailsModal = ({ session, isOpen, onClose, onEnrol }) => {
             </button>
 
             {/* Badges */}
-            <div className="absolute bottom-2 left-6 right-4 flex flex-wrap gap-2">
+            <div className="absolute bottom-4 left-4 right-4 flex flex-wrap gap-2">
               <span
                 className="px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-sm"
                 style={{
@@ -181,22 +199,24 @@ const SessionDetailsModal = ({ session, isOpen, onClose, onEnrol }) => {
                 </span>
               )}
             </div>
+
+            {/* Title on Image */}
+            <div className="absolute bottom-20 left-6 right-6">
+              <h2 className="text-feature-heading font-bold text-white drop-shadow-lg">
+                {session.title}
+              </h2>
+            </div>
           </div>
 
           {/* Content */}
           <div className="p-6 space-y-6">
-            {/* Title & Meta */}
-            <div>         
-              <h2 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
-                {session.title}
-              </h2>
-              {session.skillArea && (
-                <span className="inline-flex items-center gap-1 mt-2 text-sm font-medium" style={{ color: 'var(--color-forest-green)' }}>
-                  <Award size={14} />
-                  {session.skillArea}
-                </span>
-              )}
-            </div>
+            {/* Skill Area */}
+            {session.skillArea && (
+              <div className="flex items-center gap-2 text-sm font-medium" style={{ color: 'var(--color-forest-green)' }}>
+                <Award size={16} />
+                {session.skillArea}
+              </div>
+            )}
 
             {/* Description */}
             <p className="text-body" style={{ color: 'var(--text-secondary)' }}>
@@ -272,8 +292,7 @@ const SessionDetailsModal = ({ session, isOpen, onClose, onEnrol }) => {
                 </p>
                 <a
                   href="/login"
-                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold text-white transition-colors"
-                  style={{ background: 'var(--color-forest-green)' }}
+                  className="btn-primary inline-flex items-center gap-2 px-6 py-2.5"
                 >
                   Sign In to Enrol
                   <ChevronRight size={16} />

@@ -58,9 +58,12 @@
   --spacing-12: 3rem;     /* 48px */
   --spacing-16: 4rem;     /* 64px */
 
+
+
   /* Shadows */
   --shadow-subtle:   0px 1px 3px rgba(0,0,0,0.1), 0px 1px 2px -1px rgba(0,0,0,0.1);
-  --shadow-elevated: 0px 10px 15px -3px rgba(0,0,0,0.1), 0px 4px 6px -4px rgba(0,0,0,0.1);
+   --shadow-elevated: 0px 10px 15px -3px rgba(0,0,0,0.1), 0px 4px 6px -4px rgba(0,0,0,0.1);
+  /* --shadow-elevated: 0px 10px 15px -3px rgba(0,0,0,0.1), 0px 4px 6px -4px rgba(0,0,0,0.1); */
   --shadow-inset:    inset 0px 4px 25px rgba(0,0,0,0.14), 0px 4px 4px rgba(0,0,0,0.06);
 }
 
@@ -72,6 +75,8 @@
   --bg-card:    #f8f8f8;
   --bg-nav:     rgba(255, 255, 255, 0.95);
   --bg-sidebar: #f9fafb;
+  --bg-surface: #f3f4f6;
+    --bg-surface-hover: #e5e7eb;
 
   /* Text */
   --text-primary:   #111827;
@@ -119,6 +124,7 @@
   --neon-bg: #faff69;
   --neon-border: #faff69;
   
+
   /* For buttons */
   --neon-button-bg: #faff69;
   --neon-button-text: #000000;
@@ -150,6 +156,8 @@
   --bg-card:    #0a0a0a;
   --bg-nav:     rgba(0, 0, 0, 0.92);
   --bg-sidebar: #0a0a0a;
+  --bg-surface: #111111;
+  --bg-surface-hover: #1a1a1a;
 
   /* Text */
   --text-primary:   #ffffff;
