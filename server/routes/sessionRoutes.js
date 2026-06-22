@@ -34,7 +34,7 @@ sessionRouter.get(
 sessionRouter.post(
   '/', 
   verifyToken, 
-  requireRole('ADMIN'),
+  requireRole('ADMIN','TRAINER'),
   validate(createSessionSchema, 'body'), 
   sessionsController.createSession
 );

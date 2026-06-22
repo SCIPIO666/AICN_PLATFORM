@@ -20,7 +20,7 @@ import Spinner from '@/components/ui/Spinner';
 import StatsCard from '@/components/dashboard/StatsCard';
 import { safeFormatRelative, getSafeDate } from '@/utils/date';
 
-// Helper component for recent activity
+
 function RecentActivityItem({ activity }) {
   const icons = {
     user_registered: Users,
@@ -33,7 +33,6 @@ function RecentActivityItem({ activity }) {
 
   const Icon = icons[activity?.type] || Bell;
 
-  // ✅ SAFE DATE HANDLING
   const getTimeAgo = () => {
     if (!activity?.timestamp) return 'Recently';
     const date = getSafeDate(activity.timestamp);
@@ -80,20 +79,19 @@ export default function AdminDashboard() {
     return statsData.data;
   }, [statsData]);
 
-  // ✅ SAFE ARRAY EXTRACTION
   const recentUsers = useMemo(() => {
     if (!usersData?.data) return [];
     return Array.isArray(usersData.data) ? usersData.data : [];
   }, [usersData]);
 
-  // ✅ SAFE ARRAY EXTRACTION
+
   const pendingApplications = useMemo(() => {
     if (!applicationsData?.data) return [];
     const apps = Array.isArray(applicationsData.data) ? applicationsData.data : [];
     return apps.filter(a => a?.status === 'PENDING');
   }, [applicationsData]);
 
-  // ✅ SAFE ACTIVITY GENERATION
+
   const activities = useMemo(() => {
     const items = [];
 
@@ -137,7 +135,7 @@ export default function AdminDashboard() {
     );
   }
 
-  // Error state - check if we have critical data
+  // Error state 
   if (statsError || !statsData) {
     return (
       <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'var(--bg-page)' }}>

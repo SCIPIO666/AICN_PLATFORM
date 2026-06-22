@@ -7,8 +7,8 @@ function LoginPage() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    email: 'calvince@africaictcsnetwork.org',
-    password: 'admin123',
+    email: 'amara.osei@aicn.org',
+    password: 'trainer123',
   });
 // learner123   akinyi@example.com
   const [localError, setLocalError] = useState('');

@@ -8,7 +8,7 @@ import Spinner from '@/components/ui/Spinner';
 import { Button } from '@/components/ui/Button';
 import { getSafeDate, safeFormatDate } from '@/utils/date';
 import SessionDetailsModal from '@/components/admin/SessionDetailsModal';
-import SessionFormModal from '@/components/admin/SessionFormModal';
+import SessionFormModal from '@/components/modals/SessionFormModal';
 
 function SessionCard({ session, onView }) {
   const date = getSafeDate(session.date);
