@@ -27,7 +27,7 @@ import { useVerifyCertificate } from '@/hooks';
 import { verifyCertificateSchema } from '@/validators/learner';
 import Reveal from '@/components/Reveal';
 import { fadeUp, staggerContainer, scaleUp, slideUp } from '@/utils/motion';
-
+import PublicNavbar from '@/components/PublicNavbar';
 const VerifyCertificate = () => {
   const [certCode, setCertCode] = useState('');
   
@@ -130,6 +130,7 @@ const VerifyCertificate = () => {
 
   return (
     <div className="min-h-screen px-4 py-8 md:px-8 lg:px-12" style={{ background: 'var(--bg-page)' }}>
+      <PublicNavbar/>
       <div className="max-w-5xl mx-auto">
         
         {/* HERO */}

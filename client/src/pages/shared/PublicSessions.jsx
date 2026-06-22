@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getSessions } from '@/api/sessions';
 import { enrolInSession } from '@/api/enrolments';
 import useSessionFilters from '../../stores/sessionFilters';
+import PublicNavbar from '@/components/PublicNavbar';
 
 import FilterBar from '../../components/dormain/FilterBar';
 import Pagination from '@/components/ui/Pagination';
@@ -240,6 +241,7 @@ export default function PublicSessions() {
 
   return (
     <>
+          <PublicNavbar />
       <div className="min-h-screen px-4 py-8 md:px-8 lg:px-12" style={{ background: 'var(--bg-page)' }}>
         <div className="max-w-7xl mx-auto">
           {/* Hero Section */}

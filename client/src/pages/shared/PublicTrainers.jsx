@@ -21,7 +21,7 @@ import Spinner from '@/components/ui/Spinner';
 import { useTrainers, useSessions } from '@/hooks';
 import useModalStore from '@/stores/useModalStore';
 import TrainerProfileModal from '@/components/dormain/TrainerProfileModal';
-
+import PublicNavbar from '@/components/PublicNavbar';
 const availabilityLabels = {
   'online-only': { label: 'Online Trainer', icon: Monitor, color: 'var(--info-text)' },
   'weekends': { label: 'Available Weekends', icon: Calendar, color: 'var(--success-text)' },
@@ -230,6 +230,7 @@ export default function PublicTrainers() {
 
   return (
     <>
+    <PublicNavbar/>
       <div className="min-h-screen px-4 py-8 md:px-8 lg:px-12" style={{ background: 'var(--bg-page)' }}>
         <div className="max-w-7xl mx-auto">
           {/* Hero Section */}

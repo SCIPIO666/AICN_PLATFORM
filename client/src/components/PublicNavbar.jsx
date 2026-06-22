@@ -56,7 +56,7 @@ export default function PublicNavbar() {
     { to: '/sessions', label: 'Sessions', icon: CalendarDays },
     { to: '/trainers', label: 'Trainers', icon: Users },
     { to: '/verify-certificate', label: 'Verify', icon: ShieldCheck },
-    { to: '/about', label: 'About', icon: Info },
+    // { to: '/about', label: 'About', icon: Info },
   ];
 
   const isActive = (path) => location.pathname === path;
