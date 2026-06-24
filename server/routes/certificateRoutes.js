@@ -1,29 +1,31 @@
+// modules/certificates/certificateRoutes.js
 const express = require('express');
 const certificatesRouter = express.Router();
 const { verifyToken, requireRole } = require('../middleware/authMiddleware');
-const certificatesController = require('../modules/certificates/certificateController');
-const  validate  = require('../middleware/validate');
+const certificatesController = require('./certificateController');
+const validate = require('../middleware/validate');
 
 // Import validation schemas
 const { 
   issueCertificateSchema,
   verifyCertificateSchema,
   batchIssueCertificatesSchema,
-  getCertificatesQuerySchema
+  getCertificatesQuerySchema,
+  getAllCertificatesQuerySchema, 
 } = require('../../shared/validators/certificateValidation.cjs');
 
 // ============ PUBLIC ROUTES ============
 // GET /verify/:certCode - Public certificate verification
 certificatesRouter.get(
   '/verify/:certCode',
-  validate(verifyCertificateSchema, 'params'),  // ADD VALIDATION
+  validate(verifyCertificateSchema, 'params'),
   certificatesController.verifyCertificate
 );
 
 // ============ PROTECTED ROUTES (Authentication required) ============
 certificatesRouter.use(verifyToken);
 
-// GET /my - Get current user's certificates
+// GET /me - Get current user's certificates
 certificatesRouter.get(
   '/me',
   validate(getCertificatesQuerySchema, 'query'),  
@@ -31,6 +33,22 @@ certificatesRouter.get(
 );
 
 // ============ ADMIN ONLY ROUTES ============
+
+// GET / - Get all certificates (Admin only)
+certificatesRouter.get(
+  '/',
+  requireRole('ADMIN'),
+  validate(getAllCertificatesQuerySchema, 'query'), 
+  certificatesController.getAllCertificates          
+);
+
+// GET /stats - Get certificate statistics (Admin only)
+certificatesRouter.get(
+  '/stats',
+  requireRole('ADMIN'),
+  certificatesController.getCertificateStats          
+);
+
 // POST /batch/:sessionId - Batch issue certificates for a session
 certificatesRouter.post(
   '/batch/:sessionId',
@@ -43,7 +61,7 @@ certificatesRouter.post(
 certificatesRouter.post(
   '/',
   requireRole('ADMIN'),
-  validate(require('../../shared/validators').issueCertificateSchema, 'body'),  
+  validate(issueCertificateSchema, 'body'),  
   certificatesController.issueCertificate
 );
 
