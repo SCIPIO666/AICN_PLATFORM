@@ -157,4 +157,6 @@ async function getCertificate(id) {
   return certificate;
 }
 
+
+
 module.exports = { verifyCertificate, getUserCertificates, getCertificate, batchIssueCertificates, issueCertificate };
