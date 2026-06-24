@@ -2,7 +2,7 @@
 const express = require('express');
 const certificatesRouter = express.Router();
 const { verifyToken, requireRole } = require('../middleware/authMiddleware');
-const certificatesController = require('./certificateController');
+const certificatesController = require('../modules/certificates/certificateController');
 const validate = require('../middleware/validate');
 
 // Import validation schemas

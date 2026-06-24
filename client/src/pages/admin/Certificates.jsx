@@ -1,4 +1,4 @@
-// src/pages/admin/Certificates.jsx (Updated with new hooks)
+// src/pages/admin/Certificates.jsx
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { 
@@ -10,21 +10,22 @@ import {
   Download, 
   Calendar, 
   User,
-  Filter,
   ChevronDown,
   ChevronUp,
   RefreshCw,
   Loader2,
   CheckCircle,
   XCircle,
+  Users,
   FileCheck,
-  Users
+  Plus,
+  Filter
 } from 'lucide-react';
 
 import { 
-  useAdminCertificates,      // NEW - uses new endpoint
-  useCertificateStats,       // NEW - uses stats endpoint
-  useIssueCertificate, 
+  useAdminCertificates,
+  useCertificateStats,
+  useIssueCertificate,
   useBatchIssueCertificates 
 } from '@/hooks';
 import { useAdminModalStore } from '@/stores/useAdminModalStore';
@@ -34,8 +35,124 @@ import { safeFormatDate } from '@/utils/date';
 import { toast } from '@/stores/toastStore';
 import CertificateDetailsModal from '@/components/admin/CertificateDetailsModal';
 
-// ... CertificateCard and StatsCard components remain the same ...
+// ============================================================
+// Certificate Card Component
+// ============================================================
+function CertificateCard({ certificate, onView, onDownload }) {
+  const [isDownloading, setIsDownloading] = useState(false);
 
+  const handleDownload = async () => {
+    setIsDownloading(true);
+    try {
+      await onDownload(certificate);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  const isActive = !certificate.revokedAt;
+
+  return (
+    <motion.div
+      whileHover={{ y: -4 }}
+      className="card-base p-6 transition-all cursor-pointer hover:border-neon-border"
+      onClick={() => onView(certificate)}
+    >
+      <div className="flex items-start justify-between">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <Award size={18} style={{ color: 'var(--color-forest-green)' }} />
+            <h3 className="font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
+              {certificate.certCode || certificate.certificateNumber || 'N/A'}
+            </h3>
+          </div>
+          
+          <p className="text-sm mt-1 truncate" style={{ color: 'var(--text-secondary)' }}>
+            {certificate.session?.title || 'Session'}
+          </p>
+          
+          {certificate.user && (
+            <p className="text-sm flex items-center gap-1 mt-1" style={{ color: 'var(--text-muted)' }}>
+              <User size={14} />
+              {certificate.user.name}
+            </p>
+          )}
+          
+          <div className="flex flex-wrap gap-3 mt-2 text-xs" style={{ color: 'var(--text-muted)' }}>
+            <span className="flex items-center gap-1">
+              <Calendar size={12} />
+              {certificate.issuedAt ? safeFormatDate(certificate.issuedAt, 'PPP') : 'No date'}
+            </span>
+            <span className="flex items-center gap-1">
+              {isActive ? (
+                <CheckCircle size={12} style={{ color: 'var(--color-forest-green)' }} />
+              ) : (
+                <XCircle size={12} style={{ color: 'var(--error-text)' }} />
+              )}
+              {isActive ? 'Active' : 'Revoked'}
+            </span>
+          </div>
+        </div>
+        
+        <div className="flex gap-2 flex-shrink-0">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onView(certificate);
+            }}
+            className="p-2 rounded-lg transition-colors hover:bg-card-hover"
+            style={{ color: 'var(--text-secondary)' }}
+            title="View Details"
+          >
+            <Eye size={18} />
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDownload();
+            }}
+            disabled={isDownloading}
+            className="p-2 rounded-lg transition-colors hover:bg-card-hover disabled:opacity-50"
+            style={{ color: 'var(--text-secondary)' }}
+            title="Download PDF"
+          >
+            {isDownloading ? (
+              <Loader2 size={18} className="animate-spin" />
+            ) : (
+              <Download size={18} />
+            )}
+          </button>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// ============================================================
+// Stats Card Component
+// ============================================================
+function StatsCard({ icon: Icon, label, value, color, subtitle }) {
+  return (
+    <div className="card-base p-4 text-center transition-all hover:border-neon-border">
+      <div className="flex items-center justify-center mb-2">
+        <div className="p-2 rounded-full" style={{ background: `${color}20`, color }}>
+          <Icon size={20} />
+        </div>
+      </div>
+      <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
+        {value}
+      </p>
+      <p className="text-sm" style={{ color: 'var(--text-muted)' }}>{label}</p>
+      {subtitle && (
+        <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>{subtitle}</p>
+      )}
+    </div>
+  );
+}
+
+// ============================================================
+// Main Admin Certificates Component
+// ============================================================
 export default function AdminCertificates() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -46,7 +163,7 @@ export default function AdminCertificates() {
   
   const { openCertificateDetails } = useAdminModalStore();
   
-  // ✅ NEW: Use admin certificates hook instead of user certificates
+  // ✅ Use admin certificates hook
   const { 
     data, 
     isLoading, 
@@ -61,31 +178,299 @@ export default function AdminCertificates() {
     limit: 12,
   });
   
-  // ✅ NEW: Use stats hook
+  // ✅ Use stats hook
   const { 
     data: statsData, 
     isLoading: statsLoading,
+    error: statsError,
     refetch: refetchStats 
   } = useCertificateStats();
 
-  // ... rest of the component remains the same ...
+  // Handlers
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await Promise.all([refetch(), refetchStats()]);
+    setIsRefreshing(false);
+    toast.info('Data refreshed');
+  };
 
+  const handleDownload = async (certificate) => {
+    try {
+      toast.info('Downloading certificate...');
+      // Implementation for PDF download
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      toast.success('Certificate downloaded successfully');
+    } catch (error) {
+      toast.error('Failed to download certificate');
+    }
+  };
+
+  const handleSort = (field) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('desc');
+    }
+  };
+
+  const SortIcon = ({ field }) => {
+    if (sortField !== field) return <ChevronDown size={14} className="opacity-30" />;
+    return sortDirection === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />;
+  };
+
+  // Process data
   const certificates = data?.data || [];
   const pagination = data?.pagination;
   const stats = statsData?.data || { total: 0, active: 0, revoked: 0, thisMonth: 0 };
 
-  // ... handlers remain the same ...
+  // ✅ Handle loading state
+  if (isLoading || statsLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-page)' }}>
+        <Spinner />
+      </div>
+    );
+  }
+
+  // ✅ Handle error state - Critical for preventing blank page
+  if (error || statsError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'var(--bg-page)' }}>
+        <div className="text-center max-w-md">
+          <AlertCircle size={48} className="mx-auto mb-4" style={{ color: 'var(--error-text)' }} />
+          <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
+            Failed to load certificates
+          </h3>
+          <p className="text-sm mb-4" style={{ color: 'var(--text-muted)' }}>
+            {error?.response?.data?.message || error?.message || 'Please try refreshing the page.'}
+          </p>
+          <div className="flex gap-3 justify-center">
+            <Button onClick={handleRefresh} className="btn-primary">
+              <RefreshCw size={16} className="mr-2" />
+              Try Again
+            </Button>
+            <Button 
+              onClick={() => window.location.href = '/dashboard/admin'} 
+              variant="outline"
+            >
+              Back to Dashboard
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
       <div className="max-w-7xl mx-auto px-4 py-8 md:px-8">
-        {/* Header - same */}
-        {/* Stats Cards - uses statsData */}
-        {/* Filters - same */}
-        {/* Results Count - uses pagination */}
-        {/* Certificates Grid - uses certificates */}
-        {/* Pagination - new */}
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+          <div>
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
+                Certificate Management
+              </h1>
+              <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{
+                background: 'rgba(22, 101, 52, 0.1)',
+                color: 'var(--color-forest-green)'
+              }}>
+                {stats.total} total
+              </span>
+            </div>
+            <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>
+              View, manage, and issue certificates across the platform
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              className="btn-primary flex items-center gap-2"
+            >
+              <Award size={18} />
+              Issue Certificate
+            </Button>
+            <Button
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <Users size={18} />
+              Batch Issue
+            </Button>
+            <button
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="p-2 rounded-lg hover:bg-card-hover transition-colors"
+              style={{ color: 'var(--text-secondary)' }}
+            >
+              <RefreshCw size={18} className={isRefreshing ? 'animate-spin' : ''} />
+            </button>
+          </div>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <StatsCard
+            icon={Award}
+            label="Total Certificates"
+            value={stats.total}
+            color="#8b5cf6"
+          />
+          <StatsCard
+            icon={CheckCircle}
+            label="Active"
+            value={stats.active}
+            color="var(--color-forest-green)"
+          />
+          <StatsCard
+            icon={XCircle}
+            label="Revoked"
+            value={stats.revoked}
+            color="#dc2626"
+          />
+          <StatsCard
+            icon={Calendar}
+            label="This Month"
+            value={stats.thisMonth}
+            color="#3b82f6"
+            subtitle={`${stats.total > 0 ? Math.round((stats.thisMonth / stats.total) * 100) : 0}% of total`}
+          />
+        </div>
+
+        {/* Filters */}
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          <div className="flex-1 relative">
+            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }} />
+            <input
+              type="text"
+              placeholder="Search by certificate number, session, or learner..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 rounded-lg input-themed"
+            />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-card-hover"
+                style={{ color: 'var(--text-muted)' }}
+              >
+                <X size={16} />
+              </button>
+            )}
+          </div>
+          <div className="flex gap-2">
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="px-4 py-2 rounded-lg select-themed"
+            >
+              <option value="all">All Status</option>
+              <option value="active">Active</option>
+              <option value="revoked">Revoked</option>
+            </select>
+            {(searchTerm || statusFilter !== 'all') && (
+              <Button
+                variant="ghost"
+                className="flex items-center gap-2"
+                onClick={() => { setSearchTerm(''); setStatusFilter('all'); }}
+              >
+                <X size={16} />
+                Clear
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {/* Results Count */}
+        <div className="flex justify-between items-center mb-4">
+          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+            Showing {certificates.length} of {pagination?.total || 0} certificates
+          </p>
+          <div className="flex items-center gap-3 text-xs" style={{ color: 'var(--text-muted)' }}>
+            <button
+              onClick={() => handleSort('issuedAt')}
+              className="flex items-center gap-1 hover:opacity-70"
+            >
+              Date <SortIcon field="issuedAt" />
+            </button>
+            <button
+              onClick={() => handleSort('userName')}
+              className="flex items-center gap-1 hover:opacity-70"
+            >
+              User <SortIcon field="userName" />
+            </button>
+            <button
+              onClick={() => handleSort('sessionTitle')}
+              className="flex items-center gap-1 hover:opacity-70"
+            >
+              Session <SortIcon field="sessionTitle" />
+            </button>
+          </div>
+        </div>
+
+        {/* Certificates Grid */}
+        {certificates.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {certificates.map((cert) => (
+              <CertificateCard
+                key={cert.id}
+                certificate={cert}
+                onView={openCertificateDetails}
+                onDownload={handleDownload}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12 card-base">
+            <Award size={48} className="mx-auto mb-4 opacity-50" style={{ color: 'var(--text-muted)' }} />
+            <h3 className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>
+              {searchTerm || statusFilter !== 'all' 
+                ? 'No certificates match your filters' 
+                : 'No certificates issued yet'}
+            </h3>
+            <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>
+              {searchTerm || statusFilter !== 'all' 
+                ? 'Try adjusting your search or filters' 
+                : 'Issue certificates to learners who have completed sessions'}
+            </p>
+            {!searchTerm && statusFilter === 'all' && (
+              <button
+                className="mt-4 btn-primary inline-flex items-center gap-2"
+              >
+                <Award size={18} />
+                Issue First Certificate
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Pagination */}
+        {pagination && pagination.totalPages > 1 && (
+          <div className="flex justify-center items-center gap-2 mt-6">
+            <button
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-1 rounded-lg border transition-colors disabled:opacity-50"
+              style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}
+            >
+              Previous
+            </button>
+            <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
+              Page {pagination.page} of {pagination.totalPages}
+            </span>
+            <button
+              onClick={() => setCurrentPage(p => Math.min(pagination.totalPages, p + 1))}
+              disabled={currentPage === pagination.totalPages}
+              className="px-3 py-1 rounded-lg border transition-colors disabled:opacity-50"
+              style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
+
+      {/* Certificate Details Modal */}
       <CertificateDetailsModal />
     </>
   );

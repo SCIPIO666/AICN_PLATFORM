@@ -571,10 +571,10 @@ components:
           type: string
         sessionId:
           type: string
-    certificateCode:
-        type: string
-        pattern: '^CERT-[A-F0-9]{16}$'
-        example: 'CERT-ABC123DEF4567890'
+        certCode:
+          type: string
+          pattern: '^CERT-[A-F0-9]{16}$'
+          example: CERT-ABC123DEF4567890
         issuedAt:
           type: string
           format: date-time
@@ -585,13 +585,82 @@ components:
         revokedReason:
           type: string
           nullable: true
-        downloadUrl:
+        pdfUrl:
           type: string
-          example: https://api.aicn.africa/api/v1/certificates/me/download/cm3n7t4xg0000j4k5a1b2c3d
+          nullable: true
+          example: https://res.cloudinary.com/aicn/certificates/cert-abc123.pdf
+        pdfPublicId:
+          type: string
+          nullable: true
+        pdfVersion:
+          type: string
+          nullable: true
+        pdfSize:
+          type: integer
+          nullable: true
+          description: PDF file size in bytes
+        pdfFormat:
+          type: string
+          nullable: true
+          example: pdf
+        pdfResourceType:
+          type: string
+          nullable: true
+        pdfCreatedAt:
+          type: string
+          format: date-time
+          nullable: true
+        pdfEtag:
+          type: string
+          nullable: true
+        pdfSignature:
+          type: string
+          nullable: true
+        pdfAssetFolder:
+          type: string
+          nullable: true
+        pdfOriginalFilename:
+          type: string
+          nullable: true
+        pdfGenerationFailed:
+          type: boolean
+          nullable: true
+          description: True if PDF generation, email delivery, or storage upload failed after the certificate record was created
+        pdfFailureReason:
+          type: string
+          nullable: true
+        pdfFailedAt:
+          type: string
+          format: date-time
+          nullable: true
         user:
           $ref: '#/components/schemas/User'
         session:
           $ref: '#/components/schemas/Session'
+
+    CertificateWithPdfDetails:
+      description: |
+        Shape returned by POST /certificates on success: the created Certificate
+        plus a condensed pdfDetails block. If PDF generation, email, or upload
+        fails, the plain Certificate (pdfGenerationFailed=true, pdfFailureReason set)
+        is returned instead, without pdfDetails.
+      allOf:
+        - $ref: '#/components/schemas/Certificate'
+        - type: object
+          properties:
+            pdfDetails:
+              type: object
+              nullable: true
+              properties:
+                url:
+                  type: string
+                  example: https://res.cloudinary.com/aicn/certificates/cert-abc123.pdf
+                publicId:
+                  type: string
+                size:
+                  type: integer
+                version:
+                  type: string
 
     IssueCertificateInput:
       type: object
@@ -611,9 +680,6 @@ components:
     BatchIssueResult:
       type: object
       properties:
-        total:
-          type: integer
-          example: 10
         issued:
           type: integer
           example: 8
@@ -631,6 +697,22 @@ components:
                 type: string
               error:
                 type: string
+
+    CertificateStats:
+      type: object
+      properties:
+        total:
+          type: integer
+          example: 142
+        active:
+          type: integer
+          example: 138
+        revoked:
+          type: integer
+          example: 4
+        thisMonth:
+          type: integer
+          example: 23
 
     # ==================== TRAINER SCHEMAS ====================
     TrainerProfile:
@@ -1005,7 +1087,7 @@ components:
             $ref: '#/components/schemas/ErrorResponse'
           example:
             success: false
-            message: Unauthorized: No token provided
+            message: "Unauthorized: No token provided"
             code: AUTHENTICATION_ERROR
 
     ForbiddenError:
@@ -1458,7 +1540,8 @@ paths:
                 properties:
                   success:
                     type: boolean
-                    example: true                  message:
+                    example: true
+                  message:
                     type: string
                     example: Session updated successfully
                   data:
@@ -1686,6 +1769,78 @@ paths:
 
   # ==================== CERTIFICATES ====================
   /certificates:
+    get:
+      summary: Get all certificates
+      description: Returns all certificates across all users with search, status, and date-range filters (ADMIN only)
+      tags: [Certificates]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Search by certificate code, user name, user email, or session title
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, revoked]
+        - name: fromDate
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: toDate
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+            default: issuedAt
+        - name: sortOrder
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+      responses:
+        '200':
+          description: Certificates retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PaginatedResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Certificate'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
     post:
       summary: Issue certificate
       description: Issue a single certificate (ADMIN only)
@@ -1713,9 +1868,37 @@ paths:
                     type: string
                     example: Certificate issued successfully
                   data:
-                    $ref: '#/components/schemas/Certificate'
+                    $ref: '#/components/schemas/CertificateWithPdfDetails'
         '400':
           $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /certificates/stats:
+    get:
+      summary: Get certificate statistics
+      description: Returns aggregate certificate counts - total, active, revoked, and issued this month (ADMIN only)
+      tags: [Certificates]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Certificate statistics retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Certificate statistics retrieved successfully
+                  data:
+                    $ref: '#/components/schemas/CertificateStats'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '403':
@@ -1741,16 +1924,33 @@ paths:
             minimum: 1
             maximum: 100
             default: 10
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+            default: issuedAt
+        - name: sortOrder
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
       responses:
         '200':
-          description: Certificates retrieved
+          description: Certificates retrieved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedResponse'
+                allOf:
+                  - $ref: '#/components/schemas/PaginatedResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Certificate'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
-
 
   /certificates/verify/{certCode}:
     get:
@@ -1766,7 +1966,7 @@ paths:
             pattern: '^CERT-[A-F0-9]{16}$'
       responses:
         '200':
-          description: Certificate is valid
+          description: Certificate verified successfully
           content:
             application/json:
               schema:
@@ -1775,13 +1975,16 @@ paths:
                   success:
                     type: boolean
                     example: true
+                  message:
+                    type: string
+                    example: Certificate verified successfully
                   data:
                     $ref: '#/components/schemas/Certificate'
         '400':
           $ref: '#/components/responses/ValidationError'
         '404':
           description: Certificate not found
-        '410':
+        '409':
           description: Certificate has been revoked
 
   /certificates/batch/{sessionId}:

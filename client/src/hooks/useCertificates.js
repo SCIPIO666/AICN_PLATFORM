@@ -1,6 +1,8 @@
+// src/hooks/useCertificates.js
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as certificateAPI from '../api/certificates';
 import useAuthStore from '../stores/useAuthStore';
+import { toast } from '@/stores/toastStore';
 
 // Query keys
 export const certificateKeys = {
@@ -12,6 +14,7 @@ export const certificateKeys = {
   stats: () => [...certificateKeys.all, 'stats'],
   verify: (code) => [...certificateKeys.all, 'verify', code],
 };
+
 // Hook for getting my certificates
 export const useMyCertificates = (page = 1, limit = 10) => {
   const { isAuthenticated } = useAuthStore();
@@ -20,7 +23,36 @@ export const useMyCertificates = (page = 1, limit = 10) => {
     queryKey: certificateKeys.myCertificatesList(page, limit),
     queryFn: () => certificateAPI.getMyCertificates({ page, limit }),
     enabled: isAuthenticated,
-    staleTime: 10 * 60 * 1000, // 10 minutes
+    staleTime: 10 * 60 * 1000,
+  });
+};
+
+// ✅ FIXED: Admin certificates hook with proper auth handling
+export const useAdminCertificates = (filters = {}) => {
+  const { user, isAuthenticated, token } = useAuthStore();
+  const isAdmin = user?.role === 'ADMIN';
+  
+  return useQuery({
+    queryKey: certificateKeys.adminCertificatesList(filters),
+    queryFn: () => certificateAPI.getAllCertificates(filters),
+    enabled: isAuthenticated && isAdmin && !!token, // ✅ Ensure token exists
+    staleTime: 5 * 60 * 1000,
+    keepPreviousData: true,
+    retry: false, // ✅ Don't retry on 401
+  });
+};
+
+// ✅ FIXED: Certificate stats hook with proper auth handling
+export const useCertificateStats = () => {
+  const { user, isAuthenticated, token } = useAuthStore();
+  const isAdmin = user?.role === 'ADMIN';
+  
+  return useQuery({
+    queryKey: certificateKeys.stats(),
+    queryFn: () => certificateAPI.getCertificateStats(),
+    enabled: isAuthenticated && isAdmin && !!token, // ✅ Ensure token exists
+    staleTime: 2 * 60 * 1000,
+    retry: false, // ✅ Don't retry on 401
   });
 };
 
@@ -42,8 +74,13 @@ export const useIssueCertificate = () => {
     mutationFn: ({ userId, sessionId }) => 
       certificateAPI.issueCertificate(userId, sessionId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: certificateKeys.myCertificates() });
+      queryClient.invalidateQueries({ queryKey: certificateKeys.adminCertificates() });
+      queryClient.invalidateQueries({ queryKey: certificateKeys.stats() });
+      toast.success('Certificate issued successfully');
     },
+    onError: (error) => {
+      toast.error(error?.response?.data?.message || 'Failed to issue certificate');
+    }
   });
 };
 
@@ -54,38 +91,12 @@ export const useBatchIssueCertificates = () => {
   return useMutation({
     mutationFn: (sessionId) => certificateAPI.batchIssueCertificates(sessionId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: certificateKeys.all });
+      queryClient.invalidateQueries({ queryKey: certificateKeys.adminCertificates() });
+      queryClient.invalidateQueries({ queryKey: certificateKeys.stats() });
+      toast.success('Certificates issued successfully');
     },
-  });
-};
-
-/**
- * Hook for getting all certificates 
- */
-export const useAdminCertificates = (filters = {}) => {
-  const { user, isAuthenticated } = useAuthStore();
-  const isAdmin = user?.role === 'ADMIN';
-  
-  return useQuery({
-    queryKey: certificateKeys.adminCertificatesList(filters),
-    queryFn: () => certificateAPI.getAllCertificates(filters),
-    enabled: isAuthenticated && isAdmin,
-    staleTime: 5 * 60 * 1000,
-    keepPreviousData: true,
-  });
-};
-
-/**
- * Hook for getting certificate statistics 
- */
-export const useCertificateStats = () => {
-  const { user, isAuthenticated } = useAuthStore();
-  const isAdmin = user?.role === 'ADMIN';
-  
-  return useQuery({
-    queryKey: certificateKeys.stats(),
-    queryFn: () => certificateAPI.getCertificateStats(),
-    enabled: isAuthenticated && isAdmin,
-    staleTime: 2 * 60 * 1000,
+    onError: (error) => {
+      toast.error(error?.response?.data?.message || 'Failed to issue certificates');
+    }
   });
 };
