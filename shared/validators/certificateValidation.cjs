@@ -55,6 +55,16 @@ const getCertificatesQuerySchema = z.object({
   sortOrder: z.enum(['asc', 'desc']).default('desc').optional()
 });
 
+const getAllCertificatesQuerySchema = z.object({
+  search: z.string().optional(),
+  status: z.enum(['active', 'revoked']).optional(),
+  fromDate: z.string().datetime().optional(),
+  toDate: z.string().datetime().optional(),
+  sortBy: z.enum(['certCode', 'issuedAt', 'userName', 'sessionTitle']).default('issuedAt'),
+  sortOrder: z.enum(['asc', 'desc']).default('desc'),
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().positive().max(100).default(10)
+});
 module.exports = {
   idParamSchema,
   issueCertificateSchema,
@@ -62,5 +72,6 @@ module.exports = {
   verifyCertificateSchema,
   batchIssueCertificatesSchema,
   certificateFiltersSchema,
-  getCertificatesQuerySchema
+  getCertificatesQuerySchema,
+  getAllCertificatesQuerySchema 
 };

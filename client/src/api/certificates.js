@@ -23,3 +23,11 @@ export const batchIssueCertificates = (sessionId) => {
   return api.post(`certificates/batch/${sessionId}`)
     .then(res => res.data.data)
 }
+
+export const getAllCertificates = (filters = {}) => {
+  return api.get('/certificates', { params: filters });
+};
+
+export const getCertificateStats = () => {
+  return api.get('/certificates/stats');
+};

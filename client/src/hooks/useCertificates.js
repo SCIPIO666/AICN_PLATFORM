@@ -7,9 +7,11 @@ export const certificateKeys = {
   all: ['certificates'],
   myCertificates: () => [...certificateKeys.all, 'my'],
   myCertificatesList: (page, limit) => [...certificateKeys.myCertificates(), { page, limit }],
+  adminCertificates: () => [...certificateKeys.all, 'admin'],
+  adminCertificatesList: (filters) => [...certificateKeys.adminCertificates(), { ...filters }],
+  stats: () => [...certificateKeys.all, 'stats'],
   verify: (code) => [...certificateKeys.all, 'verify', code],
 };
-
 // Hook for getting my certificates
 export const useMyCertificates = (page = 1, limit = 10) => {
   const { isAuthenticated } = useAuthStore();
@@ -54,5 +56,36 @@ export const useBatchIssueCertificates = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: certificateKeys.all });
     },
+  });
+};
+
+/**
+ * Hook for getting all certificates 
+ */
+export const useAdminCertificates = (filters = {}) => {
+  const { user, isAuthenticated } = useAuthStore();
+  const isAdmin = user?.role === 'ADMIN';
+  
+  return useQuery({
+    queryKey: certificateKeys.adminCertificatesList(filters),
+    queryFn: () => certificateAPI.getAllCertificates(filters),
+    enabled: isAuthenticated && isAdmin,
+    staleTime: 5 * 60 * 1000,
+    keepPreviousData: true,
+  });
+};
+
+/**
+ * Hook for getting certificate statistics 
+ */
+export const useCertificateStats = () => {
+  const { user, isAuthenticated } = useAuthStore();
+  const isAdmin = user?.role === 'ADMIN';
+  
+  return useQuery({
+    queryKey: certificateKeys.stats(),
+    queryFn: () => certificateAPI.getCertificateStats(),
+    enabled: isAuthenticated && isAdmin,
+    staleTime: 2 * 60 * 1000,
   });
 };
