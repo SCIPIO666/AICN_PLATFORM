@@ -27,5 +27,42 @@ const batchIssueCertificates = asyncHandler(async (req, res) => {
   const results = await certificatesService.batchIssueCertificates(sessionId, req.user.id, req.user.role);
   return ApiResponse.created(res, results, `Issued ${results.issued} certificates, ${results.failed} failed`);
 });
+/**
+ * Get all certificates (Admin only)
+ */
+const getAllCertificates = asyncHandler(async (req, res) => {
+  const { 
+    search, 
+    status, 
+    fromDate, 
+    toDate,
+    sortBy = 'issuedAt',
+    sortOrder = 'desc',
+    page = 1, 
+    limit = 10 
+  } = req.query;
+  
+  const filters = { search, status, fromDate, toDate, sortBy, sortOrder };
+  
+  const result = await certificatesService.getAllCertificates(
+    filters,
+    parseInt(page),
+    parseInt(limit)
+  );
+  
+  return ApiResponse.paginated(
+    res,
+    result.certificates,
+    result.pagination,
+    'Certificates retrieved successfully'
+  );
+});
 
-module.exports = { issueCertificate, verifyCertificate, getMyCertificates, batchIssueCertificates };
+/**
+ * Get certificate statistics (Admin only)
+ */
+const getCertificateStats = asyncHandler(async (req, res) => {
+  const stats = await certificatesService.getCertificateStats();
+  return ApiResponse.success(res, stats, 'Certificate statistics retrieved successfully');
+});
+module.exports = { issueCertificate, verifyCertificate, getMyCertificates, batchIssueCertificates, getAllCertificates, getCertificateStats };

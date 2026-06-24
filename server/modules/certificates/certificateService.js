@@ -157,6 +157,31 @@ async function getCertificate(id) {
   return certificate;
 }
 
+/**
+ * Get all certificates with pagination (Admin only)
+ */
+async function getAllCertificates(filters = {}, page = 1, limit = 10) {
+  const skip = (page - 1) * limit;
+  const result = await certificateModel.getAllCertificates(filters, skip, limit);
+  
+  return {
+    certificates: result.certificates,
+    pagination: {
+      page: parseInt(page),
+      limit: parseInt(limit),
+      total: result.total,
+      totalPages: Math.ceil(result.total / limit),
+      hasNextPage: page < Math.ceil(result.total / limit),
+      hasPrevPage: page > 1
+    }
+  };
+}
 
+/**
+ * Get certificate statistics (Admin only)
+ */
+async function getCertificateStats() {
+  return await certificateModel.getCertificateStats();
+}
 
-module.exports = { verifyCertificate, getUserCertificates, getCertificate, batchIssueCertificates, issueCertificate };
+module.exports = { verifyCertificate, getUserCertificates, getCertificate, batchIssueCertificates, issueCertificate, getAllCertificates, getCertificateStats };
