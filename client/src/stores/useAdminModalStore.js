@@ -1,4 +1,3 @@
-
 import { create } from 'zustand';
 
 export const useAdminModalStore = create((set) => ({
@@ -24,6 +23,10 @@ export const useAdminModalStore = create((set) => ({
   isCertificateDetailsOpen: false,
   selectedCertificate: null,
   
+  //  Issue Certificate Modal
+  isIssueCertificateOpen: false,
+  selectedSessionForIssue: null,
+  
   // User Modal Actions
   openUserDetails: (user) => set({ isUserDetailsOpen: true, selectedUser: user }),
   closeUserDetails: () => set({ isUserDetailsOpen: false, selectedUser: null }),
@@ -46,4 +49,8 @@ export const useAdminModalStore = create((set) => ({
   // Certificate Modal Actions
   openCertificateDetails: (certificate) => set({ isCertificateDetailsOpen: true, selectedCertificate: certificate }),
   closeCertificateDetails: () => set({ isCertificateDetailsOpen: false, selectedCertificate: null }),
+  
+  // Issue Certificate Actions
+  openIssueCertificate: (session = null) => set({ isIssueCertificateOpen: true, selectedSessionForIssue: session }),
+  closeIssueCertificate: () => set({ isIssueCertificateOpen: false, selectedSessionForIssue: null }),
 }));

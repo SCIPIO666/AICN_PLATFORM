@@ -115,7 +115,7 @@ export default function CertificatesTable() {
     placeholderData: keepPreviousData,
   })
 
-  const certs = data ?? []
+  const certs =  data?.data ?? data ?? [];
 
 
   if (isLoading) {
@@ -129,10 +129,7 @@ export default function CertificatesTable() {
 
   if (error) return <ErrorState onRetry={refetch} />
 
-
-  if (certs.length === 0) return <EmptyState />
-
-
+  if (!Array.isArray(certs) || certs.length === 0) return <EmptyState />;
   return (
     <div className="card-base overflow-hidden">
 

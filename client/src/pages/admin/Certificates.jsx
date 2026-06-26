@@ -1,4 +1,3 @@
-// src/pages/admin/Certificates.jsx
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { 
@@ -34,103 +33,8 @@ import { Button } from '@/components/ui/Button';
 import { safeFormatDate } from '@/utils/date';
 import { toast } from '@/stores/toastStore';
 import CertificateDetailsModal from '@/components/admin/CertificateDetailsModal';
+import IssueCertificateModal from '@/components/admin/IssueCertificateModal';
 
-// ============================================================
-// Certificate Card Component
-// ============================================================
-function CertificateCard({ certificate, onView, onDownload }) {
-  const [isDownloading, setIsDownloading] = useState(false);
-
-  const handleDownload = async () => {
-    setIsDownloading(true);
-    try {
-      await onDownload(certificate);
-    } finally {
-      setIsDownloading(false);
-    }
-  };
-
-  const isActive = !certificate.revokedAt;
-
-  return (
-    <motion.div
-      whileHover={{ y: -4 }}
-      className="card-base p-6 transition-all cursor-pointer hover:border-neon-border"
-      onClick={() => onView(certificate)}
-    >
-      <div className="flex items-start justify-between">
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <Award size={18} style={{ color: 'var(--color-forest-green)' }} />
-            <h3 className="font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
-              {certificate.certCode || certificate.certificateNumber || 'N/A'}
-            </h3>
-          </div>
-          
-          <p className="text-sm mt-1 truncate" style={{ color: 'var(--text-secondary)' }}>
-            {certificate.session?.title || 'Session'}
-          </p>
-          
-          {certificate.user && (
-            <p className="text-sm flex items-center gap-1 mt-1" style={{ color: 'var(--text-muted)' }}>
-              <User size={14} />
-              {certificate.user.name}
-            </p>
-          )}
-          
-          <div className="flex flex-wrap gap-3 mt-2 text-xs" style={{ color: 'var(--text-muted)' }}>
-            <span className="flex items-center gap-1">
-              <Calendar size={12} />
-              {certificate.issuedAt ? safeFormatDate(certificate.issuedAt, 'PPP') : 'No date'}
-            </span>
-            <span className="flex items-center gap-1">
-              {isActive ? (
-                <CheckCircle size={12} style={{ color: 'var(--color-forest-green)' }} />
-              ) : (
-                <XCircle size={12} style={{ color: 'var(--error-text)' }} />
-              )}
-              {isActive ? 'Active' : 'Revoked'}
-            </span>
-          </div>
-        </div>
-        
-        <div className="flex gap-2 flex-shrink-0">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onView(certificate);
-            }}
-            className="p-2 rounded-lg transition-colors hover:bg-card-hover"
-            style={{ color: 'var(--text-secondary)' }}
-            title="View Details"
-          >
-            <Eye size={18} />
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleDownload();
-            }}
-            disabled={isDownloading}
-            className="p-2 rounded-lg transition-colors hover:bg-card-hover disabled:opacity-50"
-            style={{ color: 'var(--text-secondary)' }}
-            title="Download PDF"
-          >
-            {isDownloading ? (
-              <Loader2 size={18} className="animate-spin" />
-            ) : (
-              <Download size={18} />
-            )}
-          </button>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
-// ============================================================
-// Stats Card Component
-// ============================================================
 function StatsCard({ icon: Icon, label, value, color, subtitle }) {
   return (
     <div className="card-base p-4 text-center transition-all hover:border-neon-border">
@@ -150,9 +54,101 @@ function StatsCard({ icon: Icon, label, value, color, subtitle }) {
   );
 }
 
-// ============================================================
-// Main Admin Certificates Component
-// ============================================================
+
+function CertificateCard({ certificate, onView, onDownload }) {
+  const isRevoked = !!certificate.revokedAt;
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleDownload = async (e) => {
+    e.stopPropagation();
+    setIsDownloading(true);
+    try {
+      await onDownload(certificate);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -2 }}
+      onClick={() => onView(certificate)}
+      className="card-base p-4 cursor-pointer transition-all hover:border-neon-border"
+    >
+      <div className="flex items-start justify-between gap-2 mb-3">
+        <div className="flex items-center gap-2 min-w-0">
+          <div
+            className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs"
+            style={{
+              background: isRevoked ? 'rgba(220, 38, 38, 0.15)' : 'rgba(22, 101, 52, 0.15)',
+              color: isRevoked ? '#dc2626' : 'var(--color-forest-green)',
+            }}
+          >
+            {certificate.user?.name?.charAt(0) || 'U'}
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-medium truncate" style={{ color: 'var(--text-primary)' }}>
+              {certificate.user?.name || 'Unknown User'}
+            </p>
+            <p className="text-xs truncate" style={{ color: 'var(--text-muted)' }}>
+              {certificate.user?.email || 'No email'}
+            </p>
+          </div>
+        </div>
+        <span
+          className="flex-shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium"
+          style={{
+            background: isRevoked ? 'rgba(220, 38, 38, 0.1)' : 'rgba(22, 101, 52, 0.1)',
+            color: isRevoked ? '#dc2626' : 'var(--color-forest-green)',
+          }}
+        >
+          {isRevoked ? <XCircle size={12} /> : <CheckCircle size={12} />}
+          {isRevoked ? 'Revoked' : 'Active'}
+        </span>
+      </div>
+
+      <p className="text-sm font-medium truncate mb-1" style={{ color: 'var(--text-primary)' }}>
+        {certificate.session?.title || 'Untitled Session'}
+      </p>
+      <p className="text-xs truncate mb-3" style={{ color: 'var(--text-muted)' }}>
+        {certificate.session?.skillArea || ''}
+      </p>
+
+      <div className="flex items-center justify-between text-xs mb-3" style={{ color: 'var(--text-muted)' }}>
+        <span className="flex items-center gap-1">
+          <Calendar size={12} />
+          {certificate.issuedAt ? safeFormatDate(certificate.issuedAt, 'PP') : '—'}
+        </span>
+        <span className="font-mono">{certificate.certCode}</span>
+      </div>
+
+      <div className="flex gap-2 pt-3 border-t" style={{ borderColor: 'var(--border-color)' }}>
+        <Button
+          variant="outline"
+          size="sm"
+          className="flex-1 flex items-center justify-center gap-1.5"
+          onClick={(e) => { e.stopPropagation(); onView(certificate); }}
+        >
+          <Eye size={14} />
+          View
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="flex-1 flex items-center justify-center gap-1.5"
+          onClick={handleDownload}
+          disabled={isDownloading}
+        >
+          {isDownloading ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
+          Download
+        </Button>
+      </div>
+    </motion.div>
+  );
+}
+
 export default function AdminCertificates() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -161,7 +157,7 @@ export default function AdminCertificates() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   
-  const { openCertificateDetails } = useAdminModalStore();
+  const { openCertificateDetails, openIssueCertificate } = useAdminModalStore();
   
   const { 
     data, 
@@ -177,7 +173,6 @@ export default function AdminCertificates() {
     limit: 12,
   });
   
-  // ✅ Use stats hook
   const { 
     data: statsData, 
     isLoading: statsLoading,
@@ -223,7 +218,7 @@ export default function AdminCertificates() {
   const pagination = data?.pagination;
   const stats = statsData?.data || { total: 0, active: 0, revoked: 0, thisMonth: 0 };
 
-  //   loading state
+  // Loading state
   if (isLoading || statsLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-page)' }}>
@@ -232,7 +227,7 @@ export default function AdminCertificates() {
     );
   }
 
-  // ✅ Handle error state - Critical for preventing blank page
+  // Error state
   if (error || statsError) {
     return (
       <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'var(--bg-page)' }}>
@@ -284,6 +279,7 @@ export default function AdminCertificates() {
           </div>
           <div className="flex gap-2">
             <Button
+              onClick={() => openIssueCertificate()}
               className="btn-primary flex items-center gap-2"
             >
               <Award size={18} />
@@ -292,6 +288,7 @@ export default function AdminCertificates() {
             <Button
               variant="outline"
               className="flex items-center gap-2"
+              onClick={() => openIssueCertificate()}
             >
               <Users size={18} />
               Batch Issue
@@ -435,6 +432,7 @@ export default function AdminCertificates() {
             {!searchTerm && statusFilter === 'all' && (
               <button
                 className="mt-4 btn-primary inline-flex items-center gap-2"
+                onClick={() => openIssueCertificate()}
               >
                 <Award size={18} />
                 Issue First Certificate
@@ -469,8 +467,9 @@ export default function AdminCertificates() {
         )}
       </div>
 
-      {/* Certificate Details Modal */}
+      {/* Modals */}
       <CertificateDetailsModal />
+      <IssueCertificateModal />
     </>
   );
 }

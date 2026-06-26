@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -15,15 +14,119 @@ import {
   Clock,
   RefreshCw,
   FileCheck,
-  UserCheck
+  UserCheck,
+  ChevronRight
 } from 'lucide-react';
 
-import { useSession, useIssueCertificate, useBatchIssueCertificates } from '@/hooks';
+import { useSession, useSessions, useIssueCertificate, useBatchIssueCertificates } from '@/hooks';
 import { useAdminModalStore } from '@/stores/useAdminModalStore';
 import Spinner from '@/components/ui/Spinner';
 import { Button } from '@/components/ui/Button';
 import { safeFormatDate, getSafeDate } from '@/utils/date';
 import { toast } from '@/stores/toastStore';
+
+// ============================================================
+// Session Picker — shown inside the modal when no session has
+// been selected yet (e.g. opened from the "Issue Certificate" /
+// "Batch Issue" buttons on the Certificates page toolbar)
+// ============================================================
+function SessionPicker({ onSelect, onClose }) {
+  const [searchTerm, setSearchTerm] = useState('');
+  const { data, isLoading, error } = useSessions({ search: searchTerm, limit: 20 });
+
+  const sessions = data?.data || data?.sessions || [];
+
+  return (
+    <>
+      <div className="sticky top-0 z-10 flex items-center justify-between p-6 border-b" style={{ 
+        borderColor: 'var(--border-color)',
+        background: 'var(--bg-card)'
+      }}>
+        <div>
+          <h2 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>
+            Select a Session
+          </h2>
+          <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
+            Choose the session you want to issue certificates for
+          </p>
+        </div>
+        <button
+          onClick={onClose}
+          className="p-2 rounded-lg hover:bg-card-hover transition-colors"
+        >
+          <X size={20} style={{ color: 'var(--text-secondary)' }} />
+        </button>
+      </div>
+
+      <div className="p-4 border-b" style={{ borderColor: 'var(--border-color)' }}>
+        <div className="relative">
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }} />
+          <input
+            type="text"
+            placeholder="Search sessions by title..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-9 pr-3 py-2 text-sm rounded-lg input-themed"
+            autoFocus
+          />
+        </div>
+      </div>
+
+      <div className="p-4 max-h-[400px] overflow-y-auto">
+        {isLoading ? (
+          <div className="py-12 text-center">
+            <Loader2 size={32} className="animate-spin mx-auto" style={{ color: 'var(--color-forest-green)' }} />
+          </div>
+        ) : error ? (
+          <div className="py-12 text-center">
+            <AlertCircle size={32} className="mx-auto mb-2" style={{ color: 'var(--error-text)' }} />
+            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Failed to load sessions</p>
+          </div>
+        ) : sessions.length > 0 ? (
+          <div className="space-y-2">
+            {sessions.map((session) => (
+              <button
+                key={session.id}
+                onClick={() => onSelect(session)}
+                className="w-full flex items-center justify-between p-4 rounded-lg text-left transition-all hover:bg-card-hover"
+                style={{ background: 'var(--bg-surface)' }}
+              >
+                <div className="min-w-0">
+                  <p className="font-medium truncate" style={{ color: 'var(--text-primary)' }}>
+                    {session.title}
+                  </p>
+                  <p className="text-xs mt-0.5 flex items-center gap-2" style={{ color: 'var(--text-muted)' }}>
+                    {session.date && (
+                      <span className="flex items-center gap-1">
+                        <Calendar size={12} />
+                        {safeFormatDate(session.date, 'PPP')}
+                      </span>
+                    )}
+                    {typeof session.enrolledCount === 'number' && (
+                      <span className="flex items-center gap-1">
+                        <Users size={12} />
+                        {session.enrolledCount} enrolled
+                      </span>
+                    )}
+                  </p>
+                </div>
+                <ChevronRight size={18} className="flex-shrink-0" style={{ color: 'var(--text-muted)' }} />
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="py-12 text-center">
+            <Calendar size={32} className="mx-auto mb-2 opacity-50" style={{ color: 'var(--text-muted)' }} />
+            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+              {searchTerm ? 'No sessions match your search' : 'No sessions found'}
+            </p>
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
+
 
 function EligibleParticipant({ enrolment, onIssue, isIssuing, isIssued, index }) {
   const [isMarking, setIsMarking] = useState(false);
@@ -110,7 +213,7 @@ function EligibleParticipant({ enrolment, onIssue, isIssuing, isIssued, index })
 }
 
 export default function IssueCertificateModal() {
-  const { isIssueCertificateOpen, selectedSession, closeIssueCertificate } = useAdminModalStore();
+  const { isIssueCertificateOpen, selectedSessionForIssue, openIssueCertificate, closeIssueCertificate } = useAdminModalStore();
   
   const [searchTerm, setSearchTerm] = useState('');
   const [issuedUserIds, setIssuedUserIds] = useState([]);
@@ -121,15 +224,22 @@ export default function IssueCertificateModal() {
     isLoading, 
     error, 
     refetch 
-  } = useSession(selectedSession?.id, {
-    enabled: isIssueCertificateOpen && !!selectedSession?.id,
+  } = useSession(selectedSessionForIssue?.id, {
+    enabled: isIssueCertificateOpen && !!selectedSessionForIssue?.id,
   });
 
   const { mutate: issueCertificate, isPending: isIssuing } = useIssueCertificate();
   const { mutate: batchIssue, isPending: isBatchIssuing } = useBatchIssueCertificates();
 
-  const session = sessionData?.data || sessionData || selectedSession;
+  const session = sessionData?.data || sessionData || selectedSessionForIssue;
   const enrolments = session?.enrolments || [];
+
+  // Reset locally-tracked "issued in this session" state whenever the
+  // target session changes, so stale checkmarks don't leak across sessions
+  useEffect(() => {
+    setIssuedUserIds([]);
+    setSearchTerm('');
+  }, [selectedSessionForIssue?.id]);
 
   // Filter eligible participants (ATTENDED status)
   const eligibleEnrolments = useMemo(() => {
@@ -180,7 +290,7 @@ export default function IssueCertificateModal() {
     
     if (!confirmed) return;
 
-    batchIssue(selectedSession.id, {
+    batchIssue(selectedSessionForIssue.id, {
       onSuccess: (result) => {
         const userIds = eligible.map(e => e.userId);
         setIssuedUserIds(prev => [...prev, ...userIds]);
@@ -230,6 +340,13 @@ export default function IssueCertificateModal() {
           className="card-base shadow-elevated max-w-4xl w-full max-h-[90vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
+          {!selectedSessionForIssue ? (
+            <SessionPicker
+              onSelect={(session) => openIssueCertificate(session)}
+              onClose={closeIssueCertificate}
+            />
+          ) : (
+          <>
           {/* Header */}
           <div className="sticky top-0 z-10 flex items-center justify-between p-6 border-b" style={{ 
             borderColor: 'var(--border-color)',
@@ -258,6 +375,13 @@ export default function IssueCertificateModal() {
                   </span>
                 </p>
               )}
+              <button
+                onClick={() => openIssueCertificate(null)}
+                className="text-xs mt-1 hover:underline"
+                style={{ color: 'var(--color-forest-green)' }}
+              >
+                Change session
+              </button>
             </div>
             <div className="flex items-center gap-2">
               <button
@@ -421,6 +545,8 @@ export default function IssueCertificateModal() {
               Close
             </button>
           </div>
+          </>
+          )}
         </motion.div>
       </motion.div>
     </AnimatePresence>
