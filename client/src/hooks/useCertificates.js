@@ -27,7 +27,7 @@ export const useMyCertificates = (page = 1, limit = 10) => {
   });
 };
 
-// ✅ FIXED: Admin certificates hook with proper auth handling
+// Admin certificates hook 
 export const useAdminCertificates = (filters = {}) => {
   const { user, isAuthenticated, token } = useAuthStore();
   const isAdmin = user?.role === 'ADMIN';
@@ -35,14 +35,13 @@ export const useAdminCertificates = (filters = {}) => {
   return useQuery({
     queryKey: certificateKeys.adminCertificatesList(filters),
     queryFn: () => certificateAPI.getAllCertificates(filters),
-    enabled: isAuthenticated && isAdmin && !!token, // ✅ Ensure token exists
-    staleTime: 5 * 60 * 1000,
+    enabled: isAuthenticated && isAdmin && !!token, // 
     keepPreviousData: true,
-    retry: false, // ✅ Don't retry on 401
+    retry: false, 
   });
 };
 
-// ✅ FIXED: Certificate stats hook with proper auth handling
+// Certificate stats hook 
 export const useCertificateStats = () => {
   const { user, isAuthenticated, token } = useAuthStore();
   const isAdmin = user?.role === 'ADMIN';
@@ -50,9 +49,9 @@ export const useCertificateStats = () => {
   return useQuery({
     queryKey: certificateKeys.stats(),
     queryFn: () => certificateAPI.getCertificateStats(),
-    enabled: isAuthenticated && isAdmin && !!token, // ✅ Ensure token exists
+    enabled: isAuthenticated && isAdmin && !!token, 
     staleTime: 2 * 60 * 1000,
-    retry: false, // ✅ Don't retry on 401
+    retry: false, //
   });
 };
 

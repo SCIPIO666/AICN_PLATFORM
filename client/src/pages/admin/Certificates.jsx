@@ -163,7 +163,6 @@ export default function AdminCertificates() {
   
   const { openCertificateDetails } = useAdminModalStore();
   
-  // ✅ Use admin certificates hook
   const { 
     data, 
     isLoading, 
@@ -224,7 +223,7 @@ export default function AdminCertificates() {
   const pagination = data?.pagination;
   const stats = statsData?.data || { total: 0, active: 0, revoked: 0, thisMonth: 0 };
 
-  // ✅ Handle loading state
+  //   loading state
   if (isLoading || statsLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-page)' }}>
