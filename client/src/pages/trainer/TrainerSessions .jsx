@@ -1,7 +1,7 @@
-
+// src/pages/trainer/TrainerSessions.jsx
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { 
   Calendar, 
   Users, 
@@ -12,17 +12,19 @@ import {
   AlertCircle,
   UserCheck,
   Award,
-  ChevronRight,
   MapPin,
   Monitor,
   CheckCircle,
-  XCircle
+  XCircle,
+  ChevronRight
 } from 'lucide-react';
 
 import { useMyTrainerSessions } from '@/hooks';
+import { useAttendanceModalStore } from '@/stores/useAttendanceModalStore';
 import Spinner from '@/components/ui/Spinner';
 import { Button } from '@/components/ui/Button';
 import { getSafeDate, safeFormatDate } from '@/utils/date';
+import AttendanceModal from '@/components/trainer/AttendanceModal';
 
 function SessionCard({ session, onMarkAttendance }) {
   const date = getSafeDate(session.date);
@@ -49,7 +51,6 @@ function SessionCard({ session, onMarkAttendance }) {
     <motion.div
       whileHover={{ y: -4 }}
       className="card-base p-6 transition-all cursor-pointer hover:border-neon-border"
-      onClick={() => onMarkAttendance(session)}
     >
       <div className="flex items-start justify-between">
         <div className="flex-1 min-w-0">
@@ -125,10 +126,7 @@ function SessionCard({ session, onMarkAttendance }) {
 
         <div className="flex flex-col items-end gap-2">
           <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onMarkAttendance(session);
-            }}
+            onClick={() => onMarkAttendance(session)}
             className="btn-primary flex items-center gap-2 px-4 py-2 text-sm"
           >
             <UserCheck size={16} />
@@ -144,9 +142,9 @@ function SessionCard({ session, onMarkAttendance }) {
 }
 
 export default function TrainerSessions() {
-  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const { openModal } = useAttendanceModalStore();
   
   const { data, isLoading, error, refetch } = useMyTrainerSessions();
 
@@ -168,7 +166,7 @@ export default function TrainerSessions() {
   }), [sessions]);
 
   const handleMarkAttendance = (session) => {
-    navigate(`/trainer/attendance/${session.id}`);
+    openModal(session.id, session);
   };
 
   if (isLoading) {
@@ -197,107 +195,112 @@ export default function TrainerSessions() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 md:px-8">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-        <div>
-          <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
-            My Sessions
-          </h1>
-          <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>
-            Mark attendance for your assigned sessions
-          </p>
+    <>
+      <div className="max-w-7xl mx-auto px-4 py-8 md:px-8">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+          <div>
+            <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
+              My Sessions
+            </h1>
+            <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>
+              Mark attendance for your assigned sessions
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
+              {stats.total} total sessions
+            </span>
+          </div>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
-            {stats.total} total sessions
-          </span>
-        </div>
-      </div>
 
-      {/* Stats Bar */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-        <div className="card-base p-3 text-center">
-          <p className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>{stats.total}</p>
-          <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Total</p>
+        {/* Stats Bar */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+          <div className="card-base p-3 text-center">
+            <p className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>{stats.total}</p>
+            <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Total</p>
+          </div>
+          <div className="card-base p-3 text-center" style={{ borderColor: 'var(--color-forest-green)' }}>
+            <p className="text-xl font-bold" style={{ color: 'var(--color-forest-green)' }}>{stats.scheduled}</p>
+            <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Scheduled</p>
+          </div>
+          <div className="card-base p-3 text-center" style={{ borderColor: '#d97706' }}>
+            <p className="text-xl font-bold" style={{ color: '#d97706' }}>{stats.inProgress}</p>
+            <p className="text-xs" style={{ color: 'var(--text-muted)' }}>In Progress</p>
+          </div>
+          <div className="card-base p-3 text-center" style={{ borderColor: '#3b82f6' }}>
+            <p className="text-xl font-bold" style={{ color: '#3b82f6' }}>{stats.completed}</p>
+            <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Completed</p>
+          </div>
         </div>
-        <div className="card-base p-3 text-center" style={{ borderColor: 'var(--color-forest-green)' }}>
-          <p className="text-xl font-bold" style={{ color: 'var(--color-forest-green)' }}>{stats.scheduled}</p>
-          <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Scheduled</p>
-        </div>
-        <div className="card-base p-3 text-center" style={{ borderColor: '#d97706' }}>
-          <p className="text-xl font-bold" style={{ color: '#d97706' }}>{stats.inProgress}</p>
-          <p className="text-xs" style={{ color: 'var(--text-muted)' }}>In Progress</p>
-        </div>
-        <div className="card-base p-3 text-center" style={{ borderColor: '#3b82f6' }}>
-          <p className="text-xl font-bold" style={{ color: '#3b82f6' }}>{stats.completed}</p>
-          <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Completed</p>
-        </div>
-      </div>
 
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
-        <div className="flex-1 relative">
-          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }} />
-          <input
-            type="text"
-            placeholder="Search sessions..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-lg input-themed"
-          />
-        </div>
-        <div className="flex gap-2">
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 rounded-lg select-themed"
-          >
-            <option value="all">All Status</option>
-            <option value="SCHEDULED">Scheduled</option>
-            <option value="IN_PROGRESS">In Progress</option>
-            <option value="COMPLETED">Completed</option>
-            <option value="CANCELLED">Cancelled</option>
-          </select>
-          {(searchTerm || statusFilter !== 'all') && (
-            <Button 
-              variant="ghost" 
-              className="flex items-center gap-2"
-              onClick={() => { setSearchTerm(''); setStatusFilter('all'); }}
-            >
-              <X size={16} />
-              Clear
-            </Button>
-          )}
-        </div>
-      </div>
-
-      {/* Sessions Grid */}
-      {filteredSessions.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {filteredSessions.map((session) => (
-            <SessionCard 
-              key={session.id} 
-              session={session} 
-              onMarkAttendance={handleMarkAttendance}
+        {/* Filters */}
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          <div className="flex-1 relative">
+            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }} />
+            <input
+              type="text"
+              placeholder="Search sessions..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 rounded-lg input-themed"
             />
-          ))}
+          </div>
+          <div className="flex gap-2">
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="px-4 py-2 rounded-lg select-themed"
+            >
+              <option value="all">All Status</option>
+              <option value="SCHEDULED">Scheduled</option>
+              <option value="IN_PROGRESS">In Progress</option>
+              <option value="COMPLETED">Completed</option>
+              <option value="CANCELLED">Cancelled</option>
+            </select>
+            {(searchTerm || statusFilter !== 'all') && (
+              <Button 
+                variant="ghost" 
+                className="flex items-center gap-2"
+                onClick={() => { setSearchTerm(''); setStatusFilter('all'); }}
+              >
+                <X size={16} />
+                Clear
+              </Button>
+            )}
+          </div>
         </div>
-      ) : (
-        <div className="text-center py-12 card-base">
-          <Calendar size={48} className="mx-auto mb-4 opacity-50" style={{ color: 'var(--text-muted)' }} />
-          <h3 className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>
-            {searchTerm || statusFilter !== 'all' 
-              ? 'No sessions match your filters' 
-              : 'No sessions assigned to you yet'}
-          </h3>
-          <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>
-            {searchTerm || statusFilter !== 'all' 
-              ? 'Try adjusting your search or filters' 
-              : 'Sessions will appear here once assigned by an admin'}
-          </p>
-        </div>
-      )}
-    </div>
+
+        {/* Sessions Grid */}
+        {filteredSessions.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {filteredSessions.map((session) => (
+              <SessionCard 
+                key={session.id} 
+                session={session} 
+                onMarkAttendance={handleMarkAttendance}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12 card-base">
+            <Calendar size={48} className="mx-auto mb-4 opacity-50" style={{ color: 'var(--text-muted)' }} />
+            <h3 className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>
+              {searchTerm || statusFilter !== 'all' 
+                ? 'No sessions match your filters' 
+                : 'No sessions assigned to you yet'}
+            </h3>
+            <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>
+              {searchTerm || statusFilter !== 'all' 
+                ? 'Try adjusting your search or filters' 
+                : 'Sessions will appear here once assigned by an admin'}
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Attendance Modal */}
+      <AttendanceModal />
+    </>
   );
 }

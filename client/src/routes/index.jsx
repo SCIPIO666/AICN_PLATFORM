@@ -58,10 +58,10 @@ export const learnerRoutes = [
 export const trainerRoutes = [
   { path: "dashboard/trainer", element: <TrainerDashboard />, roles: ['TRAINER', 'ADMIN'] },
   { path: "dashboard/trainer/sessions", element: <TrainerSessions />, roles: ['TRAINER', 'ADMIN'] },
-  { path: "dashboard/trainer/sessions/:id", element: <TrainerSessionDetails />, roles: ['TRAINER', 'ADMIN'] },
-  { path: "dashboard/trainer/sessions/:id/roster", element: <SessionRoster />, roles: ['TRAINER', 'ADMIN'] },
-  { path: "dashboard/trainer/attendance", element: <Attendance />, roles: ['TRAINER', 'ADMIN'] },
-  { path: "dashboard/trainer/attendance/:sessionId", element: <SessionAttendance />, roles: ['TRAINER', 'ADMIN'] },
+  // { path: "dashboard/trainer/sessions/:id", element: <TrainerSessionDetails />, roles: ['TRAINER', 'ADMIN'] },
+  // { path: "dashboard/trainer/sessions/:id/roster", element: <SessionRoster />, roles: ['TRAINER', 'ADMIN'] },
+  // { path: "dashboard/trainer/attendance", element: <Attendance />, roles: ['TRAINER', 'ADMIN'] },
+  // { path: "dashboard/trainer/attendance/:sessionId", element: <SessionAttendance />, roles: ['TRAINER', 'ADMIN'] },
   { path: "dashboard/trainer/profile", element: <TrainerProfile />, roles: ['TRAINER', 'ADMIN'] },
   {path : "dashboard/trainer/certificates", element : <IssueCertificates/>,roles: ['TRAINER', 'ADMIN']},
 

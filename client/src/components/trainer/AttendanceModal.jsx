@@ -1,4 +1,4 @@
-// src/components/trainer/AttendanceModal.jsx
+
 import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 

@@ -68,14 +68,14 @@ export const navigation = [
     roles: ['TRAINER', 'ADMIN'],
     order: 2
   },
-  {
-    id: 'trainer-attendance',
-    label: 'Mark Attendance',
-    path: '/dashboard/trainer/attendance',
-    icon: 'ClipboardList',
-    roles: ['TRAINER', 'ADMIN'],
-    order: 3
-  },
+  // {
+  //   id: 'trainer-attendance',
+  //   label: 'Mark Attendance',
+  //   path: '/dashboard/trainer/attendance',
+  //   icon: 'ClipboardList',
+  //   roles: ['TRAINER', 'ADMIN'],
+  //   order: 3
+  // },
   {
     id: 'issue-certs',
     label: 'Issue Certificates',
