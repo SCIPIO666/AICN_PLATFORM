@@ -2,21 +2,9 @@
 import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  X, 
-  Users, 
-  Search, 
-  CheckCircle, 
-  XCircle,
-  Loader2,
-  UserCheck,
-  UserX,
-  Calendar,
-  Clock,
-  RefreshCw,
-  Save,
-  AlertCircle,
-  ChevronDown,
-  ChevronUp
+  X, Users, Search, CheckCircle, XCircle, Loader2,
+  Calendar, Clock, RefreshCw, ChevronDown, ChevronUp,
+  AlertCircle
 } from 'lucide-react';
 
 import { useSession, useMarkAttendance } from '@/hooks';
@@ -26,30 +14,21 @@ import { Button } from '@/components/ui/Button';
 import { getSafeDate, safeFormatDate } from '@/utils/date';
 import { toast } from '@/stores/toastStore';
 
-// ============================================================
-// Participant Row Component
-// ============================================================
-function ParticipantRow({ 
-  enrolment, 
-  onStatusChange, 
-  isUpdating,
-  selectedStatuses 
-}) {
-  const [status, setStatus] = useState(enrolment.status || 'ENROLLED');
+function ParticipantRow({ enrolment, onStatusChange, isUpdating }) {
   const [isMarking, setIsMarking] = useState(false);
+  const [status, setStatus] = useState(enrolment.status || 'ENROLLED');
 
   const statusOptions = [
     { value: 'ENROLLED', label: 'Not Marked', color: '#3b82f6' },
-    { value: 'ATTENDED', label: 'Present', color: 'var(--color-forest-green)' },
+    { value: 'ATTENDED', label: 'Attended', color: 'var(--color-forest-green)' },
     { value: 'CANCELLED', label: 'Absent', color: '#dc2626' },
   ];
 
+  const currentStatus = statusOptions.find(opt => opt.value === status) || statusOptions[0];
   const isMarked = status === 'ATTENDED' || status === 'CANCELLED';
-  const canMark = status === 'ENROLLED' || status === 'ACTIVE';
 
   const handleStatusChange = async (newStatus) => {
     if (newStatus === status) return;
-    
     setIsMarking(true);
     try {
       await onStatusChange(enrolment.id, newStatus);
@@ -58,8 +37,6 @@ function ParticipantRow({
       setIsMarking(false);
     }
   };
-
-  const currentStatus = statusOptions.find(opt => opt.value === status) || statusOptions[0];
 
   return (
     <motion.tr
@@ -95,19 +72,13 @@ function ParticipantRow({
           </div>
         </div>
       </td>
-
       <td className="px-4 py-3">
-        <span
-          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium"
-          style={{
-            background: `${currentStatus.color}20`,
-            color: currentStatus.color
-          }}
+        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium"
+          style={{ background: `${currentStatus.color}20`, color: currentStatus.color }}
         >
           {currentStatus.label}
         </span>
       </td>
-
       <td className="px-4 py-3">
         <div className="flex items-center gap-2">
           {statusOptions.map((option) => (
@@ -137,10 +108,8 @@ function ParticipantRow({
   );
 }
 
-// ============================================================
-// Main Attendance Modal Component
-// ============================================================
 export default function AttendanceModal() {
+  // ✅ ALL hooks at the top (no early returns before hooks)
   const { isOpen, sessionId, sessionData, closeModal } = useAttendanceModalStore();
   
   const [searchTerm, setSearchTerm] = useState('');
@@ -150,7 +119,6 @@ export default function AttendanceModal() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [selectedStatuses, setSelectedStatuses] = useState({});
   
-  // Fetch session data if not provided
   const { 
     data: fetchedData, 
     isLoading, 
@@ -165,62 +133,7 @@ export default function AttendanceModal() {
   const session = sessionData || fetchedData?.data || fetchedData;
   const enrolments = session?.enrolments || [];
 
-  // Initialize selected statuses from enrolments
-  useEffect(() => {
-    if (enrolments.length > 0) {
-      const initial = {};
-      enrolments.forEach(e => {
-        initial[e.id] = e.status || 'ENROLLED';
-      });
-      setSelectedStatuses(initial);
-    }
-  }, [enrolments]);
-
-  if (!isOpen) return null;
-
-  // Sort handlers
-  const handleSort = (field) => {
-    if (sortField === field) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortField(field);
-      setSortDirection('asc');
-    }
-  };
-
-  const SortIcon = ({ field }) => {
-    if (sortField !== field) return <ChevronDown size={14} className="opacity-30" />;
-    return sortDirection === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />;
-  };
-
-  // Handle status change
-  const handleStatusChange = async (enrolmentId, status) => {
-    return new Promise((resolve, reject) => {
-      markAttendance(
-        { enrolmentId, status },
-        {
-          onSuccess: () => {
-            setSelectedStatuses(prev => ({ ...prev, [enrolmentId]: status }));
-            toast.success(`Marked as ${status === 'ATTENDED' ? 'Present' : status === 'CANCELLED' ? 'Absent' : 'Not Marked'}`);
-            resolve();
-          },
-          onError: (error) => {
-            toast.error(error?.response?.data?.message || 'Failed to mark attendance');
-            reject(error);
-          }
-        }
-      );
-    });
-  };
-
-  // Handle refresh
-  const handleRefresh = async () => {
-    setIsRefreshing(true);
-    await refetch();
-    setIsRefreshing(false);
-  };
-
-  // Filter and sort enrolments
+  // ✅ useMemo hooks
   const filteredEnrolments = useMemo(() => {
     let filtered = [...enrolments];
 
@@ -262,16 +175,67 @@ export default function AttendanceModal() {
     return filtered;
   }, [enrolments, searchTerm, statusFilter, sortField, sortDirection, selectedStatuses]);
 
-  // Stats
   const stats = useMemo(() => {
     const total = enrolments.length;
-    const present = enrolments.filter(e => (selectedStatuses[e.id] || e.status) === 'ATTENDED').length;
+    const attended = enrolments.filter(e => (selectedStatuses[e.id] || e.status) === 'ATTENDED').length;
     const absent = enrolments.filter(e => (selectedStatuses[e.id] || e.status) === 'CANCELLED').length;
     const notMarked = enrolments.filter(e => (selectedStatuses[e.id] || e.status) === 'ENROLLED' || (selectedStatuses[e.id] || e.status) === 'ACTIVE').length;
-    return { total, present, absent, notMarked };
+    return { total, attended, absent, notMarked };
   }, [enrolments, selectedStatuses]);
 
-  // Loading state
+
+  useEffect(() => {
+    if (enrolments.length > 0) {
+      const initial = {};
+      enrolments.forEach(e => {
+        initial[e.id] = e.status || 'ENROLLED';
+      });
+      setSelectedStatuses(initial);
+    }
+  }, [enrolments]);
+
+
+  if (!isOpen) return null;
+
+  const handleSort = (field) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  const SortIcon = ({ field }) => {
+    if (sortField !== field) return <ChevronDown size={14} className="opacity-30" />;
+    return sortDirection === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />;
+  };
+
+  const handleStatusChange = async (enrolmentId, status) => {
+    return new Promise((resolve, reject) => {
+      markAttendance(
+        { enrolmentId, status },
+        {
+          onSuccess: () => {
+            setSelectedStatuses(prev => ({ ...prev, [enrolmentId]: status }));
+            toast.success(`Marked as ${status === 'ATTENDED' ? 'Attended' : status === 'CANCELLED' ? 'Absent' : 'Not Marked'}`);
+            resolve();
+          },
+          onError: (error) => {
+            toast.error(error?.response?.data?.message || 'Failed to mark attendance');
+            reject(error);
+          }
+        }
+      );
+    });
+  };
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await refetch();
+    setIsRefreshing(false);
+  };
+
   if (isLoading) {
     return (
       <AnimatePresence>
@@ -290,7 +254,6 @@ export default function AttendanceModal() {
     );
   }
 
-  // Error state
   if (error || !session) {
     return (
       <AnimatePresence>
@@ -399,8 +362,8 @@ export default function AttendanceModal() {
               <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Not Marked</p>
             </div>
             <div className="text-center">
-              <p className="text-xl font-bold" style={{ color: 'var(--color-forest-green)' }}>{stats.present}</p>
-              <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Present</p>
+              <p className="text-xl font-bold" style={{ color: 'var(--color-forest-green)' }}>{stats.attended}</p>
+              <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Attended</p>
             </div>
             <div className="text-center">
               <p className="text-xl font-bold" style={{ color: 'var(--error-text)' }}>{stats.absent}</p>
@@ -437,7 +400,7 @@ export default function AttendanceModal() {
               >
                 <option value="all">All Status</option>
                 <option value="ENROLLED">Not Marked</option>
-                <option value="ATTENDED">Present</option>
+                <option value="ATTENDED">Attended</option>
                 <option value="CANCELLED">Absent</option>
               </select>
               {(searchTerm || statusFilter !== 'all') && (
@@ -491,7 +454,6 @@ export default function AttendanceModal() {
                         enrolment={enrolment}
                         onStatusChange={handleStatusChange}
                         isUpdating={isUpdating}
-                        selectedStatuses={selectedStatuses}
                       />
                     ))
                   ) : (
