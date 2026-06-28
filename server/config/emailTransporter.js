@@ -1,6 +1,7 @@
 // config/emailTransporter.js
 const nodemailer = require('nodemailer');
 const logger = require('../utils/logger');
+const dotenv=require('dotenv').config()
 
 /**
  * Create email transporter with fallback to Ethereal
