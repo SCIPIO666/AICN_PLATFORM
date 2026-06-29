@@ -1,10 +1,8 @@
-
-const { getTransporter, getEtherealPreviewUrl } = require('../../../config/emailTransporter');
 const logger = require('../../../utils/logger');
+const { transporter } = require('../../../config/mailer');
 
-/**
- * Send email with proper error handling
- */
+//Sending email 
+
 async function sendEmail({ to, subject, html, attachments = [] }) {
   // Validate
   if (!to) throw new Error('Recipient email (to) is required');
@@ -12,8 +10,6 @@ async function sendEmail({ to, subject, html, attachments = [] }) {
   if (!html) throw new Error('Email HTML content is required');
 
   try {
-    const transporter = await getTransporter();
-    
     const mailOptions = {
       from: process.env.EMAIL_FROM || 'AICN Training <noreply@aicn.africa>',
       to,
@@ -24,29 +20,27 @@ async function sendEmail({ to, subject, html, attachments = [] }) {
     };
 
     if (process.env.DEBUG_EMAIL === 'true') {
-      logger.info('📧 Sending email:', { to, subject, hasAttachments: attachments.length > 0 });
+      logger.info('Sending email:', { to, subject, hasAttachments: attachments.length > 0 });
     }
 
     const info = await transporter.sendMail(mailOptions);
 
-    logger.info(`✅ Email sent to ${to}`, {
+    logger.info(`Email sent to ${to}`, {
       messageId: info.messageId,
       accepted: info.accepted,
     });
 
     // Ethereal preview URL
-    if (process.env.NODE_ENV === 'development' || !process.env.EMAIL_USER) {
-      const previewUrl = getEtherealPreviewUrl(info);
-      if (previewUrl) {
-        logger.info(`📧 Preview: ${previewUrl}`);
-        // Also log to console for easy access
-        console.log(`\n🔗 EMAIL PREVIEW: ${previewUrl}\n`);
-      }
+    if (process.env.SMTP_HOST === 'smtp.ethereal.email') {
+      // URL https://ethereal.email/message/{messageId}
+      const previewUrl = `https://ethereal.email/message/${info.messageId}`;
+      console.log(`\n EMAIL PREVIEW URL: ${previewUrl}`);
+      console.log(`View all messages: https://ethereal.email/messages\n`);
     }
 
     return info;
   } catch (error) {
-    logger.error(`❌ Email failed for ${to}:`, {
+    logger.error(` Email failed for ${to}:`, {
       error: error.message,
       code: error.code,
     });
@@ -54,44 +48,35 @@ async function sendEmail({ to, subject, html, attachments = [] }) {
   }
 }
 
-/**
- * Test email connection
- */
+// email connection
+
 async function testEmailConnection() {
   try {
-    const transporter = await getTransporter();
     await transporter.verify();
-    logger.info('✅ Email connection verified successfully');
-    
-    // Log Ethereal credentials if using it
-    if (transporter.testAccount) {
-      logger.info('📧 Ethereal credentials:', {
-        user: transporter.testAccount.user,
-        pass: transporter.testAccount.pass,
-        login: 'https://ethereal.email/login',
-      });
-      console.log('\n📧 ETHEREAL EMAIL SETUP:');
-      console.log(`   Email: ${transporter.testAccount.user}`);
-      console.log(`   Password: ${transporter.testAccount.pass}`);
-      console.log(`   Login: https://ethereal.email/login\n`);
+    logger.info(' Email connection verified successfully');
+  
+    if (process.env.SMTP_HOST === 'smtp.ethereal.email') {
+      logger.info('\n ETHEREAL EMAIL SETUP:');
+      logger.info(`   Email: ${process.env.SMTP_USER}`);
+      logger.info(`   Password: ${process.env.SMTP_PASS? true : false}`);
+      logger.info(`   Login: https://ethereal.email/login`);
+      logger.info(`   View messages: https://ethereal.email/messages\n`);
     }
     
     return true;
   } catch (error) {
-    logger.error('❌ Email connection test failed:', error.message);
+    logger.error(' Email connection test failed:', error.message);
     return false;
   }
 }
 
-/**
- * Send a test email
- */
+//test email
 async function sendTestEmail(to = null) {
-  const recipient = to || 'test@example.com';
+  const recipient = to || 'tsailunenterprises@gmail.com';
   
   const result = await sendEmail({
     to: recipient,
-    subject: '✅ AICN Email Test',
+    subject: ' AICN Email Test',
     html: `
       <!DOCTYPE html>
       <html>
@@ -106,7 +91,7 @@ async function sendTestEmail(to = null) {
       </head>
       <body>
         <div class="header">
-          <h2>✅ Email Test Successful</h2>
+          <h2> Email Test Successful</h2>
         </div>
         <div class="content">
           <p class="success">Your AICN email system is working correctly!</p>
@@ -125,7 +110,7 @@ async function sendTestEmail(to = null) {
     `,
   });
 
-  console.log(`\n✅ Test email sent to: ${recipient}`);
+  logger.info(`\n Test email sent to: ${recipient}`);
   return result;
 }
 
