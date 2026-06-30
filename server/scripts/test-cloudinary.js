@@ -1,12 +1,12 @@
-// scripts/test-cloudinary-debug.js
+// scripts/test-cloudinary.js - Fixed version
 const cloudinary = require('../config/cloudinary');
 const logger = require('../utils/logger');
 
-async function testCloudinaryDebug() {
+async function testCloudinary() {
     try {
-        logger.info('🔍 Testing Cloudinary...');
+        logger.info('🔍 Testing Cloudinary upload...');
         
-        // 1. Check if cloudinary is loaded and configured
+        // 1. Check configuration
         const config = cloudinary.config();
         logger.info('Cloudinary config:', {
             cloud_name: config.cloud_name || 'NOT SET',
@@ -14,19 +14,13 @@ async function testCloudinaryDebug() {
             api_secret: config.api_secret ? 'SET' : 'NOT SET'
         });
 
-        // 2. Test API ping
+        // 2. Test API ping (already working)
         try {
-            logger.info('📡 Testing Cloudinary API ping...');
             const result = await cloudinary.api.ping();
             logger.info('✅ API ping successful:', result);
         } catch (pingError) {
-            logger.error('❌ API ping failed:', pingError.message || 'Unknown error');
-            logger.error('Ping error details:', {
-                code: pingError.code,
-                http_code: pingError.http_code,
-                error: pingError.error,
-                response: pingError.response?.body
-            });
+            logger.error('❌ API ping failed:', pingError.message);
+            return false;
         }
 
         // 3. Test upload with a small text file
@@ -47,22 +41,30 @@ async function testCloudinaryDebug() {
             return true;
             
         } catch (uploadError) {
+            // ✅ FIX: Properly log the error
             logger.error('❌ Upload failed:', uploadError.message || 'Unknown error');
             
-            // Log all error properties
-            const errorDetails = {};
-            for (const key of Object.keys(uploadError)) {
-                errorDetails[key] = uploadError[key];
-            }
-            logger.error('Upload error details:', errorDetails);
+            // Log all properties of the error
+            logger.error('Upload error details:', {
+                message: uploadError.message,
+                http_code: uploadError.http_code,
+                code: uploadError.code,
+                error: uploadError.error,
+                response: uploadError.response?.body,
+                stack: uploadError.stack
+            });
             
-            // Check if it's a network error
-            if (uploadError.code === 'ECONNREFUSED' || uploadError.code === 'ENOTFOUND') {
-                logger.error('💡 Network error: Cannot reach Cloudinary API. Check internet connection.');
+            // Check for specific error types
+            if (uploadError.http_code === 403) {
+                logger.error('💡 HTTP 403: Forbidden - Check your Cloudinary API key permissions');
+            } else if (uploadError.http_code === 400) {
+                logger.error('💡 HTTP 400: Bad Request - Check the upload parameters');
+            } else if (uploadError.code === 'ECONNREFUSED' || uploadError.code === 'ENOTFOUND') {
+                logger.error('💡 Network error: Cannot reach Cloudinary API');
             }
+            
+            return false;
         }
-
-        return false;
         
     } catch (error) {
         logger.error('❌ Test failed:', error.message);
@@ -71,7 +73,7 @@ async function testCloudinaryDebug() {
     }
 }
 
-testCloudinaryDebug().then(success => {
+testCloudinary().then(success => {
     logger.info(success ? '✅ Test completed successfully' : '❌ Test failed');
     process.exit(success ? 0 : 1);
 });
