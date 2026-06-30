@@ -1,540 +1,302 @@
-/* ================================================================
-   AICN CPD CERTIFICATE — v3
-   Design: Trifold dark-left panel + rich ivory body + full bleed
-   gold header band. Optimised for Puppeteer PDF @ A4 landscape
-   1122 × 794 px at 96 dpi.
-   ================================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Inconsolata:wght@400;600&display=swap');
 
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Jost:wght@300;400;500;600&display=swap');
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-/* ── Reset ───────────────────────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-/* ── Brand tokens ────────────────────────────────────────────── */
 :root {
-  --gold:          #d97706;
-  --gold-light:    #f5c842;
-  --gold-pale:     #fde68a;
-  --gold-deep:     #92400e;
-  --gold-deeper:   #78350f;
 
-  --panel-bg:      #0e0d0b;
-  --panel-mid:     #161410;
-  --panel-edge:    #1e1c18;
-
-  --ivory:         #faf8f3;
-  --ivory-warm:    #f2ede3;
-  --cream:         #e8e2d6;
-  --cream-mid:     #d5cfc3;
-
-  --ink:           #1a1614;
-  --ink-soft:      #2d2926;
-  --muted:         #6b6560;
-  --faint:         #a09890;
-
-  --green:         #14532d;
-  --green-mid:     #15803d;
-
-  --f-display:     'Cinzel', 'Georgia', serif;
-  --f-serif:       'Cormorant Garamond', 'Georgia', serif;
-  --f-sans:        'Jost', 'Helvetica Neue', sans-serif;
+  --pure-black:    #000000;
+  --near-black:    #141414;
+  --charcoal:      #414141;
+  --deep-charcoal: #343434;
+  --pure-white:    #ffffff;
+  --silver:        #8a8a8a; 
+  --border-gray:   #e5e7eb;
+  
+  /* Fallback definitions for components */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Inconsolata', monospace;
+  --radius-sharp: 4px;
+  --radius-card:  8px;
 }
 
-/* ── Root page ───────────────────────────────────────────────── */
-html, body {
-  width: 1122px; height: 794px;
+html,
+body {
+  width: 1200px;
+  height: 848px;
   overflow: hidden;
-  background: #0e0d0b;
+  background: #ffffff;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
 }
 
-/* ── Certificate shell ───────────────────────────────────────── */
+/* Base Print Container */
 .cert {
   position: relative;
-  width: 1122px; height: 794px;
-  background: var(--ivory);
+  width: 1200px;
+  height: 848px;
+  background-color: var(--pure-white);
+  color: var(--pure-black);
   overflow: hidden;
-  font-family: var(--f-sans);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-/* ================================================================
-   FULL-WIDTH GOLD HEADER BAND
-   Sits above everything — tight stripe at very top
-   ================================================================ */
-.header-band {
+
+.cert-grid-bg {
   position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 6px;
-  background: linear-gradient(
-    90deg,
-    var(--panel-bg) 0%,
-    var(--panel-bg) 28%,
-    var(--gold-deep) 30%,
-    var(--gold) 40%,
-    var(--gold-light) 55%,
-    var(--gold) 70%,
-    var(--gold-deep) 80%,
-    var(--ivory) 100%
-  );
-  z-index: 20;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 1;
 }
 
-.footer-band {
+/* Solid Stark Framing */
+.cert-outer-border {
   position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 4px;
-  background: linear-gradient(
-    90deg,
-    var(--panel-bg) 0%,
-    var(--panel-bg) 28%,
-    var(--gold-deep) 30%,
-    var(--gold) 50%,
-    var(--gold-deep) 70%,
-    var(--ivory) 100%
-  );
-  z-index: 20;
-}
-
-/* ================================================================
-   LEFT DARK PANEL
-   ================================================================ */
-.panel {
-  position: absolute;
-  top: 0; left: 0;
-  width: 340px; height: 100%;
-  background: var(--panel-bg);
-  clip-path: polygon(0 0, 100% 0, 84% 100%, 0 100%);
+  inset: 24px;
+  border: 1px solid var(--border-gray);
+  border-top: 5px solid var(--pure-black);
+  pointer-events: none;
   z-index: 2;
 }
 
-/* Subtle fabric texture */
-.panel::before {
-  content: '';
-  position: absolute; inset: 0;
-  background:
-    repeating-linear-gradient(
-      175deg,
-      transparent 0px, transparent 18px,
-      rgba(255,255,255,0.012) 18px, rgba(255,255,255,0.012) 19px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      transparent 0px, transparent 60px,
-      rgba(255,255,255,0.008) 60px, rgba(255,255,255,0.008) 61px
-    );
-  pointer-events: none;
-}
-
-/* Gold edge glow on diagonal */
-.panel::after {
-  content: '';
-  position: absolute;
-  top: 6%; right: -1px;
-  width: 2px; height: 88%;
-  background: linear-gradient(
-    180deg,
-    transparent 0%,
-    var(--gold-deep) 15%,
-    var(--gold) 35%,
-    var(--gold-light) 50%,
-    var(--gold) 65%,
-    var(--gold-deep) 85%,
-    transparent 100%
-  );
-  clip-path: none;
-  z-index: 5;
-}
-
-/* ================================================================
-   TOP-LEFT DECORATIVE ARC (panel area, behind content)
-   ================================================================ */
-.panel-arc {
-  position: absolute;
-  top: -60px; left: -60px;
-  width: 240px; height: 240px;
-  border: 1px solid rgba(217,119,6,0.18);
-  border-radius: 50%;
+.cert-container {
+  position: relative;
   z-index: 3;
-  pointer-events: none;
-}
-.panel-arc-2 {
-  position: absolute;
-  top: -40px; left: -40px;
-  width: 200px; height: 200px;
-  border: 0.5px solid rgba(217,119,6,0.10);
-  border-radius: 50%;
-  z-index: 3;
-  pointer-events: none;
-}
-
-/* ================================================================
-   OUTER BORDER FRAME
-   ================================================================ */
-.border-frame {
-  position: absolute;
-  inset: 12px;
-  border: 1.5px solid rgba(180,83,9,0.28);
-  z-index: 10;
-  pointer-events: none;
-}
-.border-frame-inner {
-  position: absolute;
-  inset: 18px;
-  border: 0.75px solid rgba(180,83,9,0.14);
-  z-index: 10;
-  pointer-events: none;
-}
-
-/* Corner ornaments */
-.corner {
-  position: absolute;
-  width: 36px; height: 36px;
-  z-index: 11;
-}
-.corner-tl { top: 8px;    left: 8px;   border-top: 2.5px solid var(--gold); border-left:  2.5px solid var(--gold); }
-.corner-tr { top: 8px;    right: 8px;  border-top: 2.5px solid var(--gold); border-right: 2.5px solid var(--gold); }
-.corner-bl { bottom: 8px; left: 8px;   border-bottom: 2.5px solid var(--gold); border-left:  2.5px solid var(--gold); }
-.corner-br { bottom: 8px; right: 8px;  border-bottom: 2.5px solid var(--gold); border-right: 2.5px solid var(--gold); }
-
-/* Corner dots */
-.corner-dot {
-  position: absolute;
-  width: 5px; height: 5px;
-  background: var(--gold);
-  border-radius: 50%;
-  z-index: 12;
-}
-.corner-dot-tl { top: 22px;    left: 22px;   }
-.corner-dot-tr { top: 22px;    right: 22px;  }
-.corner-dot-bl { bottom: 22px; left: 22px;   }
-.corner-dot-br { bottom: 22px; right: 22px;  }
-
-/* ================================================================
-   PANEL CONTENT
-   ================================================================ */
-.panel-content {
-  position: absolute;
-  top: 6px; left: 0;
-  width: 282px; height: calc(100% - 10px);
-  z-index: 6;
+  height: 100%;
+  padding: 64px 72px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 20px 36px 32px;
-  gap: 18px;
+  justify-content: space-between;
 }
 
-/* Logo ring */
-.panel-logo-ring {
-  width: 86px; height: 86px;
-  border: 2px solid var(--gold);
-  border-radius: 50%;
+/* Header Configuration */
+.cert-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  position: relative;
-  flex-shrink: 0;
-}
-.panel-logo-ring::before {
-  content: '';
-  position: absolute; inset: 7px;
-  border: 1px solid rgba(217,119,6,0.35);
-  border-radius: 50%;
-}
-.panel-logo-ring::after {
-  content: '';
-  position: absolute; inset: 14px;
-  border: 0.5px solid rgba(217,119,6,0.15);
-  border-radius: 50%;
-}
-.panel-logo-text {
-  font-family: var(--f-display);
-  font-size: 20px; font-weight: 700;
-  color: var(--gold-light);
-  letter-spacing: 3px;
-  position: relative; z-index: 1;
+  border-bottom: 1px solid var(--border-gray);
+  padding-bottom: 16px;
 }
 
-/* Org name */
-.panel-org {
-  font-family: var(--f-display);
-  font-size: 7.5px; font-weight: 600;
-  letter-spacing: 3.5px;
-  text-transform: uppercase;
-  color: var(--gold);
-  text-align: center;
-  line-height: 2;
+.brand-pill {
+  background-color: var(--pure-black);
+  color: var(--pure-white);
+  font-family: var(--font-mono);
+  font-weight: 900;
+  font-size: 14px;
+  padding: 2px 8px;
+  border-radius: var(--radius-sharp);
 }
 
-/* Rules */
-.panel-rule {
-  width: 90%; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
-  flex-shrink: 0;
-}
-.panel-rule-thin {
-  width: 60%; height: 0.5px;
-  background: linear-gradient(90deg, transparent, rgba(217,119,6,0.5), transparent);
-  flex-shrink: 0;
+.brand-sub {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--charcoal);
+  letter-spacing: 1.5px;
 }
 
-/* Tagline */
-.panel-tagline {
-  font-family: var(--f-serif);
-  font-size: 11.5px; font-style: italic;
-  color: rgba(245,200,66,0.45);
-  text-align: center;
-  line-height: 1.8;
+.cert-id-badge {
+  font-family: var(--font-mono);
+  font-size: 13px;
 }
 
-/* Panel seal */
-.panel-seal { flex-shrink: 0; }
-.panel-seal img, .panel-seal svg { width: 84px; height: 84px; }
+.mono-label {
+  color: var(--silver);
+}
 
-/* Year disc */
-.panel-year {
-  width: 52px; height: 52px;
-  border: 2px solid rgba(217,119,6,0.45);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
+.mono-value {
+  color: var(--pure-black);
+  font-weight: 600;
+}
+
+/* Layout Grid Splits */
+.cert-main-grid {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 64px;
+  align-items: center;
   margin-top: auto;
-  flex-shrink: 0;
-  position: relative;
-}
-.panel-year::before {
-  content: '';
-  position: absolute; inset: 5px;
-  border: 0.5px solid rgba(217,119,6,0.2);
-  border-radius: 50%;
-}
-.panel-year-text {
-  font-family: var(--f-display);
-  font-size: 12px; font-weight: 700;
-  color: var(--gold);
-  letter-spacing: 1px;
-  position: relative; z-index: 1;
+  margin-bottom: auto;
 }
 
-/* ================================================================
-   MAIN BODY
-   ================================================================ */
-.cert-body {
-  position: absolute;
-  top: 6px; left: 290px;
-  right: 0; height: calc(100% - 10px);
-  z-index: 6;
+.cert-content-left {
   display: flex;
   flex-direction: column;
-  padding: 36px 46px 30px 56px;
 }
 
-/* ── Top area: org line + title ── */
-.cert-org-line {
-  font-family: var(--f-sans);
-  font-size: 8.5px; font-weight: 500;
-  letter-spacing: 4.5px;
-  text-transform: uppercase;
-  color: var(--gold-deep);
+.cert-label {
+  font-family: var(--font-mono);
+  color: var(--pure-black);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
+
+.cert-recipient {
+  font-size: 54px;
+  font-weight: 900;
+  color: var(--pure-black);
+  line-height: 1.1;
+  letter-spacing: -1px;
+}
+
+.cert-summary-box {
+  margin-top: 24px;
+  padding-left: 20px;
+  border-left: 3px solid var(--pure-black);
+  max-width: 680px;
+}
+
+.summary-pre {
+  font-size: 13px;
+  color: var(--charcoal);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.cert-session {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--pure-black);
+  line-height: 1.3;
+}
+
+/* Meta Properties Grid Row */
+.cert-metadata-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 48px;
+  border-top: 1px solid var(--border-gray);
+  padding-top: 20px;
+}
+
+.meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.meta-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--silver);
+  letter-spacing: 1px;
+}
+
+.meta-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--near-black);
+}
+
+/* Right Side Verification Segment */
+.cert-content-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  border-left: 1px solid var(--border-gray);
+  padding-left: 48px;
+}
+
+.badge-status-text {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--pure-black);
+  background-color: var(--pure-white);
+  border: 1px solid var(--pure-black);
+  padding: 3px 10px;
+  border-radius: var(--radius-sharp);
+  letter-spacing: 0.5px;
+}
+
+.cert-verification-zone {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.qr-wrapper {
+  width: 76px;
+  height: 76px;
+  background-color: var(--pure-white);
+  border: 1px solid var(--pure-black);
+  border-radius: var(--radius-sharp);
+  padding: 4px;
+}
+
+.qr-wrapper img {
+  width: 100%;
+  height: 100%;
+}
+
+.verify-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--pure-black);
+}
+
+.verify-url {
+  font-size: 12px;
+  color: var(--charcoal);
+}
+
+/* Footer & Signature Systems */
+.cert-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-top: 1px solid var(--border-gray);
+  padding-top: 20px;
+}
+
+.signature-line {
+  width: 140px;
+  height: 2px;
+  background-color: var(--pure-black);
   margin-bottom: 6px;
 }
 
-.cert-main-title {
-  font-family: var(--f-display);
-  font-size: 33px; font-weight: 900;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  color: var(--ink);
-  line-height: 1;
-  margin-bottom: 0;
-}
-.cert-main-title .accent { color: var(--gold); }
-
-/* Title rule with ornament */
-.title-rule {
-  display: flex; align-items: center; gap: 8px;
-  margin: 10px 0 16px;
-}
-.title-rule-line {
-  height: 1.5px;
-  background: linear-gradient(90deg, var(--gold), transparent);
-}
-.title-rule-line.long  { flex: 2.5; }
-.title-rule-line.short { flex: 1; }
-.title-rule-diamond {
-  width: 8px; height: 8px;
-  background: var(--gold);
-  transform: rotate(45deg);
-  flex-shrink: 0;
-}
-.title-rule-dot {
-  width: 4px; height: 4px;
-  background: var(--gold-deep);
-  transform: rotate(45deg);
-  flex-shrink: 0;
+.signer-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--pure-black);
 }
 
-/* ── Presented to ── */
-.cert-presented {
-  font-family: var(--f-sans);
-  font-size: 9px; font-weight: 400;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 5px;
+.signer-title {
+  font-size: 12px;
+  color: var(--charcoal);
 }
 
-/* ── Recipient name ── */
-.cert-name {
-  font-family: var(--f-serif);
-  font-size: 56px; font-weight: 600; font-style: italic;
-  color: var(--ink);
-  line-height: 1;
-  letter-spacing: 0.5px;
-  margin-bottom: 3px;
+.footer-tagline {
+  font-family: var(--font-mono) !important;
+  font-size: 10px;
+  color: var(--silver);
 }
 
-.name-underline {
-  height: 1.5px;
-  width: 100%; max-width: 480px;
-  background: linear-gradient(90deg, var(--gold), var(--gold-light) 45%, transparent);
-  margin-bottom: 14px;
+/* Print Configuration */
+@media print {
+  body, .cert {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  .cert-grid-bg {
+    display: none; 
+  }
 }
-
-/* ── Course ── */
-.cert-course-label {
-  font-family: var(--f-sans);
-  font-size: 8px; letter-spacing: 3.5px;
-  text-transform: uppercase; color: var(--muted);
-  margin-bottom: 3px;
-}
-.cert-course-name {
-  font-family: var(--f-display);
-  font-size: 15px; font-weight: 600;
-  color: var(--gold-deep);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: 14px;
-}
-
-/* ── Meta row ── */
-.cert-meta {
-  display: flex; gap: 0;
-  margin-bottom: 0;
-}
-.meta-block {
-  display: flex; flex-direction: column; gap: 2px;
-  padding-right: 24px;
-  border-right: 1px solid var(--cream);
-  margin-right: 24px;
-}
-.meta-block:last-child { border-right: none; margin-right: 0; }
-.meta-label {
-  font-family: var(--f-sans);
-  font-size: 7.5px; letter-spacing: 2.5px;
-  text-transform: uppercase; color: var(--faint);
-}
-.meta-value {
-  font-family: var(--f-serif);
-  font-size: 13px; font-weight: 600;
-  color: var(--ink-soft);
-}
-
-/* CPD pill */
-.cpd-pill {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: rgba(180,83,9,0.07);
-  border: 1px solid rgba(180,83,9,0.22);
-  padding: 4px 12px;
-  border-radius: 20px;
-  margin: 12px 0 0;
-  width: fit-content;
-}
-.cpd-dot {
-  width: 5px; height: 5px;
-  background: var(--gold); border-radius: 50%; flex-shrink: 0;
-}
-.cpd-text {
-  font-family: var(--f-sans);
-  font-size: 8px; font-weight: 500;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  color: var(--gold-deep);
-}
-
-/* ================================================================
-   FOOTER
-   ================================================================ */
-.cert-footer {
-  margin-top: auto;
-  padding-top: 14px;
-  border-top: 1px solid var(--cream-mid);
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-/* Signature block */
-.sig-block {
-  display: flex; flex-direction: column;
-  align-items: center; gap: 3px;
-  min-width: 140px;
-}
-.sig-line {
-  width: 140px; height: 1px;
-  background: var(--gold-deep); opacity: 0.45;
-}
-.sig-name {
-  font-family: var(--f-serif);
-  font-size: 12px; font-weight: 600; font-style: italic;
-  color: var(--ink);
-}
-.sig-title {
-  font-family: var(--f-sans);
-  font-size: 7px; letter-spacing: 2px;
-  text-transform: uppercase; color: var(--faint);
-}
-
-/* QR + code cluster */
-.verify-cluster {
-  display: flex; flex-direction: column;
-  align-items: center; gap: 5px;
-}
-.qr-frame {
-  padding: 5px;
-  border: 1.5px solid var(--gold);
-  border-radius: 4px;
-  background: #fff;
-}
-.qr-frame img { width: 68px; height: 68px; display: block; }
-.qr-label {
-  font-family: var(--f-sans);
-  font-size: 7px; letter-spacing: 2px;
-  text-transform: uppercase; color: var(--faint);
-}
-.code-box {
-  font-family: 'Courier New', monospace;
-  font-size: 9.5px; font-weight: 700;
-  letter-spacing: 2.5px;
-  color: var(--ink-soft);
-  background: var(--ivory-warm);
-  border: 1px solid var(--cream-mid);
-  padding: 3px 10px;
-  text-align: center;
-}
-.verify-url {
-  font-family: var(--f-sans);
-  font-size: 6.5px; letter-spacing: 0.5px;
-  color: var(--faint);
-}
-
-/* Badge cluster */
-.badge-cluster {
-  display: flex; flex-direction: column;
-  align-items: center; gap: 6px;
-}
-.badge-row {
-  display: flex; align-items: center; gap: 8px;
-}
-.badge-row img, .badge-row svg { width: 58px; height: 58px; }
-.badge-cpd img, .badge-cpd svg { width: 46px; height: 56px; }

@@ -1,250 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=1122"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1200" />
   <title>AICN Certificate — {{userName}}</title>
-  <link rel="stylesheet" href="certificate.css"/>
+  <link rel="stylesheet" href="certificate.css" />
 </head>
 <body>
-<div class="cert">
+  <div class="cert printable-cert">
+    <!-- Clean Structural Grid (Light Grayscale Opacity) -->
+    <div class="cert-grid-bg"></div>
 
-  <!-- ══ Top + bottom gold bands ═══════════════════════════════ -->
-  <div class="header-band"></div>
-  <div class="footer-band"></div>
+    <!-- Structural Perimeter Border -->
+    <div class="cert-outer-border"></div>
 
-  <!-- ══ Left dark panel ═══════════════════════════════════════ -->
-  <div class="panel">
-    <div class="panel-arc"></div>
-    <div class="panel-arc-2"></div>
-  </div>
-
-  <!-- ══ Border frame + corners ════════════════════════════════ -->
-  <div class="border-frame"></div>
-  <div class="border-frame-inner"></div>
-  <div class="corner corner-tl"></div>
-  <div class="corner corner-tr"></div>
-  <div class="corner corner-bl"></div>
-  <div class="corner corner-br"></div>
-  <div class="corner-dot corner-dot-tl"></div>
-  <div class="corner-dot corner-dot-tr"></div>
-  <div class="corner-dot corner-dot-bl"></div>
-  <div class="corner-dot corner-dot-br"></div>
-
-  <!-- ══ Panel content ═════════════════════════════════════════ -->
-  <div class="panel-content">
-
-    <div class="panel-logo-ring">
-      <span class="panel-logo-text">AICN</span>
-    </div>
-
-    <div class="panel-org">
-      Africa ICT<br/>&amp; CS Network
-    </div>
-
-    <div class="panel-rule"></div>
-    <div class="panel-rule-thin"></div>
-
-    <div class="panel-tagline">
-      Empowering Africa<br/>through Digital Skills
-    </div>
-
-    <!-- Seal badge -->
-    <div class="panel-seal">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="84" height="84">
-        <defs>
-          <radialGradient id="so" cx="50%" cy="35%" r="65%">
-            <stop offset="0%"   stop-color="#f5c842"/>
-            <stop offset="45%"  stop-color="#c8860a"/>
-            <stop offset="100%" stop-color="#7a4f05"/>
-          </radialGradient>
-          <radialGradient id="si" cx="50%" cy="35%" r="65%">
-            <stop offset="0%"   stop-color="#fde68a"/>
-            <stop offset="50%"  stop-color="#d97706"/>
-            <stop offset="100%" stop-color="#92400e"/>
-          </radialGradient>
-          <filter id="ss">
-            <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#00000040"/>
-          </filter>
-        </defs>
-        <g filter="url(#ss)">
-          <polygon fill="url(#so)" points="60,4 64.5,12 73,8 74,17 83,16 81,25 90,27 85,35 93,40 86,46 92,53 84,57 87,66 78,67 78,76 69,75 66,84 57,80 51,88 45,82 36,85 35,76 26,74 28,65 19,61 23,52 14,46 21,40 14,33 22,28 18,19 27,17 26,8 35,10 38,2 47,6"/>
-          <polygon fill="url(#si)" points="60,14 63.5,20 70,17 70.5,24 77,22 75.5,29 82,30 79,36 85,39 81,44 86,49 81,52 83,58 78,59 78,65 72,64 70,70 64,67 60,72 56,67 50,70 48,64 42,65 42,59 37,58 39,52 34,49 39,44 35,39 41,36 38,30 45,29 43.5,22 50,24 49.5,17 56,20"/>
-        </g>
-        <circle cx="60" cy="60" r="28" fill="url(#so)" filter="url(#ss)"/>
-        <circle cx="60" cy="60" r="24" fill="#100d06"/>
-        <circle cx="60" cy="60" r="21" fill="none" stroke="#d97706" stroke-width="1"/>
-        <circle cx="60" cy="60" r="17" fill="none" stroke="rgba(217,119,6,0.3)" stroke-width="0.5"/>
-        <text x="60" y="55" text-anchor="middle" font-family="Georgia,serif" font-size="11" font-weight="700" fill="#f5c842" letter-spacing="2">AICN</text>
-        <text x="60" y="66" text-anchor="middle" font-family="Georgia,serif" font-size="6" fill="#d97706" letter-spacing="1.5">CERTIFIED</text>
-        <text x="60" y="77" text-anchor="middle" font-size="7" fill="#d97706">★  ★  ★</text>
-      </svg>
-    </div>
-
-    <div class="panel-rule-thin"></div>
-
-    <div class="panel-year">
-      <span class="panel-year-text">{{completionYear}}</span>
-    </div>
-
-  </div><!-- /panel-content -->
-
-  <!-- ══ Main certificate body ══════════════════════════════════ -->
-  <div class="cert-body">
-
-    <!-- Organisation line + title -->
-    <div class="cert-org-line">Africa ICT &amp; CS Network · CPD Programme</div>
-
-    <div class="cert-main-title">
-      Certificate <span class="accent">of Completion</span>
-    </div>
-
-    <!-- Decorative rule -->
-    <div class="title-rule">
-      <div class="title-rule-line long"></div>
-      <div class="title-rule-dot"></div>
-      <div class="title-rule-diamond"></div>
-      <div class="title-rule-dot"></div>
-      <div class="title-rule-line short"></div>
-    </div>
-
-    <!-- Recipient -->
-    <div class="cert-presented">This certificate is proudly presented to</div>
-    <div class="cert-name">{{userName}}</div>
-    <div class="name-underline"></div>
-
-    <!-- Course -->
-    <div class="cert-course-label">For successfully completing</div>
-    <div class="cert-course-name">{{sessionTitle}}</div>
-
-    <!-- Meta -->
-    <div class="cert-meta">
-      <div class="meta-block">
-        <span class="meta-label">Skill Area</span>
-        <span class="meta-value">{{skillArea}}</span>
-      </div>
-      <div class="meta-block">
-        <span class="meta-label">Date Completed</span>
-        <span class="meta-value">{{completionDate}}</span>
-      </div>
-      <div class="meta-block">
-        <span class="meta-label">Duration</span>
-        <span class="meta-value">{{duration}} hrs</span>
-      </div>
-    </div>
-
-    <!-- CPD pill -->
-    <div class="cpd-pill">
-      <div class="cpd-dot"></div>
-      <span class="cpd-text">Continuing Professional Development · Verified</span>
-    </div>
-
-    <!-- ── Footer ─────────────────────────────────────────── -->
-    <div class="cert-footer">
-
-      <!-- Trainer signature -->
-      <div class="sig-block">
-        <div style="height:32px; margin-bottom:4px;">
-          {{#if trainerSigDataUrl}}
-          <img src="{{trainerSigDataUrl}}" alt="Trainer signature" style="height:32px;">
-          {{/if}}
+    <div class="cert-container">
+      
+      <!-- Header Row -->
+      <div class="cert-header">
+        <div class="cert-brand">
+          <span class="brand-pill">AICN</span>
+          <span class="brand-sub">AFRICA DIGITAL SKILLS NETWORK</span>
         </div>
-        <div class="sig-line"></div>
-        <div class="sig-name">{{trainerName}}</div>
-        <div class="sig-title">Lead Trainer</div>
-      </div>
-
-      <!-- QR + cert code -->
-      <div class="verify-cluster">
-        <div class="qr-frame">
-          <img src="{{qrCodeDataUrl}}" alt="Scan to verify"/>
+        <div class="cert-id-badge">
+          <span class="mono-label">ID:</span>
+          <span class="mono-value">{{certCode}}</span>
         </div>
-        <div class="qr-label">Scan to verify</div>
-        <div class="code-box">{{certCode}}</div>
-        <div class="verify-url">{{verifyUrl}}</div>
       </div>
 
-      <!-- Excellence badge + founder sig -->
-      <div class="badge-cluster">
-        <div class="badge-row">
-          <!-- Excellence wreath badge -->
-          <div class="badge-row">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="58" height="58">
-              <defs>
-                <radialGradient id="wc2" cx="50%" cy="40%" r="65%">
-                  <stop offset="0%" stop-color="#fde68a"/>
-                  <stop offset="50%" stop-color="#d97706"/>
-                  <stop offset="100%" stop-color="#78350f"/>
-                </radialGradient>
-                <filter id="ws"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#00000030"/></filter>
-              </defs>
-              <g fill="#15803d" opacity="0.85">
-                <ellipse cx="18" cy="50" rx="7" ry="12" transform="rotate(-30 18 50)"/>
-                <ellipse cx="14" cy="40" rx="6" ry="11" transform="rotate(-15 14 40)"/>
-                <ellipse cx="16" cy="30" rx="5.5" ry="10" transform="rotate(5 16 30)"/>
-                <ellipse cx="22" cy="22" rx="5" ry="9" transform="rotate(20 22 22)"/>
-                <ellipse cx="30" cy="17" rx="4.5" ry="8" transform="rotate(38 30 17)"/>
-                <ellipse cx="22" cy="60" rx="6" ry="10" transform="rotate(-45 22 60)"/>
-                <ellipse cx="20" cy="70" rx="5.5" ry="9" transform="rotate(-60 20 70)"/>
-                <ellipse cx="24" cy="78" rx="5" ry="8" transform="rotate(-75 24 78)"/>
-                <ellipse cx="82" cy="50" rx="7" ry="12" transform="rotate(30 82 50)"/>
-                <ellipse cx="86" cy="40" rx="6" ry="11" transform="rotate(15 86 40)"/>
-                <ellipse cx="84" cy="30" rx="5.5" ry="10" transform="rotate(-5 84 30)"/>
-                <ellipse cx="78" cy="22" rx="5" ry="9" transform="rotate(-20 78 22)"/>
-                <ellipse cx="70" cy="17" rx="4.5" ry="8" transform="rotate(-38 70 17)"/>
-                <ellipse cx="78" cy="60" rx="6" ry="10" transform="rotate(45 78 60)"/>
-                <ellipse cx="80" cy="70" rx="5.5" ry="9" transform="rotate(60 80 70)"/>
-                <ellipse cx="76" cy="78" rx="5" ry="8" transform="rotate(75 76 78)"/>
-              </g>
-              <path d="M26 85 Q50 90 74 85" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round"/>
-              <path d="M22 14 Q50 8 78 14" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round"/>
-              <circle cx="50" cy="50" r="28" fill="url(#wc2)" filter="url(#ws)"/>
-              <circle cx="50" cy="50" r="24" fill="#1c1917"/>
-              <circle cx="50" cy="50" r="21" fill="none" stroke="#d97706" stroke-width="1"/>
-              <polygon fill="#f5c842" points="50,32 53.5,43 65,43 55.5,50 59,61 50,54 41,61 44.5,50 35,43 46.5,43"/>
-              <text x="50" y="71" text-anchor="middle" font-family="Georgia,serif" font-size="5.5" fill="#d97706" letter-spacing="1.8">EXCELLENCE</text>
-            </svg>
-            <!-- CPD medal badge -->
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 110" width="42" height="52">
-              <defs>
-                <radialGradient id="mt" cx="50%" cy="30%" r="70%">
-                  <stop offset="0%" stop-color="#fde68a"/>
-                  <stop offset="60%" stop-color="#d97706"/>
-                  <stop offset="100%" stop-color="#78350f"/>
-                </radialGradient>
-                <radialGradient id="mr" cx="40%" cy="35%" r="70%">
-                  <stop offset="0%" stop-color="#f5c842"/>
-                  <stop offset="100%" stop-color="#92400e"/>
-                </radialGradient>
-                <filter id="ms"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#00000035"/></filter>
-              </defs>
-              <polygon fill="#1c1917" points="27,0 45,0 45,68 30,58 15,68 15,0"/>
-              <polygon fill="#292524" points="30,0 45,0 45,68 37,62 30,56 30,0"/>
-              <polygon fill="#1c1917" points="45,0 63,0 75,68 60,58 45,68 45,0"/>
-              <polygon fill="#292524" points="45,0 60,0 60,56 53,62 45,68 45,0"/>
-              <line x1="30" y1="0" x2="30" y2="56" stroke="#d97706" stroke-width="1.5"/>
-              <line x1="60" y1="0" x2="60" y2="56" stroke="#d97706" stroke-width="1.5"/>
-              <circle cx="45" cy="75" r="30" fill="url(#mr)" filter="url(#ms)"/>
-              <circle cx="45" cy="75" r="26" fill="#1c1917"/>
-              <circle cx="45" cy="75" r="23" fill="none" stroke="#d97706" stroke-width="1.2"/>
-              <circle cx="45" cy="75" r="19" fill="url(#mt)" opacity="0.15"/>
-              <path d="M34 75 L41 82 L57 67" fill="none" stroke="#f5c842" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-              <text x="45" y="102" text-anchor="middle" font-family="Georgia,serif" font-size="7" fill="#d97706" letter-spacing="2">CPD</text>
-            </svg>
+      <!-- Main Content Layout -->
+      <div class="cert-main-grid">
+        
+        <!-- Left Column: High-DPI Crisp Typography -->
+        <div class="cert-content-left">
+          <div class="cert-label">CERTIFICATE OF COMPLETION</div>
+          <h1 class="cert-recipient">{{userName}}</h1>
+          
+          <div class="cert-summary-box">
+            <span class="summary-pre">Successfully mastered the professional program:</span>
+            <h2 class="cert-session">{{sessionTitle}}</h2>
+          </div>
+
+          <!-- Metadata Grid with crisp underlines -->
+          <div class="cert-metadata-grid">
+            <div class="meta-item">
+              <span class="meta-label">TRACK</span>
+              <span class="meta-value">{{skillArea}}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">DURATION</span>
+              <span class="meta-value">{{duration}}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">ISSUED ON</span>
+              <span class="meta-value">{{completionDate}}</span>
+            </div>
           </div>
         </div>
 
-        <!-- Founder signature -->
-        <div class="sig-block" style="margin-top:4px;">
-          <div class="sig-line"></div>
-          <div class="sig-name">Calvince Wise</div>
-          <div class="sig-title">Founder &amp; Director, AICN</div>
+        <!-- Right Column: Verification & Tech Badge -->
+        <div class="cert-content-right">
+          <!-- Monochromatic Safe High-Tech SVG Badge -->
+          <div class="cert-tech-badge">
+            <svg width="130" height="130" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Geometric outer hex frame -->
+              <polygon points="50,3 93,25 93,75 50,97 7,75 7,25" stroke="var(--pure-black)" stroke-width="2" stroke-dasharray="3 2"/>
+              <polygon points="50,9 86,28 86,72 50,91 14,72 14,28" stroke="var(--charcoal)" stroke-width="1"/>
+              <!-- Crosshair guides -->
+              <path d="M50 15 V85 M15 50 H85" stroke="var(--silver)" stroke-width="0.5" stroke-dasharray="1 1"/>
+              <!-- Central crisp black token ring -->
+              <circle cx="50" cy="50" r="16" fill="var(--pure-black)"/>
+              <path d="M50 43 L53 47 L58 50 L53 53 L50 57 L47 53 L42 50 L47 47 Z" fill="var(--pure-white)"/>
+              <!-- Curved Text Vector Path -->
+              <path id="textPath" d="M 16,72 A 36,36 0 1,1 84,72" fill="none"/>
+              <text font-family="var(--font-mono)" font-size="6" font-weight="600" fill="var(--pure-black)" letter-spacing="1.2">
+                <textPath href="#textPath" startOffset="50%" text-anchor="middle">AICN ADVANCED VERIFIED</textPath>
+              </text>
+            </svg>
+            <div class="badge-status-text">CPD ACCREDITED</div>
+          </div>
+
+          <!-- Crisp B&W QR Zone -->
+          <div class="cert-verification-zone">
+            <div class="qr-wrapper">
+              <!-- Ensure your QR library generates clean black lines on a white background -->
+              <img src="{{qrCodeDataUrl}}" alt="Verification QR" />
+            </div>
+            <div class="verification-meta">
+              <div class="verify-title">SCAN TO VERIFY</div>
+              <div class="verify-url">verify.aicn.africa</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Footer Signatures -->
+      <div class="cert-footer">
+        <div class="signature-block">
+          <div class="signature-line"></div>
+          <div class="signer-name">{{trainerName}}</div>
+          <div class="signer-title">Lead Trainer, AICN Faculty</div>
+        </div>
+        <div class="footer-tagline">
+          // DIGITAL SKILLS ENGINE VERIFICATION DATA METRICS
         </div>
       </div>
 
-    </div><!-- /cert-footer -->
-  </div><!-- /cert-body -->
-
-</div><!-- /cert -->
+    </div>
+  </div>
 </body>
 </html>

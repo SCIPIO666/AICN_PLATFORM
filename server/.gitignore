@@ -20,3 +20,6 @@ Thumbs.db
 pino-debug.log
 logs/
 /src/generated/prisma
+
+# cache files
+.cache/
