@@ -2,7 +2,7 @@
 const certificateModel = require('./certificatesModel');
 const { getSession } = require('../sessions/sessionsModel');
 const { sendCertificateEmail } = require('../../utils/email/email services/aicnEmailsService');
-const uploadPdf = require('../../utils/media storage/uploadPdf');
+const uploadPdf = require('../../utils/storage/uploadPdf');
 const { generateCertificatePDF } = require('../../utils/pdf/templates/certificates/certificateGenerator');
 const {prisma} = require('../../config/db');
 const logger = require('../../utils/logger');
