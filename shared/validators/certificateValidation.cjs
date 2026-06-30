@@ -1,26 +1,27 @@
 const { z } = require('zod');
 
-// ID validation (assuming UUID format - adjust if using CUID)
+const CUID_REGEX = /^c[a-z0-9]{24}$/;
+
+// ID validation - all IDs  CUIDs
 const idParamSchema = z.object({
- id: z.string().regex(/^c[a-z0-9]{24}$/, 'Invalid CUID format'),
-  sessionId: z.string().uuid('Invalid session ID format - must be a valid UUID'),
-  userId: z.string().uuid('Invalid user ID format - must be a valid UUID')
+  id: z.string().regex(CUID_REGEX, 'Invalid CUID format'),
+  sessionId: z.string().regex(CUID_REGEX, 'Invalid CUID format'),
+  userId: z.string().regex(CUID_REGEX, 'Invalid CUID format')
 });
 
 // Issue certificate validation
 const issueCertificateSchema = z.object({
-  userId: z.string().regex(/^c[a-z0-9]{24}$/, 'Invalid CUID format'),
-  sessionId: z.string()
-    .uuid('Invalid session ID format - must be a valid UUID')
+  userId: z.string().regex(CUID_REGEX, 'Invalid CUID format'),
+  sessionId: z.string().regex(CUID_REGEX, 'Invalid CUID format')
 });
 
-// Single issue certificate (alternative schema for body)
+// Single issue certificate
 const issueSingleCertificateSchema = z.object({
-  userId: z.string().regex(/^c[a-z0-9]{24}$/, 'Invalid CUID format'),
-  sessionId: z.string()
+  userId: z.string().regex(CUID_REGEX, 'Invalid CUID format'),
+  sessionId: z.string().regex(CUID_REGEX, 'Invalid CUID format')
 });
 
-// Verify certificate validation
+// Verify certificate validation 
 const verifyCertificateSchema = z.object({
   certCode: z
     .string()
@@ -34,13 +35,13 @@ const verifyCertificateSchema = z.object({
 
 // Batch issue certificates validation
 const batchIssueCertificatesSchema = z.object({
-  sessionId:  z.string().regex(/^c[a-z0-9]{24}$/, 'Invalid CUID format'),
+  sessionId: z.string().regex(CUID_REGEX, 'Invalid CUID format'),
 });
 
 // Certificate filters validation
 const certificateFiltersSchema = z.object({
-  userId:  z.string().regex(/^c[a-z0-9]{24}$/).optional(),
-  sessionId: z.string().uuid().optional(),
+  userId: z.string().regex(CUID_REGEX).optional(),
+  sessionId: z.string().regex(CUID_REGEX).optional(),
   fromDate: z.string().datetime({ offset: true }).optional(),
   toDate: z.string().datetime({ offset: true }).optional(),
   page: z.coerce.number().int().positive().default(1),
@@ -65,6 +66,7 @@ const getAllCertificatesQuerySchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce.number().int().positive().max(100).default(10)
 });
+
 module.exports = {
   idParamSchema,
   issueCertificateSchema,

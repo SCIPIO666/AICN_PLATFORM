@@ -50,11 +50,13 @@ async function main() {
     pendingPw,
     superLearnerPw,
     superTrainerPw,
+    tsailunPw,
   ] = await Promise.all([
     hash('admin123'),
     hash('trainer123'),
     hash('learner123'),
     hash('pending123'),
+    hash('Test123!@#'),
     hash('Test123!@#'),
     hash('Test123!@#'),
   ]);
@@ -68,6 +70,18 @@ async function main() {
       email: 'calvince@africaictcsnetwork.org',
       password: adminPw,
       phone: '+254799112919',
+      county: 'Nairobi',
+      role: 'ADMIN',
+    }
+  });
+
+  // --- Second Super Admin (REAL working email — use for live email/PDF/Cloudinary testing) ---
+  const tsailunAdmin = await prisma.user.create({
+    data: {
+      name: 'Tsailun Enterprises',
+      email: 'tsailunenterprises@gmail.com',
+      password: tsailunPw,
+      phone: '+254700000099',
       county: 'Nairobi',
       role: 'ADMIN',
     }
@@ -210,7 +224,7 @@ async function main() {
     }
   });
 
-  logger.info('✅ Created 13 users (1 admin, 2 dev super users, 3 mock trainers, 6 mock learners, 1 pending applicant)');
+  logger.info('✅ Created 14 users (2 admins incl. live-email super admin, 2 dev super users, 3 mock trainers, 6 mock learners, 1 pending applicant)');
 
   // ============ Trainer Profiles =======================
 
@@ -808,6 +822,18 @@ async function main() {
   await prisma.enrolment.create({ data: { userId: learner2.id, sessionId: session7.id, status: 'ENROLLED' } });
   await prisma.enrolment.create({ data: { userId: learner6.id, sessionId: session7.id, status: 'ENROLLED' } });
 
+  // Tsailun (live-email super admin) enrolments — covers every QA scenario
+  // 1) ATTENDED + certificate already issued (session1)
+  await prisma.enrolment.create({ data: { userId: tsailunAdmin.id, sessionId: session1.id, status: 'ATTENDED' } });
+  // 2) ATTENDED, NO certificate yet — use this one to test live issuance (email/PDF/Cloudinary) via Calvince's admin account
+  await prisma.enrolment.create({ data: { userId: tsailunAdmin.id, sessionId: session2.id, status: 'ATTENDED' } });
+  // 3) ABSENT on a completed session — no cert
+  await prisma.enrolment.create({ data: { userId: tsailunAdmin.id, sessionId: session3.id, status: 'ABSENT' } });
+  // 4) ENROLLED on an upcoming scheduled session
+  await prisma.enrolment.create({ data: { userId: tsailunAdmin.id, sessionId: session4.id, status: 'ENROLLED' } });
+  // 5) CANCELLED enrolment on a cancelled session
+  await prisma.enrolment.create({ data: { userId: tsailunAdmin.id, sessionId: session10.id, status: 'CANCELLED' } });
+
   logger.info('✅ Created base enrolments');
 
   // ============ CERTIFICATES ====================================
@@ -864,7 +890,13 @@ async function main() {
   await prisma.certificate.create({ data: { userId: learner2.id, sessionId: session3.id, certCode: generateCertCode() } });
   await prisma.certificate.create({ data: { userId: learner3.id, sessionId: session3.id, certCode: generateCertCode() } });
 
-  logger.info(`✅ Issued ${superCertCount + 9} certificates total`);
+  // Tsailun: certificate already issued for session1 (ATTENDED).
+  // NOTE: session2 enrolment is deliberately left WITHOUT a certificate — use it to live-test
+  // certificate issuance (email + PDF generation + Cloudinary upload) by issuing it manually
+  // from Calvince's (calvince@africaictcsnetwork.org) admin account.
+  await prisma.certificate.create({ data: { userId: tsailunAdmin.id, sessionId: session1.id, certCode: generateCertCode() } });
+
+  logger.info(`✅ Issued ${superCertCount + 10} certificates total`);
 
   // ====== Announcements =================================
 
@@ -903,6 +935,7 @@ const totalCertificates = await prisma.certificate.count();
 logger.info('\n======= SEEDING COMPLETE =============================');
 logger.info('\n🔑 DEV SUPER USER ACCOUNTS (use these for testing UIs):');
 logger.info('  ★ ADMIN:    calvince@africaictcsnetwork.org  /  admin123');
+logger.info('  ★ ADMIN:    tsailunenterprises@gmail.com     /  Test123!@#  ← REAL inbox, use to verify email/PDF/Cloudinary delivery');
 logger.info('  ★ TRAINER:  trainer@aicn.africa              /  Test123!@#  ← super trainer (rich QA data)');
 logger.info('  ★ LEARNER:  learner@aicn.africa              /  Test123!@#  ← super learner (rich history)');
 logger.info('\n📋 Mock accounts (additional data only):');
