@@ -2,96 +2,39 @@ const puppeteer = require('puppeteer');
 const { generateCertificateHTML } = require('../templates/certificates/certificateGenerator');
 const logger = require('../../logger');
 
-// Browser pool for production
-class BrowserPool {
-    constructor() {
-        this.browser = null;
-        this.isLaunching = false;
-        this.launchPromise = null;
-    }
-    
-    async getBrowser() {
-        if (this.browser) {
-            return this.browser;
-        }
-        
-        if (this.isLaunching) {
-            return await this.launchPromise;
-        }
-        
-        this.isLaunching = true;
-        this.launchPromise = this.launchBrowser();
-        
-        try {
-            this.browser = await this.launchPromise;
-            return this.browser;
-        } finally {
-            this.isLaunching = false;
-            this.launchPromise = null;
-        }
-    }
-    
-    async launchBrowser() {
-        const args = [
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
-            '--disable-accelerated-2d-canvas',
-            '--disable-gpu',
-            '--memory-pressure-off'
-        ];
-        
-        if (process.env.NODE_ENV === 'production') {
-            args.push('--max-old-space-size=512');
-        }
-        
-        const browser = await puppeteer.launch({
-            headless: 'new',
-            args,
-            defaultViewport: {
-                width: 1200,
-                height: 1600,
-                deviceScaleFactor: 2
-            }
-        });
-        
-        return browser;
-    }
-    
-    async closeBrowser() {
-        if (this.browser) {
-            await this.browser.close();
-            this.browser = null;
-        }
-    }
-}
-
-const browserPool = new BrowserPool();
-
 /**
  * Generate premium certificate PDF
  * @param {Object} data - Certificate data
+ * @param {string} data.userName - Recipient name
+ * @param {string} data.sessionTitle - Session title
+ * @param {string} data.skillArea - Skill area
+ * @param {number} data.duration - Duration in minutes
+ * @param {Date} data.completionDate - Completion date
+ * @param {string} data.trainerName - Trainer name
+ * @param {string} data.certCode - Certificate code
+ * @param {Date} data.issueDate - Issue date
+ * @param {string} data.verifyUrl - Verification URL
+ * @param {string} [data.qrCode] - Optional QR code data URL
  * @returns {Promise<Buffer>} PDF buffer
  */
 async function generateCertificatePDF(data) {
     let page = null;
-    
+    const browser = await getBrowser();
+
     try {
-        logger.info(`🎓 Generating premium certificate for: ${data.userName} (${data.certCode})`);
-        
+        logger.info(`🎓 Generating certificate PDF for: ${data.userName} (${data.certCode})`);
+
         // Generate complete HTML with embedded CSS and data
         const html = await generateCertificateHTML(data);
-        
-        // Get browser from pool
-        const browser = await browserPool.getBrowser();
+
         page = await browser.newPage();
-        
-        // Set content with networkidle0 to ensure all fonts load
+
+        // Set content with networkidle0 to ensure all resources load
         await page.setContent(html, {
             waitUntil: 'networkidle0',
             timeout: 30000
         });
-        
+
         // Generate PDF with high quality settings
         const pdfBuffer = await page.pdf({
             format: 'A4',
@@ -105,11 +48,11 @@ async function generateCertificatePDF(data) {
             preferCSSPageSize: true,
             displayHeaderFooter: false
         });
-        
-        logger.info(`✅ PDF generated successfully | Size: ${(pdfBuffer.length / 1024).toFixed(2)} KB`);
-        
+
+        logger.info(`✅ PDF generated | Size: ${(pdfBuffer.length / 1024).toFixed(2)} KB`);
+
         return pdfBuffer;
-        
+
     } catch (error) {
         logger.error(`❌ PDF generation failed: ${error.message}`);
         throw new Error(`Failed to generate certificate PDF: ${error.message}`);
@@ -121,11 +64,66 @@ async function generateCertificatePDF(data) {
 }
 
 /**
- * Generate certificate for testing (saves to file)
+ * Get or create browser instance (reuse across calls)
+ */
+let browserInstance = null;
+
+async function getBrowser() {
+    if (browserInstance && browserInstance.isConnected()) {
+        return browserInstance;
+    }
+
+    logger.info('🚀 Launching Puppeteer browser');
+
+    const args = [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-accelerated-2d-canvas',
+        '--disable-gpu',
+        '--memory-pressure-off'
+    ];
+
+    if (process.env.NODE_ENV === 'production') {
+        args.push('--max-old-space-size=512');
+    }
+
+    browserInstance = await puppeteer.launch({
+        headless: 'new',
+        args,
+        defaultViewport: {
+            width: 1200,
+            height: 1600,
+            deviceScaleFactor: 2
+        }
+    });
+
+    browserInstance.on('disconnected', () => {
+        logger.warn('⚠️ Puppeteer browser disconnected');
+        browserInstance = null;
+    });
+
+    return browserInstance;
+}
+
+/**
+ * Close browser instance (call on server shutdown)
+ */
+async function closeBrowser() {
+    if (browserInstance) {
+        await browserInstance.close();
+        browserInstance = null;
+        logger.info('🔒 Puppeteer browser closed');
+    }
+}
+
+/**
+ * Generate test certificate and save to file
  */
 async function generateTestCertificate(outputPath = './test-certificate.pdf') {
     const fs = require('fs');
-    
+    const path = require('path');
+
     const testData = {
         userName: 'John Michael Doe',
         sessionTitle: 'Advanced Full-Stack Development with React & Node.js',
@@ -135,17 +133,27 @@ async function generateTestCertificate(outputPath = './test-certificate.pdf') {
         trainerName: 'Prof. Sarah Johnson',
         certCode: 'AICN-FS-2024-001234',
         issueDate: new Date(),
-        verifyUrl: 'https://aicn.com/verify/AICN-FS-2024-001234'
+        verifyUrl: 'https://aicn.africa/verify/AICN-FS-2024-001234'
     };
-    
+
+    // Add QR code if available
+    try {
+        const { generateQRCode } = require('../../qrCodes/qrService');
+        testData.qrCode = await generateQRCode(testData.verifyUrl);
+    } catch (error) {
+        logger.warn('QR code not included in test:', error.message);
+    }
+
     const pdfBuffer = await generateCertificatePDF(testData);
-    fs.writeFileSync(outputPath, pdfBuffer);
-    logger.info(`📄 Test certificate saved to: ${outputPath}`);
-    return outputPath;
+    const fullPath = path.resolve(outputPath);
+    fs.writeFileSync(fullPath, pdfBuffer);
+
+    logger.info(`📄 Test certificate saved to: ${fullPath}`);
+    return fullPath;
 }
 
 module.exports = {
     generateCertificatePDF,
     generateTestCertificate,
-    browserPool
+    closeBrowser
 };
