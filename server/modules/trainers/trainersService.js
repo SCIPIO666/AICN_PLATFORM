@@ -1,4 +1,4 @@
-// trainers/trainersService.js
+
 const trainersModel = require('./trainersModel');
 const { prisma} = require('../../config/db');
 const logger = require('../../utils/logger');

@@ -113,7 +113,7 @@ async function closeBrowser() {
     if (browserInstance) {
         await browserInstance.close();
         browserInstance = null;
-        logger.info('🔒 Puppeteer browser closed');
+        logger.info(' Puppeteer browser closed');
     }
 }
 
@@ -148,7 +148,7 @@ async function generateTestCertificate(outputPath = './test-certificate.pdf') {
     const fullPath = path.resolve(outputPath);
     fs.writeFileSync(fullPath, pdfBuffer);
 
-    logger.info(`📄 Test certificate saved to: ${fullPath}`);
+    logger.info(` Test certificate saved to: ${fullPath}`);
     return fullPath;
 }
 

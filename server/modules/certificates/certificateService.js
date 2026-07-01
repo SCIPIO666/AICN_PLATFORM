@@ -1,13 +1,92 @@
-// certificates/certificateService.js
-const { generateCertificatePDF } = require('../../utils/pdf/generators/pdfGenerator');
+
 const certificateModel = require('./certificatesModel');
 const { getSession } = require('../sessions/sessionsModel');
 const { sendCertificateEmail } = require('../../utils/email/email services/aicnEmailsService');
-const uploadPdf = require('../../utils/storage/uploadPdf');
+const generatePdfAndUpload = require('../../utils/pdf/generatePdfAndUpload');
 const {prisma} = require('../../config/db');
 const logger = require('../../utils/logger');
 const { AuthorizationError, NotFoundError, BusinessLogicError } = require('../../utils/errors/customErrors');
 
+// async function issueCertificate(userId, sessionId, adminId, role) {
+//   if (role !== 'ADMIN') {
+//     throw new AuthorizationError('Only administrators can issue certificates');
+//   }
+
+//   const enrolment = await prisma.enrolment.findFirst({
+//     where: { userId, sessionId, status: 'ATTENDED' },
+//     include: { user: true, session: { include: { trainer: true } } }
+//   });
+  
+//   if (!enrolment) {
+//     throw new BusinessLogicError('User has not completed the session');
+//   }
+  
+//   const existingCert = await certificateModel.getCertificateByUserAndSession(userId, sessionId);
+//   if (existingCert && !existingCert.revokedAt) {
+//     throw new BusinessLogicError('Certificate already issued for this session');
+//   }
+  
+//   const certificate = await certificateModel.createCertificate(userId, sessionId);
+  
+//   try {
+//     const pdfBuffer = await generateCertificatePDF({
+//       certCode: certificate.certCode,
+//       userName: enrolment.user.name,
+//       sessionTitle: enrolment.session.title,
+//       sessionDate: enrolment.session.date,
+//       skillArea: enrolment.session.skillArea,
+//       duration: enrolment.session.durationMins,
+//       trainerName: enrolment.session.trainer?.name || 'AICN Training Faculty',
+//       issueDate: certificate.issuedAt,
+//       verifyUrl: `${process.env.FRONTEND_URL}/verify/${certificate.certCode}`
+//     });
+    
+//   await sendCertificateEmail({
+//     to: enrolment.user.email,
+//     name: enrolment.user.name,
+//     sessionTitle: enrolment.session.title,
+//     certCode: certificate.certCode,
+//     pdfBuffer,
+//     meta: { skillArea: enrolment.session.skillArea, durationMins: enrolment.session.durationMins }
+//   });
+    
+//     logger.info(`Certificate issued and emailed to ${enrolment.user.email}`);
+    
+//     const uploadResult = await uploadPdf(pdfBuffer, userId, certificate.id);
+    
+//     await prisma.certificate.update({
+//       where: { id: certificate.id },
+//       data: {
+//         pdfUrl: uploadResult.secureUrl,
+//         pdfPublicId: uploadResult.publicId,
+//         pdfVersion: uploadResult.version,
+//         pdfSize: uploadResult.bytes,
+//         pdfFormat: uploadResult.format,
+//         pdfResourceType: uploadResult.resourceType,
+//         pdfCreatedAt: new Date(uploadResult.createdAt),
+//         pdfEtag: uploadResult.etag,
+//         pdfSignature: uploadResult.signature,
+//         pdfAssetFolder: uploadResult.assetFolder,
+//         pdfOriginalFilename: uploadResult.originalFilename
+//       }
+//     });
+    
+//     logger.info(`Certificate PDF stored at: ${uploadResult.secureUrl}`);
+    
+//     return {
+//       ...certificate,
+//       pdfDetails: { url: uploadResult.secureUrl, publicId: uploadResult.publicId, size: uploadResult.bytes, version: uploadResult.version }
+//     };
+    
+//   } catch (error) {
+//     logger.error(`Certificate issued but storage/email failed: ${error.message}`);
+//     await prisma.certificate.update({
+//       where: { id: certificate.id },
+//       data: { pdfGenerationFailed: true, pdfFailureReason: error.message, pdfFailedAt: new Date() }
+//     });
+//     return certificate;
+//   }
+// }
 async function issueCertificate(userId, sessionId, adminId, role) {
   if (role !== 'ADMIN') {
     throw new AuthorizationError('Only administrators can issue certificates');
@@ -17,74 +96,95 @@ async function issueCertificate(userId, sessionId, adminId, role) {
     where: { userId, sessionId, status: 'ATTENDED' },
     include: { user: true, session: { include: { trainer: true } } }
   });
-  
+
   if (!enrolment) {
     throw new BusinessLogicError('User has not completed the session');
   }
-  
+
   const existingCert = await certificateModel.getCertificateByUserAndSession(userId, sessionId);
   if (existingCert && !existingCert.revokedAt) {
     throw new BusinessLogicError('Certificate already issued for this session');
   }
-  
+
   const certificate = await certificateModel.createCertificate(userId, sessionId);
-  
+
   try {
-    const pdfBuffer = await generateCertificatePDF({
-      certCode: certificate.certCode,
-      userName: enrolment.user.name,
-      sessionTitle: enrolment.session.title,
-      sessionDate: enrolment.session.date,
-      skillArea: enrolment.session.skillArea,
-      duration: enrolment.session.durationMins,
-      trainerName: enrolment.session.trainer?.name || 'AICN Training Faculty',
-      issueDate: certificate.issuedAt,
-      verifyUrl: `${process.env.FRONTEND_URL}/verify/${certificate.certCode}`
+
+    const { pdfBuffer, uploadResult } = await generatePdfAndUpload({
+      userId:        userId,
+      certificateId: certificate.id,
+      certCode:      certificate.certCode,
+      userName:      enrolment.user.name,
+      sessionTitle:  enrolment.session.title,
+      skillArea:     enrolment.session.skillArea,
+      duration:      enrolment.session.durationMins,
+      trainerName:   enrolment.session.trainer?.name || 'AICN Training Faculty',
+      issueDate:     certificate.issuedAt,
+      completionDate: enrolment.session.date,
+      verifyUrl:     `${process.env.FRONTEND_URL}/verify/${certificate.certCode}`,
     });
-    
-  await sendCertificateEmail({
-    to: enrolment.user.email,
-    name: enrolment.user.name,
-    sessionTitle: enrolment.session.title,
-    certCode: certificate.certCode,
-    pdfBuffer,
-    meta: { skillArea: enrolment.session.skillArea, durationMins: enrolment.session.durationMins }
-  });
-    
-    logger.info(`Certificate issued and emailed to ${enrolment.user.email}`);
-    
-    const uploadResult = await uploadPdf(pdfBuffer, userId, certificate.id);
-    
+
+    await sendCertificateEmail({
+      to:           enrolment.user.email,
+      name:         enrolment.user.name,
+      sessionTitle: enrolment.session.title,
+      certCode:     certificate.certCode,
+      pdfBuffer,
+      meta: {
+        skillArea:   enrolment.session.skillArea,
+        durationMins: enrolment.session.durationMins,
+      }
+    });
+
+    logger.info(`Certificate emailed to ${enrolment.user.email}`);
+
     await prisma.certificate.update({
       where: { id: certificate.id },
       data: {
-        pdfUrl: uploadResult.secureUrl,
-        pdfPublicId: uploadResult.publicId,
-        pdfVersion: uploadResult.version,
-        pdfSize: uploadResult.bytes,
-        pdfFormat: uploadResult.format,
-        pdfResourceType: uploadResult.resourceType,
-        pdfCreatedAt: new Date(uploadResult.createdAt),
-        pdfEtag: uploadResult.etag,
-        pdfSignature: uploadResult.signature,
-        pdfAssetFolder: uploadResult.assetFolder,
-        pdfOriginalFilename: uploadResult.originalFilename
+        pdfUrl:              uploadResult.secureUrl,
+        pdfPublicId:         uploadResult.publicId,
+        pdfVersion:          uploadResult.version,
+        pdfSize:             uploadResult.bytes,
+        pdfFormat:           uploadResult.format,
+        pdfResourceType:     uploadResult.resourceType,
+        pdfCreatedAt:        uploadResult.createdAt ? new Date(uploadResult.createdAt) : new Date(),
+        pdfEtag:             uploadResult.etag,
+        pdfSignature:        uploadResult.signature,
+        pdfAssetFolder:      uploadResult.assetFolder,
+        pdfOriginalFilename: uploadResult.originalFilename,
       }
     });
-    
-    logger.info(`Certificate PDF stored at: ${uploadResult.secureUrl}`);
-    
+
+    await prisma.enrolment.update({
+      where: { userId_sessionId: { userId, sessionId } },
+      data:  { certificate: true }
+    });
+
+    logger.info(` Certificate stored at: ${uploadResult.secureUrl}`);
+
     return {
       ...certificate,
-      pdfDetails: { url: uploadResult.secureUrl, publicId: uploadResult.publicId, size: uploadResult.bytes, version: uploadResult.version }
+      pdfDetails: {
+        url:      uploadResult.secureUrl,
+        publicId: uploadResult.publicId,
+        size:     uploadResult.bytes,
+        local:    uploadResult.local ?? false,
+      }
     };
-    
+
   } catch (error) {
-    logger.error(`Certificate issued but storage/email failed: ${error.message}`);
+    logger.error(`PDF/email failed for cert ${certificate.certCode}: ${error.message}`);
+    logger.error(error.stack);
+
     await prisma.certificate.update({
       where: { id: certificate.id },
-      data: { pdfGenerationFailed: true, pdfFailureReason: error.message, pdfFailedAt: new Date() }
+      data: {
+        pdfGenerationFailed: true,
+        pdfFailureReason:    error.message,
+        pdfFailedAt:         new Date(),
+      }
     });
+
     return certificate;
   }
 }
@@ -114,7 +214,7 @@ async function batchIssueCertificates(sessionId, adminId, role) {
       where: { userId_sessionId: { userId: enrolment.userId, sessionId } },
       data: { certificate: true }
     });
-    
+
     } catch (error) {
       results.failed++;
       results.errors.push({ userId: enrolment.userId, userName: enrolment.user.name, error: error.message });
