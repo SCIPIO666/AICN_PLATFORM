@@ -17,8 +17,18 @@ export default defineConfig({
     proxy: {
       '/api': {
         target: 'http://localhost:3000',
-        changeOrigin: true,//debug
-        secure: false,//debug
+        changeOrigin: true,
+        secure: false,
+        timeout: 10000,
+        configure: (proxy) => {
+          proxy.on('error', (err, req, res) => {
+            console.warn(`[proxy] ${req.method} ${req.url} — ${err.message}`);
+            if (!res.headersSent) {
+              res.writeHead(503, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ error: 'Backend unavailable' }));
+            }
+          });
+        },
       }
     }
   }
