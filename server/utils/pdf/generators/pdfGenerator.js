@@ -22,20 +22,20 @@ async function generateCertificatePDF(data) {
     const browser = await getBrowser();
 
     try {
-        logger.info(`🎓 Generating certificate PDF for: ${data.userName} (${data.certCode})`);
+        logger.info(`Generating certificate PDF for: ${data.userName} (${data.certCode})`);
 
-        // Generate complete HTML with embedded CSS and data
+        // complete HTML with embedded CSS and data
         const html = await generateCertificateHTML(data);
 
         page = await browser.newPage();
 
-        // Set content with networkidle0 to ensure all resources load
+        //  content with networkidle0  to ensure all resources load
         await page.setContent(html, {
             waitUntil: 'networkidle0',
             timeout: 30000
         });
 
-        // Generate PDF with high quality settings
+        //  PDF with high quality settings
         const pdfBuffer = await page.pdf({
             format: 'A4',
             printBackground: true,
@@ -49,12 +49,12 @@ async function generateCertificatePDF(data) {
             displayHeaderFooter: false
         });
 
-        logger.info(`✅ PDF generated | Size: ${(pdfBuffer.length / 1024).toFixed(2)} KB`);
+        logger.info(`PDF generated | Size: ${(pdfBuffer.length / 1024).toFixed(2)} KB`);
 
         return pdfBuffer;
 
     } catch (error) {
-        logger.error(`❌ PDF generation failed: ${error.message}`);
+        logger.error(` PDF generation failed: ${error.message}`);
         throw new Error(`Failed to generate certificate PDF: ${error.message}`);
     } finally {
         if (page) {
@@ -131,9 +131,9 @@ async function generateTestCertificate(outputPath = './test-certificate.pdf') {
         duration: 240,
         completionDate: new Date(),
         trainerName: 'Prof. Sarah Johnson',
-        certCode: 'AICN-FS-2024-001234',
+        certCode: 'AICN-C17ACD9BAE450BE8',
         issueDate: new Date(),
-        verifyUrl: 'https://aicn.africa/verify/AICN-FS-2024-001234'
+        verifyUrl: 'https://aicn.africa/verify/AICN-C17ACD9BAE450BE8'
     };
 
     // Add QR code if available

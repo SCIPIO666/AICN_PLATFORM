@@ -1,0 +1,62 @@
+module.exports = ({ name, supportEmail, frontendUrl }) => `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 20px; background: #faf7f2; }
+    .header { background: linear-gradient(135deg, #166534 0%, #15803d 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+    .content { background: #ffffff; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #e7e2d8; }
+    .status-box { background: #f0fdf4; border: 2px solid #86efac; padding: 20px; border-radius: 10px; margin: 20px 0; text-align: center; }
+    .timeline { background: #f8f7f4; padding: 20px; border-radius: 10px; margin: 20px 0; }
+    .timeline-item { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+    .step { width: 24px; height: 24px; border-radius: 50%; background: #d97706; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; flex-shrink: 0; }
+    .button { display: inline-block; background: #166534; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; margin: 20px 0; font-weight: bold; }
+    .footer { text-align: center; padding: 20px; font-size: 12px; color: #57534e; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h2>🎓 Application Received!</h2>
+    <p style="margin: 0; opacity: 0.9;">AICN Trainer Program</p>
+  </div>
+  <div class="content">
+    <p>Dear <strong>${name}</strong>,</p>
+    <p>Thank you for applying to become an AICN Certified Trainer. We have received your application and it is now under review.</p>
+
+    <div class="status-box">
+      <p style="font-size: 18px; font-weight: bold; color: #166534; margin: 0;">✅ Application Submitted</p>
+      <p style="color: #15803d; margin: 8px 0 0;">Status: <strong>Pending Review</strong></p>
+    </div>
+
+    <div class="timeline">
+      <h3 style="margin-top: 0; color: #d97706;">What happens next?</h3>
+      <div class="timeline-item">
+        <div class="step">1</div>
+        <div><strong>Application Review</strong><br><span style="color: #57534e; font-size: 14px;">Our team will review your skills, bio, and motivation within 2–5 business days.</span></div>
+      </div>
+      <div class="timeline-item">
+        <div class="step">2</div>
+        <div><strong>Decision Email</strong><br><span style="color: #57534e; font-size: 14px;">You will receive an email with the outcome — approval or feedback for improvement.</span></div>
+      </div>
+      <div class="timeline-item">
+        <div class="step">3</div>
+        <div><strong>Get Started</strong><br><span style="color: #57534e; font-size: 14px;">If approved, your trainer dashboard unlocks immediately so you can create sessions.</span></div>
+      </div>
+    </div>
+
+    <p style="color: #57534e;">While you wait, you can continue browsing and attending sessions as a learner.</p>
+
+    <div style="text-align: center;">
+      <a href="${frontendUrl}/dashboard/learner" class="button">Browse Sessions</a>
+    </div>
+
+    <p style="color: #57534e; font-size: 14px;">Questions about your application? Contact us at <a href="mailto:${supportEmail}" style="color: #166534;">${supportEmail}</a></p>
+  </div>
+  <div class="footer">
+    <p>© ${new Date().getFullYear()} AICN Training. All rights reserved.</p>
+    <p>Africa ICT &amp; CS Network — Empowering Africa Digitally, Transforming Lives</p>
+  </div>
+</body>
+</html>
+`;

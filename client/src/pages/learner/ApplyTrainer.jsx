@@ -1,48 +1,22 @@
-import { applyTrainerSchema } from "@/validators/learner";
+import { applyTrainerSchema } from '@/validators/learner';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useApplyAsTrainer, useMyTrainerProfile } from "@/hooks";
+import { useApplyAsTrainer, useMyTrainerProfile } from '@/hooks';
+import { useNavigate } from 'react-router-dom';
 import {
-  GraduationCap,
-  UserRound,
-  Code2,
-  CalendarDays,
-  HeartHandshake,
-  Clock3,
-  BadgeCheck,
-  ShieldAlert,
-  Award,
-  Users,
-  TrendingUp,
-  Send,
-  Loader2,
-  RefreshCw
-} from "lucide-react";
+  GraduationCap, UserRound, Code2, CalendarDays, HeartHandshake,
+  Clock3, BadgeCheck, ShieldAlert, Award, Users, TrendingUp, Send, Loader2, RefreshCw
+} from 'lucide-react';
 
 export default function ApplyTrainer() {
+  const navigate = useNavigate();
   const { mutate, isPending, isError, error } = useApplyAsTrainer();
 
   const {
-    register,
-    handleSubmit,
-    reset,
-    watch,
-    setValue,
-    getValues,
-    formState: {
-      errors,
-      isSubmitting,
-      isDirty,
-      isValid,
-    }
+    register, handleSubmit, reset, formState: { errors, isSubmitting }
   } = useForm({
     resolver: zodResolver(applyTrainerSchema),
-    defaultValues: {
-      bio: "",
-      skills: [],
-      availability: "",
-      motivation: ""
-    }
+    defaultValues: { bio: '', skills: [], availability: '', motivation: '' }
   });
 
   const onSubmit = (validatedData) => {
@@ -58,12 +32,7 @@ export default function ApplyTrainer() {
   const { data, isFetching, isError: isProfileError, error: profileError, refetch } = useMyTrainerProfile();
 
   const handleReapply = () => {
-    reset({
-      bio: "",
-      skills: [],
-      availability: "",
-      motivation: ""
-    });
+    reset({ bio: '', skills: [], availability: '', motivation: '' });
     document.getElementById('application-form')?.scrollIntoView({ behavior: 'smooth' });
   };
 
@@ -78,24 +47,19 @@ export default function ApplyTrainer() {
     }
 
     if (isProfileError) {
+      // 404 means no profile yet — not a real error, just hide
+      if (profileError?.response?.status === 404) return null;
       return (
         <div className="card-base p-6 mb-8 border border-red-500/20 bg-red-500/5">
           <div className="flex items-start gap-4">
             <ShieldAlert className="text-red-500 mt-0.5" size={24} />
             <div className="flex-1">
               <p className="label-uppercase text-red-500">Error</p>
-              <h3 className="text-sub-heading font-bold text-red-400 mt-1">
-                Failed to Load Status
-              </h3>
-              <p className="text-secondary mt-2">
-                {profileError?.message || 'Unable to fetch trainer profile status'}
-              </p>
-              <button
-                onClick={() => refetch()}
-                className="mt-3 text-neon-volt hover:text-neon-volt/80 font-medium flex items-center gap-2 text-sm"
-              >
-                <RefreshCw size={14} />
-                Retry
+              <h3 className="text-sub-heading font-bold text-red-400 mt-1">Failed to Load Status</h3>
+              <p className="text-secondary mt-2">{profileError?.message || 'Unable to fetch trainer profile status'}</p>
+              <button onClick={() => refetch()}
+                className="mt-3 text-neon-volt hover:text-neon-volt/80 font-medium flex items-center gap-2 text-sm">
+                <RefreshCw size={14} /> Retry
               </button>
             </div>
           </div>
@@ -103,9 +67,7 @@ export default function ApplyTrainer() {
       );
     }
 
-    if (!data) {
-      return null;
-    }
+    if (!data) return null;
 
     if (data.status === 'PENDING') {
       return (
@@ -116,7 +78,7 @@ export default function ApplyTrainer() {
               <p className="label-uppercase text-neon-volt">Under Review</p>
               <h3 className="text-sub-heading font-bold mt-1">Application Pending</h3>
               <p className="text-secondary mt-2">
-                Our team is reviewing your qualifications. You'll receive a notification once a decision is made.
+                Our team is reviewing your qualifications. You will receive an email once a decision is made.
               </p>
               <div className="mt-3 flex items-center gap-2">
                 <div className="w-2 h-2 bg-neon-volt rounded-full animate-pulse" />
@@ -137,7 +99,7 @@ export default function ApplyTrainer() {
               <p className="label-uppercase text-forest-green">Approved</p>
               <h3 className="text-sub-heading font-bold mt-1">Welcome, Trainer!</h3>
               <p className="text-secondary mt-2">
-                Your profile is active and ready. You can now start creating sessions and mentoring learners.
+                Your profile is active. You can now create sessions and mentor learners.
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-forest-green/20 text-forest-green border border-forest-green/30">
@@ -147,10 +109,8 @@ export default function ApplyTrainer() {
                   Active Status
                 </span>
               </div>
-              <button
-                onClick={() => window.location.href = '/trainer/dashboard'}
-                className="mt-4 btn-primary px-6 py-2 text-sm"
-              >
+              <button onClick={() => navigate('/dashboard/trainer')}
+                className="mt-4 btn-primary px-6 py-2 text-sm">
                 Go to Dashboard
               </button>
             </div>
@@ -172,15 +132,13 @@ export default function ApplyTrainer() {
               </p>
               <div className="mt-3 p-3 rounded-md bg-white/5 border border-red-500/10">
                 <p className="text-sm text-muted">
-                  <span className="font-medium text-red-400">Feedback:</span> We encourage you to gain more experience and reapply in the future.
+                  <span className="font-medium text-red-400">Feedback:</span>{' '}
+                  We encourage you to gain more experience and reapply in the future.
                 </p>
               </div>
-              <button
-                onClick={handleReapply}
-                className="mt-4 btn-primary px-6 py-2 text-sm flex items-center gap-2"
-              >
-                <RefreshCw size={16} />
-                Reapply Now
+              <button onClick={handleReapply}
+                className="mt-4 btn-primary px-6 py-2 text-sm flex items-center gap-2">
+                <RefreshCw size={16} /> Reapply Now
               </button>
             </div>
           </div>
@@ -191,6 +149,7 @@ export default function ApplyTrainer() {
     return null;
   };
 
+  // Hide the form if the user has a live PENDING or APPROVED application
   const shouldShowForm = !data || data.status === 'REJECTED';
 
   return (
@@ -198,132 +157,72 @@ export default function ApplyTrainer() {
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="
-            mx-auto
-            w-16 h-16
-            rounded-card
-            bg-forest-green
-            border border-border-olive
-            flex items-center justify-center
-            shadow-elevated
-            mb-5
-          ">
+          <div className="mx-auto w-16 h-16 rounded-card bg-forest-green border border-border-olive flex items-center justify-center shadow-elevated mb-5">
             <GraduationCap size={28} className="text-white" />
           </div>
-
-          <p className="label-uppercase text-neon-volt">
-            Trainer Program
-          </p>
-
-          <h1 className="
-            text-feature-heading
-            font-black
-            mt-3
-            text-balance
-          ">
-            Become A Certified Trainer
-          </h1>
-
-          <p className="
-            text-body-large
-            max-w-xl
-            mx-auto
-            mt-3
-            text-secondary
-          ">
-            Share expertise, mentor learners and
-            grow your professional influence.
+          <p className="label-uppercase text-neon-volt">Trainer Program</p>
+          <h1 className="text-feature-heading font-black mt-3 text-balance">Become A Certified Trainer</h1>
+          <p className="text-body-large max-w-xl mx-auto mt-3 text-secondary">
+            Share expertise, mentor learners and grow your professional influence.
           </p>
         </div>
 
-        {/* Status Display
-        {renderStatus()} */}
+        {/* Status panel — now rendered */}
+        {renderStatus()}
 
         {/* Benefits Panel */}
         <div className="card-inset p-5 mb-8">
           <p className="label-uppercase text-neon-volt">Why Become A Trainer?</p>
           <div className="grid md:grid-cols-3 gap-4 mt-4">
-            <div className="flex items-start gap-3 p-3 rounded-md bg-white/5">
-              <Users size={18} className="text-neon-volt flex-shrink-0 mt-0.5" />
-              <div>
-                <h4 className="text-sm font-semibold">Mentor Learners</h4>
-                <p className="text-micro text-muted">Shape the next generation of tech talent</p>
+            {[
+              { icon: Users, title: 'Mentor Learners', desc: 'Shape the next generation of tech talent' },
+              { icon: Award, title: 'Build Reputation', desc: 'Establish yourself as an industry expert' },
+              { icon: TrendingUp, title: 'Grow Career', desc: 'Unlock new opportunities and connections' },
+            ].map(({ icon: Icon, title, desc }) => (
+              <div key={title} className="flex items-start gap-3 p-3 rounded-md bg-white/5">
+                <Icon size={18} className="text-neon-volt flex-shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="text-sm font-semibold">{title}</h4>
+                  <p className="text-micro text-muted">{desc}</p>
+                </div>
               </div>
-            </div>
-            <div className="flex items-start gap-3 p-3 rounded-md bg-white/5">
-              <Award size={18} className="text-neon-volt flex-shrink-0 mt-0.5" />
-              <div>
-                <h4 className="text-sm font-semibold">Build Reputation</h4>
-                <p className="text-micro text-muted">Establish yourself as an industry expert</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3 p-3 rounded-md bg-white/5">
-              <TrendingUp size={18} className="text-neon-volt flex-shrink-0 mt-0.5" />
-              <div>
-                <h4 className="text-sm font-semibold">Grow Career</h4>
-                <p className="text-micro text-muted">Unlock new opportunities and connections</p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
 
         {/* Application Form */}
         {shouldShowForm && (
-          <form
-            id="application-form"
-            className="
-              card-base
-              p-8
-              lg:p-10
-              shadow-elevated
-              space-y-6
-            "
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            {/* Form Header */}
+          <form id="application-form"
+            className="card-base p-8 lg:p-10 shadow-elevated space-y-6"
+            onSubmit={handleSubmit(onSubmit)}>
             <div className="mb-8 pb-6 border-b border-border-subtle">
               <p className="label-uppercase text-neon-volt">Trainer Application</p>
               <h2 className="text-sub-heading font-bold mt-2">Professional Profile</h2>
               <p className="text-secondary text-sm mt-1">Complete your profile to apply for the trainer program</p>
             </div>
 
-            {/* Professional Bio */}
+            {/* Bio */}
             <div className="space-y-2">
               <label className="flex items-center gap-2 label-uppercase">
-                <UserRound size={14} className="text-neon-volt" />
-                Professional Bio
+                <UserRound size={14} className="text-neon-volt" />Professional Bio
               </label>
-              <textarea
-                {...register('bio')}
-                id="bio"
-                rows="4"
-                required
+              <textarea {...register('bio')} rows="4" required
                 className="input-themed block w-full px-3 py-2.5 text-sm resize-y"
-                placeholder="Tell us about your experience and background..."
-              />
-              <p className="text-micro text-muted">
-                Brief overview of your professional journey and expertise.
-              </p>
+                placeholder="Tell us about your experience and background..." />
               {errors.bio && <span className="text-red-500 text-sm">{errors.bio.message}</span>}
             </div>
 
-            {/* Technical Skills */}
+            {/* Skills */}
             <div className="space-y-2">
               <label className="flex items-center gap-2 label-uppercase">
-                <Code2 size={14} className="text-neon-volt" />
-                Technical Skills
+                <Code2 size={14} className="text-neon-volt" />Technical Skills
               </label>
-              <input
-                {...register('skills')}
-                type="text"
-                id="skills"
-                required
+              <input {...register('skills')} type="text" required
                 className="input-themed block w-full px-3 py-2.5 text-sm"
-                placeholder="e.g., JavaScript, React, Node.js"
-              />
+                placeholder="e.g., JavaScript, React, Node.js" />
               <div className="card-inset p-3 mt-2">
                 <p className="text-micro text-muted">
-                  <span className="font-medium">Examples:</span> React • JavaScript • Node.js • Docker • PostgreSQL
+                  <span className="font-medium">Examples:</span> React, JavaScript, Node.js, Docker, PostgreSQL
                 </p>
               </div>
               {errors.skills && <span className="text-red-500 text-sm">{errors.skills.message}</span>}
@@ -332,15 +231,9 @@ export default function ApplyTrainer() {
             {/* Availability */}
             <div className="space-y-2">
               <label className="flex items-center gap-2 label-uppercase">
-                <CalendarDays size={14} className="text-neon-volt" />
-                Availability
+                <CalendarDays size={14} className="text-neon-volt" />Availability
               </label>
-              <select
-                {...register('availability')}
-                id="availability"
-                required
-                className="select-themed block w-full"
-              >
+              <select {...register('availability')} required className="select-themed block w-full">
                 <option value="">Select your availability</option>
                 <option value="Weekends only">Weekends only</option>
                 <option value="Evenings">Evenings</option>
@@ -354,53 +247,28 @@ export default function ApplyTrainer() {
             {/* Motivation */}
             <div className="space-y-2">
               <label className="flex items-center gap-2 label-uppercase">
-                <HeartHandshake size={14} className="text-neon-volt" />
-                Why do you want to become a trainer?
+                <HeartHandshake size={14} className="text-neon-volt" />Why do you want to become a trainer?
               </label>
-              <textarea
-                {...register('motivation')}
-                id="motivation"
-                rows="3"
-                required
+              <textarea {...register('motivation')} rows="3" required
                 className="input-themed block w-full px-3 py-2.5 text-sm resize-y"
-                placeholder="Share your motivation and passion for teaching..."
-              />
+                placeholder="Share your motivation and passion for teaching..." />
               {errors.motivation && <span className="text-red-500 text-sm">{errors.motivation.message}</span>}
             </div>
 
             {/* Submit */}
             <div className="pt-4 border-t border-border-subtle">
-              <button
-                type="submit"
-                className="
-                  btn-primary
-                  w-full
-                  py-4
-                  text-body
-                  font-semibold
-                  flex
-                  items-center
-                  justify-center
-                  gap-2
-                "
-                disabled={isPending || isSubmitting}
-              >
+              <button type="submit"
+                className="btn-primary w-full py-4 text-body font-semibold flex items-center justify-center gap-2"
+                disabled={isPending || isSubmitting}>
                 {isPending || isSubmitting ? (
-                  <>
-                    <Loader2 className="animate-spin" size={18} />
-                    Submitting Application...
-                  </>
+                  <><Loader2 className="animate-spin" size={18} />Submitting Application...</>
                 ) : (
-                  <>
-                    <Send size={18} />
-                    Submit Trainer Application
-                  </>
+                  <><Send size={18} />Submit Trainer Application</>
                 )}
               </button>
-
               {isError && (
                 <p className="mt-3 text-red-500 text-sm text-center">
-                  Error: {error?.message || 'Application failed. Please try again.'}
+                  {error?.response?.data?.message || error?.message || 'Application failed. Please try again.'}
                 </p>
               )}
             </div>

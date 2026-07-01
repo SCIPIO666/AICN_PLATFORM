@@ -1,7 +1,6 @@
-import { useEffect } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { getSessions } from '@/api/sessions';
-import { enrolInSession } from '@/api/enrolments';
+import { useEnrolInSession } from '@/hooks/useEnrolments';
 import useSessionFilters from '../../stores/sessionFilters';
 
 import SessionCard from '../../components/dormain/SessionCard';
@@ -9,12 +8,10 @@ import FilterBar from '../../components/dormain/FilterBar';
 import Pagination from '@/components/ui/Pagination';
 import Spinner from '@/components/ui/Spinner';
 import { Button } from '@/components/ui/button';
-import { Search, Filter, X, AlertCircle } from 'lucide-react';
-import { toast } from '@/stores/toastStore'
+import { Search, X, AlertCircle } from 'lucide-react';
 
 export default function LearnerSessions() {
   const { filters, setFilters, resetFilters } = useSessionFilters();
-  const queryClient = useQueryClient();
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['sessions', filters],
@@ -22,20 +19,12 @@ export default function LearnerSessions() {
     keepPreviousData: true,
   });
 
-const enrolMutation = useMutation({
-  mutationFn: (sessionId) => enrolInSession(sessionId),
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['sessions'] })
-    toast.success('Enrolled successfully!')
-  },
-  onError: (error) => {
-    toast.error(error.response?.data?.message || 'Enrolment failed')
-  },
-});
-
-  useEffect(() => { refetch(); }, [filters, refetch]);
+  // Use the shared hook — it invalidates ['enrolments','my'] on success so
+  // SessionCard's useMyEnrolmentStatus sees the new status immediately
+  const enrolMutation = useEnrolInSession();
 
   if (isLoading) return <Spinner fullScreen />;
+
   if (error) return (
     <div className="text-center py-12">
       <AlertCircle size={48} className="mx-auto text-red-500 mb-4" />
@@ -50,22 +39,13 @@ const enrolMutation = useMutation({
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <span className="label-uppercase">
-          Learning Portal
-        </span>
-
-        <h1 className="text-display-hero font-bold text-balance gradient-text">
-          Browse Sessions
-        </h1>
-
-        <p
-          className="text-body-large"
-          style={{ color: 'var(--text-secondary)' }}
-        >
+        <span className="label-uppercase">Learning Portal</span>
+        <h1 className="text-display-hero font-bold text-balance gradient-text">Browse Sessions</h1>
+        <p className="text-body-large" style={{ color: 'var(--text-secondary)' }}>
           Discover and enrol in training sessions
         </p>
       </div>
-      
+
       <FilterBar filters={filters} onFilterChange={setFilters} onReset={resetFilters} />
 
       <div className="text-caption text-text-muted flex items-center gap-2">
@@ -79,8 +59,7 @@ const enrolMutation = useMutation({
           <h3 className="text-feature-title font-bold">No sessions found</h3>
           <p className="text-text-muted mt-1">Try adjusting your filters</p>
           <Button variant="ghost" onClick={resetFilters} className="mt-4">
-            <X size={16} className="mr-2" />
-            Clear Filters
+            <X size={16} className="mr-2" />Clear Filters
           </Button>
         </div>
       ) : (
@@ -91,16 +70,16 @@ const enrolMutation = useMutation({
                 key={session.id}
                 session={session}
                 onEnrol={(id) => enrolMutation.mutate(id)}
-                isEnrolling={enrolMutation.isLoading && enrolMutation.variables === session.id}
+                isEnrolling={enrolMutation.isPending && enrolMutation.variables === session.id}
               />
             ))}
           </div>
           {pagination && pagination.totalPages > 1 && (
             <div className="flex justify-center pt-4">
-              <Pagination 
-                currentPage={pagination.page} 
-                totalPages={pagination.totalPages} 
-                onPageChange={(page) => setFilters({ page })} 
+              <Pagination
+                currentPage={pagination.page}
+                totalPages={pagination.totalPages}
+                onPageChange={(page) => setFilters({ page })}
               />
             </div>
           )}
