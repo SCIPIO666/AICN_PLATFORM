@@ -1,9 +1,9 @@
 // certificates/certificateService.js
+const { generateCertificatePDF } = require('../../utils/pdf/generators/pdfGenerator');
 const certificateModel = require('./certificatesModel');
 const { getSession } = require('../sessions/sessionsModel');
 const { sendCertificateEmail } = require('../../utils/email/email services/aicnEmailsService');
 const uploadPdf = require('../../utils/storage/uploadPdf');
-const { generateCertificatePDF } = require('../../utils/pdf/templates/certificates/certificateGenerator');
 const {prisma} = require('../../config/db');
 const logger = require('../../utils/logger');
 const { AuthorizationError, NotFoundError, BusinessLogicError } = require('../../utils/errors/customErrors');
@@ -42,14 +42,14 @@ async function issueCertificate(userId, sessionId, adminId, role) {
       verifyUrl: `${process.env.FRONTEND_URL}/verify/${certificate.certCode}`
     });
     
-    await sendCertificateEmail(
-      enrolment.user.email,
-      enrolment.user.name,
-      enrolment.session.title,
-      certificate.certCode,
-      pdfBuffer,
-      { skillArea: enrolment.session.skillArea, durationMins: enrolment.session.durationMins }
-    );
+  await sendCertificateEmail({
+    to: enrolment.user.email,
+    name: enrolment.user.name,
+    sessionTitle: enrolment.session.title,
+    certCode: certificate.certCode,
+    pdfBuffer,
+    meta: { skillArea: enrolment.session.skillArea, durationMins: enrolment.session.durationMins }
+  });
     
     logger.info(`Certificate issued and emailed to ${enrolment.user.email}`);
     
@@ -109,10 +109,12 @@ async function batchIssueCertificates(sessionId, adminId, role) {
     try {
       await issueCertificate(enrolment.userId, sessionId, adminId, role);
       results.issued++;
-      await prisma.enrolment.update({
-        where: { sessionId, status: 'ATTENDED',userId:enrolment.userId },
-        data : { certificate: true}
-      })
+
+    await prisma.enrolment.update({
+      where: { userId_sessionId: { userId: enrolment.userId, sessionId } },
+      data: { certificate: true }
+    });
+    
     } catch (error) {
       results.failed++;
       results.errors.push({ userId: enrolment.userId, userName: enrolment.user.name, error: error.message });
