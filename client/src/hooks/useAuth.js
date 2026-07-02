@@ -203,7 +203,9 @@ export const useUpdateProfile = () => {
   const { updateUser, setLoading, setError } = useAuthStore();
   
   return useMutation({
-    mutationFn: (profileData) => authAPI.updateProfile(profileData),
+    mutationFn: async () => {
+      throw new Error('Profile update endpoint is not available yet');
+    },
     onMutate: () => {
       setLoading(true);
       setError(null);
@@ -215,7 +217,7 @@ export const useUpdateProfile = () => {
       console.log('Profile updated successfully!');
     },
     onError: (error) => {
-      const message = error.response?.data?.message || 'Profile update failed';
+      const message = error.response?.data?.message || error.message || 'Profile update failed';
       setError(message);
       setLoading(false);
     },
