@@ -149,9 +149,43 @@ async function sendSessionReminderEmail({ to, name, sessionTitle, sessionDate, s
   return await sendEmail({ to, subject: `Reminder: ${sessionTitle} starts soon!`, html });
 }
 
+async function sendEnrolmentCancellationEmail({ to, name, sessionTitle, reason = null }) {
+  const html = `
+    <!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="font-family:Arial,sans-serif;line-height:1.6;color:#1c1917">
+      <p>Dear <strong>${name}</strong>,</p>
+      <p>Your enrolment for <strong>${sessionTitle}</strong> has been cancelled.</p>
+      ${reason ? `<p><strong>Reason:</strong> ${reason}</p>` : ''}
+      <p>You can browse available sessions from your dashboard whenever you are ready to enrol again.</p>
+      <p style="font-size:13px;color:#57534e">AICN Training Platform</p>
+    </body></html>
+  `;
+
+  return await sendEmail({ to, subject: `Enrolment Cancelled: ${sessionTitle}`, html });
+}
+
+async function sendSessionCancellationEmail({ to, name, sessionTitle, sessionDate, reason = null }) {
+  const formattedDate = sessionDate
+    ? new Date(sessionDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+    : 'the scheduled date';
+
+  const html = `
+    <!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="font-family:Arial,sans-serif;line-height:1.6;color:#1c1917">
+      <p>Dear <strong>${name}</strong>,</p>
+      <p>The session <strong>${sessionTitle}</strong>, scheduled for <strong>${formattedDate}</strong>, has been cancelled.</p>
+      ${reason ? `<p><strong>Reason:</strong> ${reason}</p>` : ''}
+      <p>Please check your dashboard for other available sessions.</p>
+      <p style="font-size:13px;color:#57534e">AICN Training Platform</p>
+    </body></html>
+  `;
+
+  return await sendEmail({ to, subject: `Session Cancelled: ${sessionTitle}`, html });
+}
+
 module.exports = {
   sendCertificateEmail,
   sendEnrolmentConfirmationEmail,
+  sendEnrolmentCancellationEmail,
+  sendSessionCancellationEmail,
   sendTrainerApprovalEmail,
   sendTrainerApplicationReceivedEmail,
   sendWelcomeEmail,

@@ -1,6 +1,8 @@
 
 const sessionModel = require('./sessionsModel');
 const { NotFoundError, BusinessLogicError } = require('../../utils/errors/customErrors');
+const logger = require('../../utils/logger');
+const { sendSessionCancellationEmail } = require('../../utils/email/email services/aicnEmailsService');
 
 async function createSession(data) {
   const newSession = await sessionModel.createSession(data);
@@ -45,6 +47,17 @@ async function cancelSession(id) {
   if (session.status === 'CANCELLED') throw new BusinessLogicError('Session is already cancelled');
   
   const cancelledSession = await sessionModel.updateSession(id, { status: 'CANCELLED' });
+  const recipients = session.enrolments?.filter(enrolment => enrolment.user?.email) || [];
+
+  for (const enrolment of recipients) {
+    sendSessionCancellationEmail({
+      to: enrolment.user.email,
+      name: enrolment.user.name,
+      sessionTitle: session.title,
+      sessionDate: session.date,
+    }).catch(err => logger.error(`Failed to send session cancellation email: ${err.message}`));
+  }
+
   return cancelledSession;
 }
 

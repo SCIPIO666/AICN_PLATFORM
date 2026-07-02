@@ -2,7 +2,10 @@
 const enrolmentModel = require('./enrolmentsModel');
 const { getSession } = require('../sessions/sessionsModel');
 const logger = require('../../utils/logger');
-const { sendEnrolmentConfirmationEmail } = require('../../utils/email/email services/aicnEmailsService');
+const {
+  sendEnrolmentConfirmationEmail,
+  sendEnrolmentCancellationEmail
+} = require('../../utils/email/email services/aicnEmailsService');
 const {prisma }= require('../../config/db');
 const {updateEnrolment}=require('./enrolmentsModel')
 const { NotFoundError, BusinessLogicError, AuthorizationError } = require('../../utils/errors/customErrors');
@@ -109,6 +112,14 @@ async function cancelEnrolment(enrolmentId, userId, role, reason = null) {
   }
   
   const updated = await enrolmentModel.updateEnrolment(enrolmentId, { status: 'CANCELLED', cancellationReason: reason });
+  if (updated.user?.email) {
+    sendEnrolmentCancellationEmail({
+      to: updated.user.email,
+      name: updated.user.name,
+      sessionTitle: updated.session?.title || 'your session',
+      reason,
+    }).catch(err => logger.error(`Failed to send enrolment cancellation email: ${err.message}`));
+  }
   return updated;
 }
 

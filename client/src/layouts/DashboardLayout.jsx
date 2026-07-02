@@ -22,9 +22,9 @@ function DashboardLayout() {
   return (
     <div className="min-h-screen bg-gray-50">
       <DashboardNavbar user={user} />
-      <div className="flex pt-16">
+      <div className="pt-16 lg:pl-64">
         <Sidebar userRole={user.role} />
-        <main className="flex-1 ml-64 p-6">
+        <main className="min-w-0 p-6">
           <div className="max-w-7xl mx-auto">
             <Outlet />
           </div>

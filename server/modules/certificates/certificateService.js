@@ -59,7 +59,7 @@ async function issueCertificate(userId, sessionId, adminId, role) {
   let uploadResult;
 
   try {
-    logger.info(`starting certificate generation for ${enrolment.user.name}-${enrolment.session.title}`)
+    logger.info(`starting certificate generation for ${enrolment.user.name}-${enrolment.session.title}`);
     ({ pdfBuffer, uploadResult } = await generatePdfAndUpload({
       userId,
       certificateId: certificate.id,
