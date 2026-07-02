@@ -1,4 +1,4 @@
-import { downloadCertificatePdf } from '@/api/certificates';
+// src/utils/downloadCertificate.js - Simple version
 
 function safeFilename(value) {
   return String(value || 'certificate')
@@ -7,26 +7,30 @@ function safeFilename(value) {
 }
 
 export async function downloadCertificateFile(certificate, onProgress) {
-  if (!certificate?.id) {
-    throw new Error('Certificate is missing an ID');
+  if (!certificate?.pdfUrl) {
+    throw new Error('Certificate PDF not available');
   }
 
-  const response = await downloadCertificatePdf(certificate.id, (event) => {
-    if (!event.total) {
-      onProgress?.(null);
-      return;
+  try {
+    // Create a temporary anchor element
+    const link = document.createElement('a');
+    link.href = certificate.pdfUrl;
+    link.download = safeFilename(`${certificate.certCode || certificate.id}.pdf`);
+    link.target = '_blank';
+    
+    // Append, click, and remove
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // If progress callback provided, notify completion
+    if (onProgress) {
+      onProgress(100);
     }
-
-    onProgress?.(Math.round((event.loaded * 100) / event.total));
-  });
-
-  const blob = new Blob([response.data], { type: response.headers['content-type'] || 'application/pdf' });
-  const url = window.URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = safeFilename(`${certificate.certCode || certificate.id}.pdf`);
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  window.URL.revokeObjectURL(url);
+    
+    return { success: true };
+  } catch (error) {
+    console.error('Download error:', error);
+    throw new Error('Failed to download certificate');
+  }
 }
