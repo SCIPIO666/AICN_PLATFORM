@@ -1,4 +1,5 @@
 const { sendEmail } = require('./emailService');
+require('../hbsLoader');
 
 // templates
 const certificateEmailTemplate        = require('../emailTemplates/certificate.hbs');
