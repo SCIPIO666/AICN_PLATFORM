@@ -5,6 +5,8 @@ const { prisma } = require('../../config/db');
 const logger = require('../../utils/logger');
 const { AuthorizationError, NotFoundError, BusinessLogicError } = require('../../utils/errors/customErrors');
 
+
+//helpers
 function assertAdmin(role) {
   if (role !== 'ADMIN') {
     throw new AuthorizationError('Only administrators can issue certificates');
@@ -52,6 +54,7 @@ async function issueCertificate(userId, sessionId, adminId, role) {
   let uploadResult;
 
   try {
+    logger.info(`starting certificate generation for ${enrolment.user.name}-${enrolment.session.title}`)
     ({ pdfBuffer, uploadResult } = await generatePdfAndUpload({
       userId,
       certificateId: certificate.id,

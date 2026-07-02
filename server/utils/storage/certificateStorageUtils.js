@@ -1,7 +1,5 @@
 const logger=require('../logger')
 const prisma=require('../../config/db')
-// const cloudinary=require('../../config/cloudinary')
-
 const { deletePdf } = require('./uploadPdf');
 
 

@@ -15,7 +15,7 @@ const compileTemplate = (name) => {
   return compiled;
 };
  
-// ── CORE: HTML STRING → PDF BUFFER ───────────────────────────────────
+//  CORE: HTML STRING → PDF BUFFER 
 const renderPdfFromHtml = async (html, options = {}) => {
   const browser = await getBrowser();
   const page    = await browser.newPage();
