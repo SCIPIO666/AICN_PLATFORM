@@ -2,6 +2,14 @@
 const certificatesService = require('./certificateService');
 const { asyncHandler } = require('../../utils/asyncHandler');
 const ApiResponse = require('../../utils/responseFormatter');
+const path = require('path');
+const { Readable } = require('stream');
+
+function safeFilename(value) {
+  return String(value || 'certificate')
+    .replace(/[^a-zA-Z0-9._-]/g, '-')
+    .replace(/-+/g, '-');
+}
 
 const issueCertificate = asyncHandler(async (req, res) => {
   const { userId, sessionId } = req.body;
@@ -26,6 +34,33 @@ const batchIssueCertificates = asyncHandler(async (req, res) => {
   const { sessionId } = req.params;
   const results = await certificatesService.batchIssueCertificates(sessionId, req.user.id, req.user.role);
   return ApiResponse.created(res, results, `Issued ${results.issued} certificates, ${results.failed} failed`);
+});
+
+const downloadCertificate = asyncHandler(async (req, res, next) => {
+  const certificate = await certificatesService.getCertificateForDownload(req.params.id, req.user);
+  const filename = safeFilename(`${certificate.certCode}.pdf`);
+
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+
+  if (certificate.pdfUrl.startsWith('/uploads/')) {
+    const localPath = path.join(__dirname, '../../', certificate.pdfUrl.replace(/^\/+/, ''));
+    return res.download(localPath, filename);
+  }
+
+  const upstream = await fetch(certificate.pdfUrl);
+  if (!upstream.ok || !upstream.body) {
+    throw new Error(`Could not fetch certificate PDF (${upstream.status})`);
+  }
+
+  const contentLength = upstream.headers.get('content-length');
+  if (contentLength) {
+    res.setHeader('Content-Length', contentLength);
+  }
+
+  const stream = Readable.fromWeb(upstream.body);
+  stream.on('error', next);
+  return stream.pipe(res);
 });
 /**
  * Get all certificates (Admin only)
@@ -65,4 +100,12 @@ const getCertificateStats = asyncHandler(async (req, res) => {
   const stats = await certificatesService.getCertificateStats();
   return ApiResponse.success(res, stats, 'Certificate statistics retrieved successfully');
 });
-module.exports = { issueCertificate, verifyCertificate, getMyCertificates, batchIssueCertificates, getAllCertificates, getCertificateStats };
+module.exports = {
+  issueCertificate,
+  verifyCertificate,
+  getMyCertificates,
+  downloadCertificate,
+  batchIssueCertificates,
+  getAllCertificates,
+  getCertificateStats,
+};

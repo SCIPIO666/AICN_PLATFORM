@@ -12,6 +12,7 @@ const {
   batchIssueCertificatesSchema,
   getCertificatesQuerySchema,
   getAllCertificatesQuerySchema, 
+  certificateIdParamSchema,
 } = require('../../shared/validators/certificateValidation.cjs');
 
 // ============ PUBLIC ROUTES ============
@@ -30,6 +31,13 @@ certificatesRouter.get(
   '/me',
   validate(getCertificatesQuerySchema, 'query'),  
   certificatesController.getMyCertificates
+);
+
+// GET /:id/download - Download authenticated user's certificate PDF
+certificatesRouter.get(
+  '/:id/download',
+  validate(certificateIdParamSchema, 'params'),
+  certificatesController.downloadCertificate
 );
 
 // ============ ADMIN ONLY ROUTES ============

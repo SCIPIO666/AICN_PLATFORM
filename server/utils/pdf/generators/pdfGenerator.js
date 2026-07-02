@@ -1,4 +1,3 @@
-const puppeteer = require('puppeteer');
 const { generateCertificateHTML } = require('../templates/certificates/certificateGenerator');
 const logger = require('../../logger');
 
@@ -24,12 +23,12 @@ async function generateCertificatePDF(data) {
     try {
         logger.info(`Generating certificate PDF for: ${data.userName} (${data.certCode})`);
 
-        // complete HTML with embedded CSS and data
+        // Generate complete HTML with embedded CSS and data
         const html = await generateCertificateHTML(data);
 
         page = await browser.newPage();
 
-        //  content with networkidle0  to ensure all resources load
+        // Set content with networkidle0  to ensure all resources load
         await page.setContent(html, {
             waitUntil: 'networkidle0',
             timeout: 30000
@@ -88,6 +87,7 @@ async function getBrowser() {
         args.push('--max-old-space-size=512');
     }
 
+    const puppeteer = require('puppeteer');
     browserInstance = await puppeteer.launch({
         headless: 'new',
         args,

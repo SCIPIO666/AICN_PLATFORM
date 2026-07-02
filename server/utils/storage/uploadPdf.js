@@ -1,169 +1,135 @@
-// const cloudinary = require('../../config/cloudinary');
-// const logger = require('../logger');
-
-// /**
-//  * Upload PDF buffer directly to Cloudinary
-//  * @param {Buffer} pdfBuffer - PDF file buffer
-//  * @param {string|number} userId - User ID for folder organization
-//  * @param {string} certificateId - Certificate ID for filename
-//  * @returns {Promise<Object>} Cloudinary upload result with all metadata
-//  */
-// async function uploadPdf(pdfBuffer, userId, certificateId) {
-//   try {
-//     //  buffer to base64
-//     const base64String = pdfBuffer.toString('base64');
-//     const dataURI = `data:application/pdf;base64,${base64String}`;
-    
-//     const result = await cloudinary.uploader.upload(dataURI, {
-//       folder: `certificates/${userId}`,
-//       resource_type: 'raw',
-//       public_id: `certificate-${certificateId}-${Date.now()}`,
-//       format: 'pdf',
-//       use_filename: true,
-//       unique_filename: true
-//     });
-    
-//     logger.info(`PDF uploaded to Cloudinary: ${result.secure_url}`);
-    
-
-//     return {
-//       publicId: result.public_id,
-//       secureUrl: result.secure_url,
-//       url: result.url,
-//       version: result.version,
-//       format: result.format,
-//       resourceType: result.resource_type,
-//       bytes: result.bytes,
-//       createdAt: result.created_at,
-//       etag: result.etag,
-//       signature: result.signature,
-//       assetFolder: result.asset_folder,
-//       originalFilename: result.original_filename
-//     };
-//   } catch (error) {
-//     logger.error(`PDF upload error: ${error.message}`);
-//     throw error;
-//   }
-// }
-
-// module.exports = uploadPdf;
-
-// utils/storage/uploadPdf.js
 const cloudinary = require('../../config/cloudinary');
 const fs = require('fs');
 const path = require('path');
 const logger = require('../logger');
 
-/**
- * Upload PDF buffer directly to Cloudinary using data URI
- * @param {Buffer} pdfBuffer - PDF file buffer
- * @param {string} userId - User ID for folder organization
- * @param {string} certificateId - Certificate ID for filename
- * @returns {Promise<Object>} Cloudinary upload result or local fallback
- */
+const uploadsDir = path.join(__dirname, '../../uploads/certificates');
+
+function isCloudinaryConfigured() {
+  return Boolean(
+    process.env.CLOUDINARY_CLOUD_NAME &&
+    process.env.CLOUDINARY_API_KEY &&
+    process.env.CLOUDINARY_API_SECRET
+  );
+}
+
+function safeSegment(value) {
+  return String(value || 'unknown').replace(/[^a-zA-Z0-9_-]/g, '-');
+}
+
+function uploadBufferToCloudinary(pdfBuffer, userId, certificateId) {
+  const folder = `certificates/${safeSegment(userId)}`;
+  const filename = `certificate-${safeSegment(certificateId)}.pdf`;
+
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        resource_type: 'raw',
+        folder,
+        public_id: filename,
+        overwrite: true,
+        unique_filename: false,
+        use_filename: false,
+        access_mode: 'public',
+        context: {
+          userId: String(userId),
+          certificateId: String(certificateId),
+        },
+      },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      }
+    );
+
+    stream.end(pdfBuffer);
+  });
+}
+
 async function uploadPdf(pdfBuffer, userId, certificateId) {
-    try {
-        // Check if Cloudinary is configured
-        if (!process.env.CLOUDINARY_CLOUD_NAME || 
-            !process.env.CLOUDINARY_API_KEY || 
-            !process.env.CLOUDINARY_API_SECRET) {
-            logger.warn(' Cloudinary not configured, saving locally');
-            return await saveLocally(pdfBuffer, userId, certificateId);
-        }
+  if (!Buffer.isBuffer(pdfBuffer) || pdfBuffer.length === 0) {
+    throw new Error('PDF buffer is empty or invalid');
+  }
 
-        // Convert buffer to base64 data URI
-        const base64String = pdfBuffer.toString('base64');
-        const dataURI = `data:application/pdf;base64,${base64String}`;
+  if (!isCloudinaryConfigured()) {
+    logger.warn('Cloudinary is not configured; saving certificate PDF locally');
+    return saveLocally(pdfBuffer, userId, certificateId);
+  }
 
-        logger.info(' Uploading PDF to Cloudinary...');
+  try {
+    logger.info('Uploading certificate PDF to Cloudinary');
+    const result = await uploadBufferToCloudinary(pdfBuffer, userId, certificateId);
 
-        // Upload using data URI
-        const result = await cloudinary.uploader.upload(dataURI, {
-            folder: `certificates/${userId}`,
-            resource_type: 'raw',
-            public_id: `certificate-${certificateId}`,
-            format: 'pdf',
-            use_filename: true,
-            unique_filename: true,
-            access_mode: 'public',
-            context: {
-                userId: userId,
-                certificateId: certificateId
-            }
-        });
-
-        logger.info(` PDF uploaded to Cloudinary: ${result.secure_url}`);
-
-        return {
-            publicId: result.public_id,
-            secureUrl: result.secure_url,
-            url: result.url,
-            version: result.version,
-            format: result.format,
-            resourceType: result.resource_type,
-            bytes: result.bytes,
-            createdAt: result.created_at,
-            etag: result.etag,
-            signature: result.signature,
-            assetFolder: result.asset_folder,
-            originalFilename: result.original_filename,
-            local: false
-        };
-    } catch (error) {
-        logger.error(` Cloudinary upload error: ${error.message}`);
-        logger.warn(' Falling back to local storage');
-        return await saveLocally(pdfBuffer, userId, certificateId);
-    }
+    return {
+      publicId: result.public_id,
+      secureUrl: result.secure_url,
+      url: result.url,
+      version: Number(result.version || 1),
+      format: result.format || 'pdf',
+      resourceType: result.resource_type || 'raw',
+      bytes: Number(result.bytes || pdfBuffer.length),
+      createdAt: result.created_at || new Date().toISOString(),
+      etag: result.etag || null,
+      signature: result.signature || null,
+      assetFolder: result.asset_folder || `certificates/${safeSegment(userId)}`,
+      originalFilename: result.original_filename || `certificate-${safeSegment(certificateId)}.pdf`,
+      local: false,
+      success: true,
+    };
+  } catch (error) {
+    logger.error(`Cloudinary PDF upload failed: ${error.message}`);
+    logger.warn('Falling back to local certificate PDF storage');
+    return saveLocally(pdfBuffer, userId, certificateId);
+  }
 }
 
-/**
- * Save PDF locally as fallback
- */
 async function saveLocally(pdfBuffer, userId, certificateId) {
-    try {
-        const uploadDir = path.join(__dirname, '../../uploads/certificates');
-        if (!fs.existsSync(uploadDir)) {
-            fs.mkdirSync(uploadDir, { recursive: true });
-            logger.info(` Created upload directory: ${uploadDir}`);
-        }
+  await fs.promises.mkdir(uploadsDir, { recursive: true });
 
-        const timestamp = Date.now();
-        const filename = `certificate-${certificateId}-${timestamp}.pdf`;
-        const filePath = path.join(uploadDir, filename);
+  const timestamp = Date.now();
+  const filename = `certificate-${safeSegment(certificateId)}-${timestamp}.pdf`;
+  const filePath = path.join(uploadsDir, filename);
 
-        fs.writeFileSync(filePath, pdfBuffer);
-        
-        const fileSize = (pdfBuffer.length / 1024).toFixed(2);
-        logger.info(` PDF saved locally: ${filename} (${fileSize} KB)`);
+  await fs.promises.writeFile(filePath, pdfBuffer);
+  logger.info(`Certificate PDF saved locally: ${filename} (${(pdfBuffer.length / 1024).toFixed(2)} KB)`);
 
-        return {
-            publicId: `local-${certificateId}-${timestamp}`,
-            secureUrl: `/uploads/certificates/${filename}`,
-            url: filePath,
-            bytes: pdfBuffer.length,
-            format: 'pdf',
-            resourceType: 'local',
-            createdAt: new Date().toISOString(),
-            local: true,
-            filePath: filePath,
-            filename: filename
-        };
-    } catch (error) {
-        logger.error(` PDF save error: ${error.message}`);
-        throw new Error(`Failed to save PDF: ${error.message}`);
-    }
+  return {
+    publicId: `local-${safeSegment(certificateId)}-${timestamp}`,
+    secureUrl: `/uploads/certificates/${filename}`,
+    url: filePath,
+    version: 1,
+    format: 'pdf',
+    resourceType: 'local',
+    bytes: pdfBuffer.length,
+    createdAt: new Date().toISOString(),
+    etag: `local-${timestamp}`,
+    signature: null,
+    assetFolder: `local/certificates/${safeSegment(userId)}`,
+    originalFilename: filename,
+    local: true,
+    filePath,
+    filename,
+    success: true,
+  };
 }
+
 async function deletePdf(publicId) {
   try {
+    if (publicId && publicId.startsWith('local-')) {
+      logger.info(`Local PDF deletion requested: ${publicId}`);
+      return { success: true, local: true };
+    }
+
     const result = await cloudinary.uploader.destroy(publicId, { resource_type: 'raw' });
-    logger.info(` Cloudinary PDF deleted: ${publicId}`);
+    logger.info(`Cloudinary PDF deleted: ${publicId}`);
     return result;
   } catch (error) {
-    logger.error(` Cloudinary delete error: ${error.message}`);
+    logger.error(`Cloudinary PDF delete failed: ${error.message}`);
     throw error;
   }
 }
 
-module.exports = uploadPdf;
-module.exports.deletePdf = deletePdf;
-module.exports = uploadPdf;
+module.exports = {
+  uploadPdf,
+  deletePdf,
+};
