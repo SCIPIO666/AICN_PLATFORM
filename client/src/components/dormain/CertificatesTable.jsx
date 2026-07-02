@@ -1,9 +1,12 @@
 
+import { useState } from 'react'
 import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { useCertificateUI } from '@/stores/useCertificateUi'
 import { getMyCertificates } from '@/api/certificates'
 import Spinner from '../ui/Spinner'
 import { Award, Download, ExternalLink, AlertCircle, FileX, Inbox } from 'lucide-react'
+import { toast } from '@/stores/toastStore'
+import { downloadCertificateFile } from '@/utils/downloadCertificate'
 
 
 //helpers
@@ -20,6 +23,32 @@ const fmtCode = (code) => (
 
 
 function PdfStatus({ cert }) {
+  const [isDownloading, setIsDownloading] = useState(false)
+  const [progress, setProgress] = useState(null)
+
+  const handleDownload = async (event) => {
+    event.stopPropagation()
+
+    if (!cert.pdfUrl) {
+      toast.info('Certificate PDF is still being prepared')
+      return
+    }
+
+    setIsDownloading(true)
+    setProgress(null)
+
+    try {
+      await downloadCertificateFile(cert, setProgress)
+      toast.success('Certificate downloaded')
+    } catch (error) {
+      const message = error?.response?.data?.message || error?.message || 'Failed to download certificate'
+      toast.error(message)
+    } finally {
+      setIsDownloading(false)
+      setProgress(null)
+    }
+  }
+
   if (cert.revokedAt) {
     return (
       <span
@@ -47,17 +76,17 @@ function PdfStatus({ cert }) {
 
   if (cert.pdfUrl) {
     return (
-      <a
-        href={cert.pdfUrl}
-        target="_blank"
-        rel="noopener noreferrer"
+      <button
+        type="button"
+        onClick={handleDownload}
+        disabled={isDownloading}
         className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold transition-opacity hover:opacity-80"
         style={{ background: 'var(--success-bg)', color: 'var(--success-text)' }}
         aria-label={`Download certificate for ${cert.session.title}`}
       >
         <Download size={11} />
-        Download
-      </a>
+        {isDownloading ? (progress ? `${progress}%` : 'Downloading') : 'Download'}
+      </button>
     )
   }
 
@@ -66,7 +95,7 @@ function PdfStatus({ cert }) {
       className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold"
       style={{ background: 'var(--info-bg)', color: 'var(--info-text)' }}
     >
-      Generating…
+      Generating...
     </span>
   )
 }

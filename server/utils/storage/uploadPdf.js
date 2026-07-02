@@ -4,6 +4,7 @@ const path = require('path');
 const logger = require('../logger');
 
 const uploadsDir = path.join(__dirname, '../../uploads/certificates');
+const cloudinaryCertificateFolder = (process.env.CLOUDINARY_CERTIFICATE_FOLDER || 'aicn_certificates').trim();
 
 function isCloudinaryConfigured() {
   return Boolean(
@@ -18,7 +19,7 @@ function safeSegment(value) {
 }
 
 function uploadBufferToCloudinary(pdfBuffer, userId, certificateId) {
-  const folder = `certificates/${safeSegment(userId)}`;
+  const folder = `${safeSegment(cloudinaryCertificateFolder)}/${safeSegment(userId)}`;
   const filename = `certificate-${safeSegment(certificateId)}.pdf`;
 
   return new Promise((resolve, reject) => {
@@ -71,7 +72,7 @@ async function uploadPdf(pdfBuffer, userId, certificateId) {
       createdAt: result.created_at || new Date().toISOString(),
       etag: result.etag || null,
       signature: result.signature || null,
-      assetFolder: result.asset_folder || `certificates/${safeSegment(userId)}`,
+      assetFolder: result.asset_folder || `${safeSegment(cloudinaryCertificateFolder)}/${safeSegment(userId)}`,
       originalFilename: result.original_filename || `certificate-${safeSegment(certificateId)}.pdf`,
       local: false,
       success: true,

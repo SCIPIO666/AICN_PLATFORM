@@ -34,6 +34,7 @@ import { safeFormatDate } from '@/utils/date';
 import { toast } from '@/stores/toastStore';
 import CertificateDetailsModal from '@/components/admin/CertificateDetailsModal';
 import IssueCertificateModal from '@/components/admin/IssueCertificateModal';
+import { downloadCertificateFile } from '@/utils/downloadCertificate';
 
 function StatsCard({ icon: Icon, label, value, color, subtitle }) {
   return (
@@ -58,14 +59,17 @@ function StatsCard({ icon: Icon, label, value, color, subtitle }) {
 function CertificateCard({ certificate, onView, onDownload }) {
   const isRevoked = !!certificate.revokedAt;
   const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadProgress, setDownloadProgress] = useState(null);
 
   const handleDownload = async (e) => {
     e.stopPropagation();
     setIsDownloading(true);
+    setDownloadProgress(null);
     try {
-      await onDownload(certificate);
+      await onDownload(certificate, setDownloadProgress);
     } finally {
       setIsDownloading(false);
+      setDownloadProgress(null);
     }
   };
 
@@ -142,7 +146,7 @@ function CertificateCard({ certificate, onView, onDownload }) {
           disabled={isDownloading}
         >
           {isDownloading ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
-          Download
+          {isDownloading && downloadProgress ? `${downloadProgress}%` : 'Download'}
         </Button>
       </div>
     </motion.div>
@@ -188,14 +192,18 @@ export default function AdminCertificates() {
     toast.info('Data refreshed');
   };
 
-  const handleDownload = async (certificate) => {
+  const handleDownload = async (certificate, onProgress) => {
     try {
-      toast.info('Downloading certificate...');
-      // Implementation for PDF download
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      if (!certificate.pdfUrl) {
+        toast.info('Certificate PDF is still being prepared');
+        return;
+      }
+
+      await downloadCertificateFile(certificate, onProgress);
       toast.success('Certificate downloaded successfully');
     } catch (error) {
-      toast.error('Failed to download certificate');
+      const message = error?.response?.data?.message || error?.message || 'Failed to download certificate';
+      toast.error(message);
     }
   };
 

@@ -42,3 +42,13 @@ export const issueCertificate = (userId, sessionId) => {
 export const batchIssueCertificates = (sessionId) => {
   return api.post(`/certificates/batch/${sessionId}`).then(res => res.data);
 };
+
+/**
+ * Download certificate PDF with progress support.
+ */
+export const downloadCertificatePdf = (certificateId, onDownloadProgress) => {
+  return api.get(`/certificates/${certificateId}/download`, {
+    responseType: 'blob',
+    onDownloadProgress,
+  });
+};

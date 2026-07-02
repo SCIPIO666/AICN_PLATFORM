@@ -72,10 +72,14 @@ export const useIssueCertificate = () => {
   return useMutation({
     mutationFn: ({ userId, sessionId }) => 
       certificateAPI.issueCertificate(userId, sessionId),
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: certificateKeys.adminCertificates() });
       queryClient.invalidateQueries({ queryKey: certificateKeys.stats() });
-      toast.success('Certificate issued successfully');
+      if (response?.data?.emailSent === false) {
+        toast.warning('Certificate issued and PDF stored, but email was not sent');
+      } else {
+        toast.success('Certificate issued, stored, and emailed');
+      }
     },
     onError: (error) => {
       toast.error(error?.response?.data?.message || 'Failed to issue certificate');
@@ -89,10 +93,16 @@ export const useBatchIssueCertificates = () => {
   
   return useMutation({
     mutationFn: (sessionId) => certificateAPI.batchIssueCertificates(sessionId),
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: certificateKeys.adminCertificates() });
       queryClient.invalidateQueries({ queryKey: certificateKeys.stats() });
-      toast.success('Certificates issued successfully');
+      const failed = response?.data?.failed || 0;
+      const issued = response?.data?.issued || 0;
+      if (failed > 0) {
+        toast.warning(`${issued} certificates issued, ${failed} failed`);
+      } else {
+        toast.success('Certificates issued, stored, and emailed');
+      }
     },
     onError: (error) => {
       toast.error(error?.response?.data?.message || 'Failed to issue certificates');

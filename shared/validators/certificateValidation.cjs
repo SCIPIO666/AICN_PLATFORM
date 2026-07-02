@@ -38,6 +38,10 @@ const batchIssueCertificatesSchema = z.object({
   sessionId: z.string().regex(CUID_REGEX, 'Invalid CUID format'),
 });
 
+const certificateIdParamSchema = z.object({
+  id: z.string().regex(CUID_REGEX, 'Invalid CUID format'),
+});
+
 // Certificate filters validation
 const certificateFiltersSchema = z.object({
   userId: z.string().regex(CUID_REGEX).optional(),
@@ -71,6 +75,7 @@ module.exports = {
   idParamSchema,
   issueCertificateSchema,
   issueSingleCertificateSchema,
+  certificateIdParamSchema,
   verifyCertificateSchema,
   batchIssueCertificatesSchema,
   certificateFiltersSchema,

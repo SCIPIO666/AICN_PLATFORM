@@ -35,7 +35,7 @@ async function generateCertificatePDF(data) {
         });
 
         //  PDF with high quality settings
-        const pdfBuffer = await page.pdf({
+        const pdfOutput = await page.pdf({
             format: 'A4',
             printBackground: true,
             margin: {
@@ -47,6 +47,7 @@ async function generateCertificatePDF(data) {
             preferCSSPageSize: true,
             displayHeaderFooter: false
         });
+        const pdfBuffer = Buffer.from(pdfOutput);
 
         logger.info(`PDF generated | Size: ${(pdfBuffer.length / 1024).toFixed(2)} KB`);
 
@@ -67,8 +68,15 @@ async function generateCertificatePDF(data) {
  */
 let browserInstance = null;
 
+function browserIsConnected(browser) {
+    if (!browser) return false;
+    if (typeof browser.isConnected === 'function') return browser.isConnected();
+    if (typeof browser.connected === 'boolean') return browser.connected;
+    return true;
+}
+
 async function getBrowser() {
-    if (browserInstance && browserInstance.isConnected()) {
+    if (browserIsConnected(browserInstance)) {
         return browserInstance;
     }
 

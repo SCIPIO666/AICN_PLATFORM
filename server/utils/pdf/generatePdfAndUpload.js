@@ -10,7 +10,7 @@ async function generatePdfAndUpload(certData) {
   });
 
   log.info('Generating certificate PDF');
-  const pdfBuffer = await generateCertificatePDF(certData);
+  const pdfBuffer = Buffer.from(await generateCertificatePDF(certData));
   log.info(`Certificate PDF generated: ${(pdfBuffer.length / 1024).toFixed(2)} KB`);
 
   const uploadResult = await uploadPdf(

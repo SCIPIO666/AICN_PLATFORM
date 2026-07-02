@@ -46,10 +46,15 @@ async function issueCertificate(userId, sessionId, adminId, role) {
 
   const existingCert = await certificateModel.getCertificateByUserAndSession(userId, sessionId);
   if (existingCert && !existingCert.revokedAt) {
-    throw new BusinessLogicError('Certificate already issued for this session');
+    if (existingCert.pdfUrl && !existingCert.pdfGenerationFailed) {
+      throw new BusinessLogicError('Certificate already issued for this session');
+    }
+    logger.info(`Retrying PDF generation for existing certificate ${existingCert.certCode}`);
   }
 
-  const certificate = await certificateModel.createCertificate(userId, sessionId);
+  const certificate = existingCert && !existingCert.revokedAt
+    ? existingCert
+    : await certificateModel.createCertificate(userId, sessionId);
   let pdfBuffer;
   let uploadResult;
 
