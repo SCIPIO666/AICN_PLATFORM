@@ -4,7 +4,7 @@ import { cancelEnrolment,getMyEnrolments } from '@/api/enrolments';
 import useSessionFilters from '../../stores/sessionFilters';
 import EnlrolmentCard from '@/components/dormain/EnlrolmentCard';
 import FilterBar from '../../components/dormain/FilterBar';
-import Pagination from '@/components/ui/Pagination';
+import Pagination from '@/components/ui/pagination';
 import Spinner from '@/components/ui/Spinner';
 import { Button } from '@/components/ui/button';
 import { Search, Filter, X, AlertCircle } from 'lucide-react';

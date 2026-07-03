@@ -5,7 +5,7 @@ import useSessionFilters from '../../stores/sessionFilters';
 
 import SessionCard from '../../components/dormain/SessionCard';
 import FilterBar from '../../components/dormain/FilterBar';
-import Pagination from '@/components/ui/Pagination';
+import Pagination from '@/components/ui/pagination';
 import Spinner from '@/components/ui/Spinner';
 import { Button } from '@/components/ui/button';
 import { Search, X, AlertCircle } from 'lucide-react';

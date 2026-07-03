@@ -19,7 +19,7 @@ import {
 
 import { useTrainerApplications, useApproveTrainer, useRejectTrainer } from '@/hooks';
 import Spinner from '@/components/ui/Spinner';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { safeFormatDate, safeFormatRelative } from '@/utils/date';
 import { toast } from '@/stores/toastStore';
 

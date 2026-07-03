@@ -22,7 +22,7 @@ import { format } from 'date-fns';
 import { useSession } from '@/hooks';
 import { useMarkAttendance } from '@/hooks';
 import Spinner from '@/components/ui/Spinner';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { getSafeDate, safeFormatDate } from '@/utils/date';
 
 function RosterItem({ enrolment, onMarkAttendance, isUpdating }) {

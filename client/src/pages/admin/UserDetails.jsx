@@ -19,7 +19,7 @@ import {
 
 import { useMe, useUpdateUserRole } from '@/hooks';
 import Spinner from '@/components/ui/Spinner';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { safeFormatDate } from '@/utils/date';
 import { toast } from '@/stores/toastStore';
 

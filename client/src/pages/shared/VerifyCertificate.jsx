@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ShieldCheck,
@@ -29,18 +30,22 @@ import Reveal from '@/components/Reveal';
 import { fadeUp, staggerContainer, scaleUp, slideUp } from '@/utils/motion';
 import PublicNavbar from '@/components/PublicNavbar';
 const VerifyCertificate = () => {
-  const [certCode, setCertCode] = useState('');
-  
+  const [searchParams] = useSearchParams();
+  // QR codes on the certificate PDF/email link here as /verify-certificate?code=CERT-XXXX
+  const codeFromUrl = searchParams.get('code') || '';
+  const [certCode, setCertCode] = useState(codeFromUrl);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-    watch
+    watch,
+    setValue
   } = useForm({
     resolver: zodResolver(verifyCertificateSchema),
     defaultValues: {
-      certCode: ''
+      certCode: codeFromUrl
     }
   });
   const { 
@@ -51,6 +56,17 @@ const VerifyCertificate = () => {
     isError, 
     refetch 
   } = useVerifyCertificate(certCode);
+
+  // Deep-link support: if a ?code= param is present (e.g. from a scanned QR
+  // code), pre-fill the input and kick off verification automatically
+  // instead of waiting for the visitor to type/paste the code manually.
+  useEffect(() => {
+    if (codeFromUrl) {
+      setValue('certCode', codeFromUrl);
+      setCertCode(codeFromUrl);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [codeFromUrl]);
 
   useEffect(() => {
     if (certCode) {

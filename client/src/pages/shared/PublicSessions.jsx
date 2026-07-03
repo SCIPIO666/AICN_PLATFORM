@@ -8,9 +8,9 @@ import useSessionFilters from '../../stores/sessionFilters';
 import PublicNavbar from '@/components/PublicNavbar';
 
 import FilterBar from '../../components/dormain/FilterBar';
-import Pagination from '@/components/ui/Pagination';
+import Pagination from '@/components/ui/pagination';
 import Spinner from '@/components/ui/Spinner';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { Search, X, AlertCircle, Sparkles, Award, UserCheck } from 'lucide-react';
 import { toast } from '@/stores/toastStore';
 

@@ -22,7 +22,7 @@ import {
 import { useMyTrainerProfile, useUpdateTrainerProfile } from '@/hooks';
 import { useMe } from '@/hooks';
 import Spinner from '@/components/ui/Spinner';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { toast } from '@/stores/toastStore';
 
 export default function TrainerProfile() {

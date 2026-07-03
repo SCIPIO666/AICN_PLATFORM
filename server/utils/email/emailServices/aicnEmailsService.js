@@ -15,7 +15,7 @@ async function sendCertificateEmail({ to, name, sessionTitle, certCode, pdfBuffe
     name, sessionTitle, certCode,
     skillArea: meta.skillArea,
     duration: meta.durationMins,
-    verifyUrl: `${process.env.FRONTEND_URL}/verify/${certCode}`,
+    verifyUrl: `${process.env.FRONTEND_URL}/verify-certificate?code=${certCode}`,
     year: new Date().getFullYear()
   });
 

@@ -7,18 +7,10 @@ function LoginPage() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    //       email: 'calvince@africaictcsnetwork.org',
-    // password: 'admin123',
-              email: 'learner@aicn.africa',
-    password: 'Test123!@#'
-
-      
-    // email: 'dev@example.com',
-    // password: 'Test123!@#',
+  email: '',
+    password: ''
   });
-    //   email: 'calvince@africaictcsnetwork.org',
-    // password: 'admin123',
-// learner123   akinyi@example.com
+
   const [localError, setLocalError] = useState('');
 
   const loginMutation = useLogin();
@@ -216,46 +208,6 @@ function LoginPage() {
           </div>
         </form>
 
-        {/* Dev Accounts Info */}
-        <div className="mt-6 rounded-lg p-4 border border-dashed"
-             style={{ 
-               backgroundColor: 'var(--bg-card)',
-               borderColor: 'var(--border-color)'
-             }}>
-          <div className="flex items-center gap-2 mb-3">
-            <svg className="h-4 w-4" style={{ color: 'var(--text-muted)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span className="text-xs font-semibold uppercase tracking-wider"
-                  style={{ color: 'var(--text-muted)' }}>
-              Development Accounts
-            </span>
-          </div>
-          <div className="space-y-2 text-xs font-mono"
-               style={{ color: 'var(--text-secondary)' }}>
-            <div className="flex items-center justify-between py-1 px-2 rounded"
-                 style={{ backgroundColor: 'var(--bg-page)' }}>
-              <span>admin@aicn.africa</span>
-              <span className="opacity-60">ADMIN</span>
-            </div>
-            <div className="flex items-center justify-between py-1 px-2 rounded"
-                 style={{ backgroundColor: 'var(--bg-page)' }}>
-              <span>trainer@aicn.africa</span>
-              <span className="opacity-60">TRAINER</span>
-            </div>
-            <div className="flex items-center justify-between py-1 px-2 rounded"
-                 style={{ backgroundColor: 'var(--bg-page)' }}>
-              <span>learner@aicn.africa</span>
-              <span className="opacity-60">LEARNER</span>
-            </div>
-            <div className="mt-2 pt-2 border-t"
-                 style={{ borderColor: 'var(--border-subtle)' }}>
-              <span className="opacity-75">Password: Test123!@#</span>
-              <p> learner123   akinyi@example.com</p>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

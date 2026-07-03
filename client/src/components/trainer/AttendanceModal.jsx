@@ -10,7 +10,7 @@ import {
 import { useSession, useMarkAttendance } from '@/hooks';
 import { useAttendanceModalStore } from '@/stores/useAttendanceModalStore';
 import Spinner from '@/components/ui/Spinner';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { getSafeDate, safeFormatDate } from '@/utils/date';
 import { toast } from '@/stores/toastStore';
 

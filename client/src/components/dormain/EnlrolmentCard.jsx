@@ -1,6 +1,6 @@
-import Card from '../ui/Card';
-import { Button } from '../ui/Button';
-import Badge from '../ui/Badge';
+import Card from '../ui/card';
+import { Button } from '../ui/button';
+import Badge from '../ui/badge';
 import { Calendar, Clock } from 'lucide-react';
 import { useEnrolmentUI } from '@/stores/enrolmentUIStore';
 

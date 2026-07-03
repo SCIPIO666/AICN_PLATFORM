@@ -5,7 +5,7 @@ import { Calendar, Search, Filter, X, AlertCircle, Eye, Users, Clock, MapPin, Mo
 import { useSessions } from '@/hooks';
 import { useAdminModalStore } from '@/stores/useAdminModalStore';
 import Spinner from '@/components/ui/Spinner';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { getSafeDate, safeFormatDate } from '@/utils/date';
 import SessionDetailsModal from '@/components/admin/SessionDetailsModal';
 import SessionFormModal from '@/components/modals/SessionFormModal';

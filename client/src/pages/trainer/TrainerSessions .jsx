@@ -22,7 +22,7 @@ import {
 import { useMyTrainerSessions } from '@/hooks';
 import { useAttendanceModalStore } from '@/stores/useAttendanceModalStore';
 import Spinner from '@/components/ui/Spinner';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { getSafeDate, safeFormatDate } from '@/utils/date';
 import AttendanceModal from '@/components/trainer/AttendanceModal';
 

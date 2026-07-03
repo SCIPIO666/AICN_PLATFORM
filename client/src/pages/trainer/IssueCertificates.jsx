@@ -21,7 +21,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 import { useSession, useMyTrainerSessions, useIssueCertificate, useBatchIssueCertificates } from '@/hooks';
 import Spinner from '@/components/ui/Spinner';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { safeFormatDate, getSafeDate } from '@/utils/date';
 import { toast } from '@/stores/toastStore';
 

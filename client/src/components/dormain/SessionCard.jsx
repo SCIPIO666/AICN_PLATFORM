@@ -1,6 +1,6 @@
-// import Card from '../ui/Card';
-// import { Button } from '../ui/Button';
-// import Badge from '../ui/Badge';
+// import Card from '../ui/card';
+// import { Button } from '../ui/button';
+// import Badge from '../ui/badge';
 // import { Monitor, MapPin, Calendar, Clock, Users, User, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 
 // export default function SessionCard({ session, onEnrol, isEnrolling }) {
@@ -144,9 +144,9 @@
 // }
 
 import { useQuery } from '@tanstack/react-query';
-import Card from '../ui/Card';
-import { Button } from '../ui/Button';
-import Badge from '../ui/Badge';
+import Card from '../ui/card';
+import { Button } from '../ui/button';
+import Badge from '../ui/badge';
 import { Monitor, MapPin, Calendar, Clock, Users, User, XCircle, Loader2, CheckCircle, RefreshCw } from 'lucide-react';
 import { getMyEnrolments } from '@/api/enrolments';
 import useAuthStore from '@/stores/useAuthStore';

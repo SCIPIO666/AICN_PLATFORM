@@ -5,7 +5,7 @@ import { Bell, Plus, Search, X, AlertCircle, Eye, Edit, Trash2, Calendar } from 
 import { useAnnouncements, useDeleteAnnouncement } from '@/hooks';
 import { useAdminModalStore } from '@/stores/useAdminModalStore';
 import Spinner from '@/components/ui/Spinner';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { safeFormatRelative } from '@/utils/date';
 import { toast } from '@/stores/toastStore';
 import AnnouncementFormModal from '@/components/admin/AnnouncementFormModal';

@@ -5,7 +5,7 @@ import { Users as UsersIcon, Search, Filter, X, AlertCircle, Eye, Mail, Calendar
 import { useUsers } from '@/hooks';
 import { useAdminModalStore } from '@/stores/useAdminModalStore';
 import Spinner from '@/components/ui/Spinner';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { safeFormatDate } from '@/utils/date';
 import UserDetailsModal from '@/components/admin/UserDetailsModal';
 

@@ -5,7 +5,7 @@ import { Briefcase, Search, Filter, X, AlertCircle, Eye, CheckCircle, XCircle, C
 import { useTrainerApplications } from '@/hooks';
 import { useAdminModalStore } from '@/stores/useAdminModalStore';
 import Spinner from '@/components/ui/Spinner';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { safeFormatRelative } from '@/utils/date';
 import ApplicationDetailsModal from '@/components/admin/ApplicationDetailsModal';
 

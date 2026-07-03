@@ -71,7 +71,7 @@ async function issueCertificate(userId, sessionId, adminId, role) {
       trainerName: enrolment.session.trainer?.name || 'AICN Training Faculty',
       issueDate: certificate.issuedAt,
       completionDate: enrolment.session.date,
-      verifyUrl: `${process.env.FRONTEND_URL}/verify/${certificate.certCode}`,
+      verifyUrl: `${process.env.FRONTEND_URL}/verify-certificate?code=${certificate.certCode}`,
     }));
 
     await prisma.certificate.update({

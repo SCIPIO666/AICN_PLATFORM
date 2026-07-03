@@ -21,7 +21,7 @@ import {
 
 import { useSession, useCancelSession } from '@/hooks';
 import Spinner from '@/components/ui/Spinner';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { getSafeDate, safeFormatDate, safeFormatTime } from '@/utils/date';
 import { toast } from '@/stores/toastStore';
 
