@@ -1,4 +1,3 @@
-module.exports = ({ name, approved, reason, trainerId, frontendUrl, supportEmail }) => `
 <!DOCTYPE html>
 <html>
 <head>
@@ -59,9 +58,9 @@ module.exports = ({ name, approved, reason, trainerId, frontendUrl, supportEmail
   </style>
 </head>
 <body>
-  ${approved ? `
+  {{#if approved}}
   <div class="approved">
-    <h2>🎉 Congratulations, ${name}!</h2>
+    <h2>🎉 Congratulations, {{name}}!</h2>
     <p style="font-size: 18px;">Your trainer application has been <strong style="color: #15803d;">APPROVED</strong>!</p>
   </div>
   <div class="content">
@@ -79,20 +78,20 @@ module.exports = ({ name, approved, reason, trainerId, frontendUrl, supportEmail
     </div>
     
     <div style="text-align: center;">
-      <a href="${frontendUrl}/trainer/dashboard" class="button">
+      <a href="{{frontendUrl}}/trainer/dashboard" class="button">
         🚀 Go to Trainer Dashboard
       </a>
     </div>
     
-    <p>Need help getting started? Contact our trainer support team at <a href="mailto:${supportEmail}" style="color: #d97706;">${supportEmail}</a></p>
+    <p>Need help getting started? Contact our trainer support team at <a href="mailto:{{supportEmail}}" style="color: #d97706;">{{supportEmail}}</a></p>
   </div>
-  ` : `
+  {{else}}
   <div class="rejected">
-    <h2>📝 Trainer Application Update</h2>
-    <p>Dear <strong>${name}</strong>,</p>
+    <h2> Trainer Application Update</h2>
+    <p>Dear <strong>{{name}}</strong>,</p>
     <p>Thank you for your interest in becoming a trainer with AICN.</p>
     <p>After careful review, we have decided not to proceed with your application at this time.</p>
-    ${reason ? `<p><strong>Reason:</strong> ${reason}</p>` : ''}
+    {{#if reason}}<p><strong>Reason:</strong> {{reason}}</p>{{/if}}
   </div>
   <div class="content">
     <p>We encourage you to reapply in the future with additional qualifications or experience.</p>
@@ -104,18 +103,17 @@ module.exports = ({ name, approved, reason, trainerId, frontendUrl, supportEmail
     </ul>
     
     <div style="text-align: center;">
-      <a href="${frontendUrl}/sessions" class="button">
+      <a href="{{frontendUrl}}/sessions" class="button">
         📚 Browse Learning Sessions
       </a>
     </div>
     
-    <p>Questions? Contact us at <a href="mailto:${supportEmail}" style="color: #d97706;">${supportEmail}</a></p>
+    <p>Questions? Contact us at <a href="mailto:{{supportEmail}}" style="color: #d97706;">{{supportEmail}}</a></p>
   </div>
-  `}
+  {{/if}}
   <div class="footer">
-    <p>© ${new Date().getFullYear()} AICN Training. All rights reserved.</p>
+    <p>© {{year}} AICN Training. All rights reserved.</p>
     <p>Africa ICT & CS Network — Empowering Africa Digitally, Transforming Lives</p>
   </div>
 </body>
 </html>
-`;
