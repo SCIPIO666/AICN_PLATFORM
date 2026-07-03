@@ -1,7 +1,7 @@
 const app=require('./app')
 const dotenv=require('dotenv').config()
 const devLogger=require('./utils/logger')
-const {sendTestEmail}=require('./utils/email/email services/emailService')
+const {sendTestEmail}=require('./utils/email/emailServices/emailService')
 const {verifyMailer}= require('./config/mailer')
 
 app.listen(process.env.PORT,'localhost',()=>{

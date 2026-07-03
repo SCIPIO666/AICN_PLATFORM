@@ -2,7 +2,7 @@
 const sessionModel = require('./sessionsModel');
 const { NotFoundError, BusinessLogicError } = require('../../utils/errors/customErrors');
 const logger = require('../../utils/logger');
-const { sendSessionCancellationEmail } = require('../../utils/email/email services/aicnEmailsService');
+const { sendSessionCancellationEmail } = require('../../utils/email/emailServices/aicnEmailsService');
 
 async function createSession(data) {
   const newSession = await sessionModel.createSession(data);

@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const {prisma} = require('../../config/db');
 const logger = require('../../utils/logger');
-const { sendWelcomeEmail, sendPasswordResetEmail } = require('../../utils/email/email services/aicnEmailsService');
+const { sendWelcomeEmail, sendPasswordResetEmail } = require('../../utils/email/emailServices/aicnEmailsService');
 const { findUser, findUserById, createUser, findUserWithPassword } = require('../users/usersModel');
 const { AuthenticationError, ConflictError, NotFoundError, BusinessLogicError } = require('../../utils/errors/customErrors');
 

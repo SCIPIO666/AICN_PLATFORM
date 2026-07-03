@@ -1,4 +1,4 @@
-const logger = require('../../../utils/logger');
+const logger = require('../../logger');
 const { transporter, getFromAddress, getEtherealPreviewUrl } = require('../../../config/mailer');
 
 // Send email 

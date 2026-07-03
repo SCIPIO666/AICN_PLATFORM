@@ -2,7 +2,7 @@
 const adminModel = require('./adminModel');
 const usersModel=require('../users/usersModel')
 const announcementsModel = require('../announcements/announcementsModel');
-const { sendTrainerApprovalEmail } = require('../../utils/email/email services/aicnEmailsService');
+const { sendTrainerApprovalEmail } = require('../../utils/email/emailServices/aicnEmailsService');
 const { AuthorizationError, NotFoundError, BusinessLogicError } = require('../../utils/errors/customErrors');
 const logger = require('../../utils/logger');
 

@@ -1,4 +1,3 @@
-// src/utils/downloadCertificate.js - Simple version
 
 function safeFilename(value) {
   return String(value || 'certificate')
@@ -12,25 +11,69 @@ export async function downloadCertificateFile(certificate, onProgress) {
   }
 
   try {
-    // Create a temporary anchor element
-    const link = document.createElement('a');
-    link.href = certificate.pdfUrl;
-    link.download = safeFilename(`${certificate.certCode || certificate.id}.pdf`);
-    link.target = '_blank';
+    let downloadUrl = certificate.pdfUrl;
     
-    // Append, click, and remove
+    if (downloadUrl.includes('?')) {
+      downloadUrl += '&fl_attachment';
+    } else {
+      downloadUrl += '?fl_attachment';
+    }
+
+    const filename = `certificate-${certificate.certCode || certificate.id}.pdf`;
+    downloadUrl += `&filename=${encodeURIComponent(filename)}`;
+
+    const response = await fetch(downloadUrl, {
+      method: 'GET',
+      credentials: 'include', 
+      headers: {
+        'Accept': 'application/pdf',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Download failed: ${response.status} ${response.statusText}`);
+    }
+
+    const contentLength = response.headers.get('content-length');
+    const total = contentLength ? parseInt(contentLength, 10) : 0;
+    
+    const reader = response.body.getReader();
+    const chunks = [];
+    let loaded = 0;
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      
+      chunks.push(value);
+      loaded += value.length;
+      
+      if (total > 0 && onProgress) {
+        onProgress(Math.round((loaded * 100) / total));
+      }
+    }
+
+    // Create download
+    const blob = new Blob(chunks, { 
+      type: response.headers.get('content-type') || 'application/pdf' 
+    });
+    
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = safeFilename(`${certificate.certCode || certificate.id}.pdf`);
     document.body.appendChild(link);
     link.click();
-    document.body.removeChild(link);
-    
-    // If progress callback provided, notify completion
+    link.remove();
+    window.URL.revokeObjectURL(url);
+
     if (onProgress) {
       onProgress(100);
     }
-    
+
     return { success: true };
   } catch (error) {
     console.error('Download error:', error);
-    throw new Error('Failed to download certificate');
+    throw new Error(error.message || 'Failed to download certificate');
   }
 }

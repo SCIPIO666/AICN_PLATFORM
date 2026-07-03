@@ -5,7 +5,7 @@ const { NotFoundError, BusinessLogicError, AuthorizationError } = require('../..
 const {
   sendTrainerApprovalEmail,
   sendTrainerApplicationReceivedEmail,
-} = require('../../utils/email/email services/aicnEmailsService');
+} = require('../../utils/email/emailServices/aicnEmailsService');
 
 async function applyForTrainer(userId, data) {
   const existing = await trainersModel.checkExistingApplication(userId);

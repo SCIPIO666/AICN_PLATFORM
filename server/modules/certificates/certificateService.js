@@ -1,5 +1,5 @@
 const certificateModel = require('./certificatesModel');
-const { sendCertificateEmail } = require('../../utils/email/email services/aicnEmailsService');
+const { sendCertificateEmail } = require('../../utils/email/emailServices/aicnEmailsService');
 const generatePdfAndUpload = require('../../utils/pdf/generatePdfAndUpload');
 const { prisma } = require('../../config/db');
 const logger = require('../../utils/logger');

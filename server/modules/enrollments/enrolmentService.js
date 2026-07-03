@@ -1,11 +1,12 @@
-// enrolments/enrolmentService.js
+
 const enrolmentModel = require('./enrolmentsModel');
 const { getSession } = require('../sessions/sessionsModel');
 const logger = require('../../utils/logger');
 const {
   sendEnrolmentConfirmationEmail,
   sendEnrolmentCancellationEmail
-} = require('../../utils/email/email services/aicnEmailsService');
+} = require('../../utils/email/emailServices/aicnEmailsService');
+
 const {prisma }= require('../../config/db');
 const {updateEnrolment}=require('./enrolmentsModel')
 const { NotFoundError, BusinessLogicError, AuthorizationError } = require('../../utils/errors/customErrors');

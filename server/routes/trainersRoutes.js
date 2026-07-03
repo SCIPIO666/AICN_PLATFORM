@@ -23,19 +23,18 @@ trainersRouter.get(
   trainersController.getApprovedTrainers 
 );
 
-// Learner applies to become trainer
-trainersRouter.post(
-  '/apply', 
-  validate(createTrainerProfileSchema, 'body'),
-  trainersController.applyForTrainer
-);
 
 // ============ PROTECTED ROUTES (Authentication required) ============
 trainersRouter.use(verifyToken); // Apply to all routes below
 
 // Get my trainer profile
 trainersRouter.get('/me', trainersController.getMyTrainerProfile);
-
+// Learner applies to become trainer
+trainersRouter.post(
+  '/apply', 
+  validate(createTrainerProfileSchema, 'body'),
+  trainersController.applyForTrainer
+);
 // Update my trainer profile
 trainersRouter.patch(
   '/me', 
