@@ -1,7 +1,11 @@
-const fs = require('fs');
-const Handlebars = require('handlebars');
 
-require.extensions['.hbs'] = function (module, filename) {
-  const src = fs.readFileSync(filename, 'utf8');
-  module.exports = Handlebars.compile(src);
+const path = require('path');
+const handlebars = require('handlebars');
+const fs = require('fs');
+
+
+require.extensions['.hbs'] = function(module, filename) {
+  const templateContent = fs.readFileSync(filename, 'utf8');
+  const compiledTemplate = handlebars.compile(templateContent);
+  module.exports = compiledTemplate;
 };

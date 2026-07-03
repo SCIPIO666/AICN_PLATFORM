@@ -1,4 +1,3 @@
-module.exports = ({ name, supportEmail, frontendUrl }) => `
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,7 +20,7 @@ module.exports = ({ name, supportEmail, frontendUrl }) => `
     <p style="margin: 0; opacity: 0.9;">AICN Trainer Program</p>
   </div>
   <div class="content">
-    <p>Dear <strong>${name}</strong>,</p>
+    <p>Dear <strong>{{name}}</strong>,</p>
     <p>Thank you for applying to become an AICN Certified Trainer. We have received your application and it is now under review.</p>
 
     <div class="status-box">
@@ -48,15 +47,14 @@ module.exports = ({ name, supportEmail, frontendUrl }) => `
     <p style="color: #57534e;">While you wait, you can continue browsing and attending sessions as a learner.</p>
 
     <div style="text-align: center;">
-      <a href="${frontendUrl}/dashboard/learner" class="button">Browse Sessions</a>
+      <a href="{{frontendUrl}}/dashboard/learner" class="button">Browse Sessions</a>
     </div>
 
-    <p style="color: #57534e; font-size: 14px;">Questions about your application? Contact us at <a href="mailto:${supportEmail}" style="color: #166534;">${supportEmail}</a></p>
+    <p style="color: #57534e; font-size: 14px;">Questions about your application? Contact us at <a href="mailto:{{supportEmail}}" style="color: #166534;">{{supportEmail}}</a></p>
   </div>
   <div class="footer">
-    <p>© ${new Date().getFullYear()} AICN Training. All rights reserved.</p>
+    <p>© {{year}} AICN Training. All rights reserved.</p>
     <p>Africa ICT &amp; CS Network — Empowering Africa Digitally, Transforming Lives</p>
   </div>
 </body>
 </html>
-`;

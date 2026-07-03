@@ -70,7 +70,8 @@ async function sendTrainerApplicationReceivedEmail({ to, name }) {
   const html = trainerApplicationReceivedTemplate({
     name,
     frontendUrl: process.env.FRONTEND_URL,
-    supportEmail: process.env.SUPPORT_EMAIL || 'support@aicn.africa'
+    supportEmail: process.env.SUPPORT_EMAIL || 'support@aicn.africa',
+    year: new Date().getFullYear()  // Add this line
   });
 
   return await sendEmail({
