@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
+  "start": "node server.js",
     "swagger:validate": "swagger-cli validate docs/swagger.yaml",
     "swagger:generate": "swagger-cli bundle docs/swagger.yaml -o docs/swagger-bundled.yaml",
     "swagger:serve": "swagger-ui-watcher docs/swagger.yaml",

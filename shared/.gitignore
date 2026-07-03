@@ -19,3 +19,4 @@ Thumbs.db
 # Debug logs
 pino-debug.log
 logs/
+dist/

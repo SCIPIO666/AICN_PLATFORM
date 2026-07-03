@@ -13,7 +13,7 @@ import ApplyTrainer from '../pages/learner/ApplyTrainer'
 
 // TRAINER PAGES 
 import TrainerDashboard from '@/pages/trainer/TrainerDashboard'
-import TrainerSessions from '../pages/trainer/TrainerSessions '
+import TrainerSessions from '@/pages/trainer/TrainerSessions'
 import TrainerSessionDetails from '../pages/trainer/TrainerSessionDetails'
 import SessionRoster from '../pages/trainer/SessionRoster'
 import Attendance from '../pages/trainer/Attendance'
