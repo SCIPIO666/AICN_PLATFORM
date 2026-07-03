@@ -1,70 +1,72 @@
 ##############################################################################
-# Render Blueprint for the AICN Training Platform
+# Render Blueprint for the AICN Training Platform - FREE TIER
 #
-# This file defines the whole stack — database, backend, frontend — as one
-# reproducible unit. Push this to your repo root, then in the Render
-# dashboard: New -> Blueprint -> pick this repo -> Render reads this file
-# and shows you everything it's about to create before you confirm.
-#
-# Service names below (aicn-db, aicn-server, aicn-client) become part of
-# the default *.onrender.com URLs (e.g. https://aicn-server.onrender.com).
-# Rename them if you want different URLs — just keep the /api/* rewrite
-# destination in aicn-client's routes in sync with aicn-server's name.
+# This configuration uses ONLY free resources:
+# - Free Postgres (expires after 90 days, good for testing)
+# - Free web services (512MB RAM each)
+# - Auto-deploy on commit
 ##############################################################################
 
 databases:
   - name: aicn-db
-    plan: free            # swap to basic-256mb (or higher) before real traffic —
-                           # Render's free Postgres is deleted after 30 days
-    region: oregon
+    plan: free              # ✅ FREE - 90 day expiry, good for testing/development
+    region: oregon           # Choose: oregon, ohio, frankfurt, singapore
 
 services:
   # ── Backend API ──────────────────────────────────────────────────────
   - type: web
     name: aicn-server
     runtime: node
-    plan: starter          # free tier's 512MB is tight once Puppeteer launches
-                            # Chromium for certificate PDFs — starter is safer
+    plan: free              #  FREE - 512MB RAM, sleeps after inactivity
     region: oregon
     rootDir: server
     buildCommand: npm install && npx prisma generate
-    # Runs once per deploy, after build, before start — perfect for migrations.
-    # Uses `migrate deploy` (not `migrate dev`) because that's the non-interactive,
-    # production-safe command; it only applies migrations that already exist
-    # in prisma/migrations, it never generates new ones.
     preDeployCommand: npx prisma migrate deploy
     startCommand: npm start
     healthCheckPath: /api/v1/health
     autoDeployTrigger: commit
+    
+    #   Free tier services sleep after inactivity
+    # To keep it awake, set this to true (but costs if you exceed free hours)
+    # sleepAfterInactivity: false
+    sleepAfterInactivity: true   # Free tier defaults to sleep after 15min inactivity
+    
     envVars:
       - key: NODE_ENV
         value: production
+      
+      - key: PORT
+        value: 3000
+      
       - key: DATABASE_URL
         fromDatabase:
           name: aicn-db
           property: connectionString
+      
       - key: JWT_SECRET
-        generateValue: true   # Render generates a random 256-bit secret for you
+        generateValue: true
+      
       - key: FRONTEND_URL
         fromService:
           name: aicn-client
           type: web
           envVarKey: RENDER_EXTERNAL_URL
-        # ^ auto-fills with aicn-client's live URL. If you later attach a
-        # custom domain to the frontend, come back and set this manually to
-        # your custom domain instead — see the deploy notes for why.
+      
       - key: SUPPORT_EMAIL
-        value: support@aicn.africa    # change to your real address
+        value: eaphoney@gmail.com
+      
       - key: SEND_TEST_EMAIL
         value: 'false'
-      # Secrets — Render prompts you for these once, during Blueprint
-      # creation, and never stores their values in this file or in git.
+      
+      #  Cloudinary - FREE (optional, set to false if not using)
       - key: CLOUDINARY_CLOUD_NAME
         sync: false
       - key: CLOUDINARY_API_KEY
         sync: false
       - key: CLOUDINARY_API_SECRET
         sync: false
+      
+      #  Email - FREE (using Gmail SMTP, no cost)
       - key: EMAIL_HOST
         sync: false
       - key: EMAIL_PORT
@@ -80,23 +82,20 @@ services:
   - type: web
     name: aicn-client
     runtime: static
+    plan: free              #  FREE - Static sites are always free
+    region: oregon
     rootDir: client
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
     autoDeployTrigger: commit
+    
     routes:
-      # Must come BEFORE the catch-all rewrite below — Render evaluates
-      # routes in order and stops at the first match.
-      #
-      # NOTE: Render does not support env var interpolation in this file,
-      # so this destination is a literal URL. It has to match aicn-server's
-      # name above. If you rename the backend service, update this too.
+      #  Proxy API requests to backend
       - type: rewrite
         source: /api/*
         destination: https://aicn-server.onrender.com/api/*
-      # SPA fallback — without this, refreshing on any route other than
-      # "/" (e.g. /verify-certificate?code=...) 404s at the edge before
-      # React Router ever loads.
+      
+      #  SPA fallback - supports React Router
       - type: rewrite
         source: /*
         destination: /index.html
