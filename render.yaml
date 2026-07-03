@@ -1,23 +1,18 @@
 ##############################################################################
 # Render Blueprint for the AICN Training Platform - FREE TIER
-#
-# This configuration uses ONLY free resources:
-# - Free Postgres (expires after 90 days, good for testing)
-# - Free web services (512MB RAM each)
-# - Auto-deploy on commit
 ##############################################################################
 
 databases:
   - name: aicn-db
-    plan: free              # ✅ FREE - 90 day expiry, good for testing/development
-    region: oregon           # Choose: oregon, ohio, frankfurt, singapore
+    plan: free
+    region: oregon
 
 services:
   # ── Backend API ──────────────────────────────────────────────────────
   - type: web
     name: aicn-server
     runtime: node
-    plan: free              #  FREE - 512MB RAM, sleeps after inactivity
+    plan: free
     region: oregon
     rootDir: server
     buildCommand: npm install && npx prisma generate
@@ -25,11 +20,6 @@ services:
     startCommand: npm start
     healthCheckPath: /api/v1/health
     autoDeployTrigger: commit
-    
-    #   Free tier services sleep after inactivity
-    # To keep it awake, set this to true (but costs if you exceed free hours)
-    # sleepAfterInactivity: false
-    sleepAfterInactivity: true   # Free tier defaults to sleep after 15min inactivity
     
     envVars:
       - key: NODE_ENV
@@ -58,7 +48,6 @@ services:
       - key: SEND_TEST_EMAIL
         value: 'false'
       
-      #  Cloudinary - FREE (optional, set to false if not using)
       - key: CLOUDINARY_CLOUD_NAME
         sync: false
       - key: CLOUDINARY_API_KEY
@@ -66,7 +55,6 @@ services:
       - key: CLOUDINARY_API_SECRET
         sync: false
       
-      #  Email - FREE (using Gmail SMTP, no cost)
       - key: EMAIL_HOST
         sync: false
       - key: EMAIL_PORT
@@ -82,7 +70,7 @@ services:
   - type: web
     name: aicn-client
     runtime: static
-    plan: free              #  FREE - Static sites are always free
+    plan: free
     region: oregon
     rootDir: client
     buildCommand: npm install && npm run build
@@ -90,12 +78,10 @@ services:
     autoDeployTrigger: commit
     
     routes:
-      #  Proxy API requests to backend
       - type: rewrite
         source: /api/*
         destination: https://aicn-server.onrender.com/api/*
       
-      #  SPA fallback - supports React Router
       - type: rewrite
         source: /*
         destination: /index.html
