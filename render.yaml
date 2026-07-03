@@ -1,5 +1,5 @@
 ##############################################################################
-# Render Blueprint for the AICN Training Platform - FREE TIER
+# Render Blueprint — AICN Training Platform (FREE TIER)
 ##############################################################################
 
 databases:
@@ -8,53 +8,58 @@ databases:
     region: oregon
 
 services:
-  # ── Backend API ──────────────────────────────────────────────────────
+
+  # ── Backend API (Node web service) ──────────────────────────────────
   - type: web
     name: aicn-server
     runtime: node
     plan: free
     region: oregon
     rootDir: server
-    buildCommand: npm install && npx prisma generate
-    preDeployCommand: npx prisma migrate deploy
+
+    # preDeployCommand is paid-only — migrate must run inside buildCommand
+    buildCommand: npm install && npx prisma generate && npx prisma migrate deploy
     startCommand: npm start
+
     healthCheckPath: /api/v1/health
     autoDeployTrigger: commit
-    
+
     envVars:
       - key: NODE_ENV
         value: production
-      
+
       - key: PORT
         value: 3000
-      
+
       - key: DATABASE_URL
         fromDatabase:
           name: aicn-db
           property: connectionString
-      
+
       - key: JWT_SECRET
         generateValue: true
-      
+
+      # Filled in automatically once aicn-client is deployed
       - key: FRONTEND_URL
         fromService:
           name: aicn-client
           type: web
           envVarKey: RENDER_EXTERNAL_URL
-      
+
       - key: SUPPORT_EMAIL
         value: eaphoney@gmail.com
-      
+
       - key: SEND_TEST_EMAIL
         value: 'false'
-      
+
+      # Set these manually in the Render dashboard after first deploy
       - key: CLOUDINARY_CLOUD_NAME
         sync: false
       - key: CLOUDINARY_API_KEY
         sync: false
       - key: CLOUDINARY_API_SECRET
         sync: false
-      
+
       - key: EMAIL_HOST
         sync: false
       - key: EMAIL_PORT
@@ -66,22 +71,30 @@ services:
       - key: EMAIL_FROM
         sync: false
 
-  # ── Frontend (static build) ──────────────────────────────────────────
+  # ── Frontend (Vite static site) ──────────────────────────────────────
+  # Static sites on Render free tier cannot have a region field — omit it
   - type: web
     name: aicn-client
     runtime: static
-    plan: free
-    region: oregon
     rootDir: client
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
     autoDeployTrigger: commit
-    
+
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          name: aicn-server
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
+
     routes:
+      # Proxy /api/* to the backend — avoids CORS entirely
       - type: rewrite
         source: /api/*
         destination: https://aicn-server.onrender.com/api/*
-      
+
+      # SPA fallback — all other routes serve index.html
       - type: rewrite
         source: /*
         destination: /index.html
