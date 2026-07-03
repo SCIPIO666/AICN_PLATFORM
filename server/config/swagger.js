@@ -1,10 +1,14 @@
 // config/swagger.js
 const swaggerUi = require('swagger-ui-express');
-const YAML = require('yamljs');
+
 const path = require('path');
 const logger = require('../utils/logger');
+// const YAML = require('yamljs');
+// const swaggerDocument = YAML.load(path.join(__dirname, '../docs/swagger.yaml'));
+const fs = require('fs');
+const YAML = require('js-yaml');
+const swaggerDocument = YAML.load(fs.readFileSync('./swagger.yaml', 'utf8'));
 
-const swaggerDocument = YAML.load(path.join(__dirname, '../docs/swagger.yaml'));
 
 const setupSwagger = (app) => {
   // Swagger UI with enhanced configuration
