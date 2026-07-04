@@ -1,14 +1,11 @@
 ##############################################################################
 # Render Blueprint — AICN Training Platform (FREE TIER)
-# Monorepo structure:
-#   AICN_PLATFORM/
-#     package.json    root deps (zod, shared validators)
-#     shared/         shared validators/types used by server
-#     server/         Express API
-#     client/        Vite React SPA
+# npm workspaces monorepo:
+#   package.json      workspace root ("workspaces": [shared, server, client])
+#   shared/           validators shared between client + server
+#   server/           Express API
+#   client/           Vite React SPA
 ##############################################################################
-
-name: AICN Training Platform
 
 databases:
   - name: aicn-db
@@ -17,21 +14,15 @@ databases:
 
 services:
 
-  # Backend API 
+  #Backend API 
   - type: web
     name: aicn-server
     runtime: node
     plan: free
     region: oregon
 
-    buildCommand: >-
-      npm install &&
-      cd shared && npm install && cd .. &&
-      npm install &&
-      cd server &&
-      npm install &&
-      npx prisma generate &&
-      npx prisma migrate deploy
+    buildCommand: npm install && cd server && npx prisma generate
+    preDeployCommand: cd server && npx prisma migrate deploy
 
     startCommand: cd server && npm start
 
@@ -41,9 +32,6 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
-
-      - key: PORT
-        value: 3000
 
       - key: DATABASE_URL
         fromDatabase:
@@ -83,14 +71,12 @@ services:
       - key: EMAIL_FROM
         sync: false
 
-  # ── Frontend (Vite static site) 
-  # Static site-no region field on  free tier
+  #Frontend (Vite static site) 
   - type: web
     name: aicn-client
     runtime: static
-    rootDir: client
-    buildCommand: npm install && npm run build
-    staticPublishPath: ./dist
+    buildCommand: npm install && cd client && npm run build
+    staticPublishPath: client/dist
     autoDeployTrigger: commit
 
     envVars:
@@ -101,7 +87,6 @@ services:
           envVarKey: RENDER_EXTERNAL_URL
 
     routes:
-      # SPA fallback — all client-side routes serve index.html
       - type: rewrite
         source: /*
         destination: /index.html
