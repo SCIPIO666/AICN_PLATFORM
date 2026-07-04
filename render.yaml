@@ -2,10 +2,10 @@
 # Render Blueprint — AICN Training Platform (FREE TIER)
 # Monorepo structure:
 #   AICN_PLATFORM/
-#     package.json   ← root deps (zod, shared validators)
-#     shared/        ← shared validators/types used by server
-#     server/        ← Express API
-#     client/        ← Vite React SPA
+#     package.json    root deps (zod, shared validators)
+#     shared/         shared validators/types used by server
+#     server/         Express API
+#     client/        Vite React SPA
 ##############################################################################
 
 name: AICN Training Platform
@@ -32,7 +32,7 @@ services:
       npm install &&
       npx prisma generate &&
       npx prisma migrate deploy
-      
+
     startCommand: cd server && npm start
 
     healthCheckPath: /api/v1/health
