@@ -23,7 +23,6 @@ services:
 
     buildCommand: npm install && cd server && npx prisma generate
     preDeployCommand: cd server && npx prisma migrate deploy
-
     startCommand: cd server && npm start
 
     healthCheckPath: /api/v1/health
