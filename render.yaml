@@ -1,6 +1,14 @@
 ##############################################################################
 # Render Blueprint — AICN Training Platform (FREE TIER)
+# Monorepo structure:
+#   AICN_PLATFORM/
+#     package.json   ← root deps (zod, shared validators)
+#     shared/        ← shared validators/types used by server
+#     server/        ← Express API
+#     client/        ← Vite React SPA
 ##############################################################################
+
+name: AICN Training Platform
 
 databases:
   - name: aicn-db
@@ -9,17 +17,21 @@ databases:
 
 services:
 
-  # ── Backend API (Node web service) ──────────────────────────────────
+  # Backend API 
   - type: web
     name: aicn-server
     runtime: node
     plan: free
     region: oregon
-    rootDir: server
 
-    # preDeployCommand is paid-only — migrate must run inside buildCommand
-    buildCommand: npm install && npx prisma generate && npx prisma migrate deploy
-    startCommand: npm start
+    buildCommand: >-
+      npm install &&
+      cd server &&
+      npm install &&
+      npx prisma generate &&
+      npx prisma migrate deploy
+
+    startCommand: cd server && npm start
 
     healthCheckPath: /api/v1/health
     autoDeployTrigger: commit
@@ -39,7 +51,6 @@ services:
       - key: JWT_SECRET
         generateValue: true
 
-      # Filled in automatically once aicn-client is deployed
       - key: FRONTEND_URL
         fromService:
           name: aicn-client
@@ -52,7 +63,6 @@ services:
       - key: SEND_TEST_EMAIL
         value: 'false'
 
-      # Set these manually in the Render dashboard after first deploy
       - key: CLOUDINARY_CLOUD_NAME
         sync: false
       - key: CLOUDINARY_API_KEY
@@ -71,8 +81,8 @@ services:
       - key: EMAIL_FROM
         sync: false
 
-  # ── Frontend (Vite static site) ──────────────────────────────────────
-  # Static sites on Render free tier cannot have a region field — omit it
+  # ── Frontend (Vite static site) 
+  # Static site-no region field on  free tier
   - type: web
     name: aicn-client
     runtime: static
@@ -89,12 +99,7 @@ services:
           envVarKey: RENDER_EXTERNAL_URL
 
     routes:
-      # Proxy /api/* to the backend — avoids CORS entirely
-      - type: rewrite
-        source: /api/*
-        destination: https://aicn-server.onrender.com/api/*
-
-      # SPA fallback — all other routes serve index.html
+      # SPA fallback — all client-side routes serve index.html
       - type: rewrite
         source: /*
         destination: /index.html
