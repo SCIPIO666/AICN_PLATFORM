@@ -41,11 +41,11 @@ info:
     url: https://opensource.org/licenses/MIT
 
 servers:
-  - url: http://localhost:3000/api/v1
+  - url: https://aicn-server.onrender.com
     description: Development server
-  - url: https://staging-api.aicn.africa/api/v1
+  - url: https://aicn-server.onrender.com
     description: Staging server
-  - url: https://api.aicn.africa/api/v1
+  - url: https://aicn-server.onrender.com
     description: Production server
 
 tags:

@@ -73,10 +73,9 @@ services:
   - type: web
     name: aicn-client
     runtime: static
-    buildCommand: npm install && cd client && npm run build
+    buildCommand: cd client && npm install && npm run build
     staticPublishPath: client/dist
     autoDeployTrigger: commit
-
     envVars:
       - key: VITE_API_URL
         fromService:
