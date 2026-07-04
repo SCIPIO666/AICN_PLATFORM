@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-  "start": "node server.js",
+    "start": "node server.js",
     "swagger:validate": "swagger-cli validate docs/swagger.yaml",
     "swagger:generate": "swagger-cli bundle docs/swagger.yaml -o docs/swagger-bundled.yaml",
     "swagger:serve": "swagger-ui-watcher docs/swagger.yaml",
@@ -54,6 +54,7 @@
     "fs-extra": "^11.3.5",
     "handlebars": "^4.7.9",
     "http-errors": "~1.6.3",
+    "js-yaml": "^4.3.0",
     "jsonwebtoken": "^9.0.3",
     "morgan": "~1.9.1",
     "nodemailer": "^6.10.1",
