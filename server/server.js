@@ -4,7 +4,7 @@ const devLogger=require('./utils/logger')
 const {sendTestEmail}=require('./utils/email/emailServices/emailService')
 const {verifyMailer}= require('./config/mailer')
 
-app.listen(process.env.PORT,'localhost',()=>{
+app.listen(process.env.PORT,()=>{
   devLogger.info(`\n Server is running! on port ${process.env.PORT}`);
   devLogger.info(`API URL: http://localhost:${process.env.PORT}/api`);
   devLogger.info(` Swagger UI: http://localhost:${process.env.PORT}/api-docs`);
