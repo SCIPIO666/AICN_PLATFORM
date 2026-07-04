@@ -22,7 +22,7 @@ export default function HeroeSection() {
     <section className="card-base overflow-hidden relative">
       <div className="grid lg:grid-cols-2 min-h-[750px]">
         {/* LEFT */}
-        <div className="p-12 lg:p-16 flex flex-col justify-center relative">
+        <div className="p-6 sm:p-10 lg:p-16 flex flex-col justify-center relative min-w-0">
           <Reveal variant={fadeUp}>
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 border"
               style={{
@@ -51,7 +51,7 @@ export default function HeroeSection() {
           </Reveal>
 
           <Reveal variant={fadeUp} delay={0.2}>
-            <h1 className="text-display-hero font-bold leading-none text-balance"
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-display-hero font-bold leading-tight lg:leading-none text-balance break-words"
               style={{ color: 'var(--text-primary)' }}
             >
               Education Without Boundaries Starts Here
