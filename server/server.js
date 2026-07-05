@@ -2,6 +2,7 @@ const app=require('./app')
 const dotenv=require('dotenv').config()
 const devLogger=require('./utils/logger')
 const {sendTestEmail}=require('./utils/email/emailServices/emailService')
+const {testEmailConnection}=require('./utils/email/emailServices/emailService')
 const {verifyMailer}= require('./config/mailer')
 
 app.listen(process.env.PORT,()=>{
@@ -13,6 +14,7 @@ app.listen(process.env.PORT,()=>{
 devLogger.info(' Auth info available at: http://localhost:3000/api-docs/auth-info');
 
 verifyMailer()
+testEmailConnection()
 
  if (process.env.SEND_TEST_EMAIL === 'true') {
     const recipient = process.env.TEST_EMAIL_RECIPIENT || 'test@example.com';
