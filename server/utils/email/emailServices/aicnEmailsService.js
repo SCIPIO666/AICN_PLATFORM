@@ -50,7 +50,7 @@ async function sendEnrolmentConfirmationEmail({ to, name, sessionTitle, sessionD
   return await sendEmail({ to, subject: `Enrolment Confirmed: ${sessionTitle}`, html });
 }
 
-// Trainer approval / rejection 
+// ── Trainer approval / rejection ──────────────────────────────────────────────
 async function sendTrainerApprovalEmail({ to, name, approved, reason = null, trainerId = null }) {
   const html = trainerApprovalTemplate({
     name, approved, reason, trainerId,
@@ -65,7 +65,7 @@ async function sendTrainerApprovalEmail({ to, name, approved, reason = null, tra
   return await sendEmail({ to, subject, html });
 }
 
-// Trainer application received (NEW) 
+// ── Trainer application received (NEW) ───────────────────────────────────────
 async function sendTrainerApplicationReceivedEmail({ to, name }) {
   const html = trainerApplicationReceivedTemplate({
     name,
@@ -81,7 +81,7 @@ async function sendTrainerApplicationReceivedEmail({ to, name }) {
   });
 }
 
-//  Welcome 
+// ── Welcome ───────────────────────────────────────────────────────────────────
 async function sendWelcomeEmail({ to, name, role = 'USER', tempPassword = null }) {
   const html = welcomeEmailTemplate({
     name, role, tempPassword,
@@ -97,7 +97,7 @@ async function sendWelcomeEmail({ to, name, role = 'USER', tempPassword = null }
   return await sendEmail({ to, subject, html });
 }
 
-// Password reset 
+// ── Password reset ────────────────────────────────────────────────────────────
 async function sendPasswordResetEmail({ to, name, resetToken, expiryHours = 1 }) {
   const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
 
@@ -111,7 +111,7 @@ async function sendPasswordResetEmail({ to, name, resetToken, expiryHours = 1 })
   return await sendEmail({ to, subject: `Reset Your AICN Password`, html });
 }
 
-// Session reminder (inline HTML, no template file) 
+// ── Session reminder (inline HTML, no template file) ─────────────────────────
 async function sendSessionReminderEmail({ to, name, sessionTitle, sessionDate, sessionTime, meetingLink }) {
   const formattedDate = new Date(sessionDate).toLocaleDateString('en-US', {
     year: 'numeric', month: 'long', day: 'numeric'
